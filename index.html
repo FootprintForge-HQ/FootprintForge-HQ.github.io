@@ -1,509 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Footprint Forge | Engineering Your Professional Presence</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Footprint Forge | Engineer Your Digital Authority</title>
 
-    <style>
-        /* Engineered Brand Color System */
-        :root {
-            --navy: #0F1B2D;
-            --charcoal: #2B2F33;
-            --copper: #B87333;
-            --copper-hover: #9c602a;
-            --bg-light: #F8F9FA;
-            --white: #FFFFFF;
-            
-            --font-serif: 'Playfair Display', serif;
-            --font-sans: 'Inter', sans-serif;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            scroll-behavior: smooth;
-        }
-
-        body {
-            background-color: var(--bg-light);
-            color: var(--charcoal);
-            font-family: var(--font-sans);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        h1, h2, h3, h4, .serif-text {
-            font-family: var(--font-serif);
-            font-weight: 600;
-        }
-
-        /* Structural Navigation */
-        nav {
-            background-color: var(--navy);
-            padding: 20px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--copper);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .brand-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            text-decoration: none;
-        }
-
-        /* Logo Integration */
-        .nav-logo {
-            height: 45px;
-            width: auto;
-            display: block;
-        }
-
-        .nav-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-title {
-            color: var(--white);
-            font-family: var(--font-serif);
-            font-size: 1.4rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            line-height: 1.1;
-        }
-
-        .nav-tagline {
-            color: var(--copper);
-            font-family: var(--font-sans);
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .nav-links a {
-            margin-left: 30px;
-            text-decoration: none;
-            color: var(--white);
-            font-size: 0.9rem;
-            font-weight: 500;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--copper);
-        }
-
-        /* Hero Section - Executive Authority */
-        .hero {
-            background-color: var(--navy);
-            color: var(--white);
-            padding: 120px 5%;
-            text-align: center;
-            border-bottom: 1px solid var(--charcoal);
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            color: var(--white);
-            letter-spacing: -0.5px;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            color: #A0AAB2;
-            max-width: 750px;
-            margin: 0 auto 40px;
-            font-weight: 400;
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: var(--copper);
-            color: var(--white);
-            padding: 14px 36px;
-            text-decoration: none;
-            font-family: var(--font-sans);
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            border-radius: 2px; /* Sharp corners for structural feel */
-            border: 1px solid var(--copper);
-            transition: all 0.3s ease;
-        }
-
-        .btn:hover {
-            background-color: var(--navy);
-            color: var(--copper);
-        }
-
-        /* Shared Section Layout */
-        section {
-            padding: 100px 5%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            color: var(--navy);
-            margin-bottom: 15px;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            color: var(--copper);
-            font-family: var(--font-sans);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.85rem;
-            margin-bottom: 60px;
-            font-weight: 600;
-        }
-
-        /* Grid Framework */
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        /* Structural Cards */
-        .card {
-            background: var(--white);
-            padding: 40px 30px;
-            border: 1px solid #E1E5EA;
-            border-top: 4px solid var(--navy);
-            border-radius: 2px;
-            transition: transform 0.3s, border-color 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            border-top-color: var(--copper);
-        }
-
-        .card h3 {
-            color: var(--navy);
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-        }
-
-        .card-link {
-            display: inline-block;
-            margin-top: 20px;
-            color: var(--copper);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Pricing Architecture */
-        .pricing-tier {
-            border-top: 4px solid var(--charcoal);
-        }
-        
-        .pricing-tier.featured {
-            border-top: 4px solid var(--copper);
-            background-color: var(--navy);
-            color: var(--white);
-        }
-
-        .pricing-tier.featured h3, 
-        .pricing-tier.featured .price {
-            color: var(--white);
-        }
-
-        .price {
-            font-family: var(--font-serif);
-            font-size: 2.8rem;
-            color: var(--navy);
-            margin: 20px 0;
-            border-bottom: 1px solid #E1E5EA;
-            padding-bottom: 20px;
-        }
-
-        .pricing-tier.featured .price {
-            border-bottom-color: var(--charcoal);
-        }
-
-        .pricing-tier ul {
-            list-style: none;
-            margin-bottom: 40px;
-        }
-
-        .pricing-tier ul li {
-            margin-bottom: 15px;
-            padding-left: 25px;
-            position: relative;
-            font-size: 0.95rem;
-        }
-
-        .pricing-tier ul li::before {
-            content: "▪"; /* Structural square bullet */
-            color: var(--copper);
-            position: absolute;
-            left: 0;
-            font-size: 1.2rem;
-            line-height: 1;
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: var(--navy);
-            border: 1px solid var(--navy);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--navy);
-            color: var(--white);
-        }
-        
-        .pricing-tier.featured .btn {
-            background-color: var(--copper);
-            color: var(--white);
-            border-color: var(--copper);
-        }
-
-        /* Hardware Banner */
-        .hardware-banner {
-            margin-top: 50px;
-            background-color: var(--navy);
-            color: var(--white);
-            padding: 50px;
-            border-radius: 2px;
-            border-top: 4px solid var(--copper);
-            text-align: center;
-        }
-
-        .hardware-options {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
-
-        .hardware-box {
-            border: 1px solid var(--border-color);
-            padding: 20px 40px;
-            background-color: var(--navy);
-            transition: border-color 0.3s;
-        }
-
-        .hardware-box:hover {
-            border-color: var(--copper);
-        }
-
-        /* Terms Box */
-        .terms-box {
-            background: var(--white);
-            padding: 50px;
-            border: 1px solid #E1E5EA;
-            border-radius: 2px;
-        }
-
-        .terms-box h4 {
-            color: var(--navy);
-            margin-top: 30px;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: var(--font-sans);
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--navy);
-            color: #A0AAB2;
-            text-align: center;
-            padding: 40px 5%;
-            border-top: 1px solid var(--charcoal);
-            font-size: 0.9rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-links { display: none; }
-            .hero h1 { font-size: 2.5rem; }
-            .nav-tagline { display: none; }
-        }
-    </style>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
 
-    <div style="background-color: var(--copper); color: var(--white); text-align: center; padding: 12px 5%; font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;">
-        Foundational Client Intake Open: Secure launch pricing for the first 10 deployments.
+<header class="navbar">
+  <div class="logo">FOOTPRINT FORGE</div>
+  <nav>
+    <a href="#system">System</a>
+    <a href="#suites">Suites</a>
+    <a href="#process">Process</a>
+    <a href="#contact" class="btn-outline">Apply</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Engineer Your Digital Authority.</h1>
+  <p>Bespoke portfolio architecture + NFC networking hardware for modern professionals.</p>
+  <div class="cta-group">
+    <a href="#contact" class="btn-primary">Build My Footprint</a>
+    <a href="portfolio.html" class="btn-secondary">View Live Architecture</a>
+  </div>
+</section>
+
+<section class="problem">
+  <h2>Your Digital Presence Is Fragmented.</h2>
+  <div class="grid-3">
+    <div class="card">LinkedIn ≠ Owned Platform</div>
+    <div class="card">Business Cards Get Discarded</div>
+    <div class="card">Websites Require Maintenance</div>
+  </div>
+</section>
+
+<section id="system" class="system">
+  <h2>The Footprint System™</h2>
+  <div class="grid-3">
+    <div class="card">
+      <h3>Digital Architecture</h3>
+      <p>Structured HTML portfolio engineered for authority.</p>
     </div>
+    <div class="card">
+      <h3>Smart NFC Card</h3>
+      <p>Physical interface to your digital identity.</p>
+    </div>
+    <div class="card">
+      <h3>Zero Recurring Hosting</h3>
+      <p>Deployed via GitHub Pages. Full ownership.</p>
+    </div>
+  </div>
+</section>
 
-    <nav>
-        <a href="#" class="brand-container">
-            <img src="FootprintForge_Master.jpg" alt="Footprint Forge Monogram" class="nav-logo">
-            <div class="nav-text">
-                <span class="nav-title">Footprint Forge</span>
-                <span class="nav-tagline">Engineering Your Professional Presence</span>
-            </div>
-        </a>
-        <div class="nav-links">
-            <a href="#architecture">Architecture</a>
-            <a href="#pricing">Acquisition</a>
-            <a href="#terms">Protocol</a>
-            <a href="mailto:Footprintforge@gmail.com">Contact</a>
-        </div>
-    </nav>
+<section id="suites" class="suites">
+  <h2>Architecture Suites</h2>
+  <div class="grid-3">
+    <div class="card">
+      <h3>The Executive</h3>
+      <p>Authority-driven portfolio for leaders.</p>
+    </div>
+    <div class="card">
+      <h3>The Consultant</h3>
+      <p>Credibility-focused architecture with proof blocks.</p>
+    </div>
+    <div class="card">
+      <h3>The Developer</h3>
+      <p>Technical showcase with structured repositories.</p>
+    </div>
+  </div>
+</section>
 
-    <section class="hero">
-        <h1>Engineered Digital Presence. Forged for the Modern Executive.</h1>
-        <p>We deploy highly structured, data-driven digital portfolios—hosted with zero ongoing fees—and pair them with bespoke smart networking cards for instant, tap-to-share connections.</p>
-        <a href="#pricing" class="btn">View Modular Packages</a>
-    </section>
+<section id="process" class="process">
+  <h2>Our Process</h2>
+  <ol>
+    <li>Strategy Consultation</li>
+    <li>Architecture Blueprint</li>
+    <li>Build & Deploy</li>
+    <li>Card Delivered</li>
+  </ol>
+</section>
 
-    <section id="architecture">
-        <h2 class="section-title">Digital Architecture</h2>
-        <div class="section-subtitle">Corporate-Standard Frameworks</div>
-        
-        <div class="card" style="border-top: 4px solid var(--copper); max-width: 800px; margin: 0 auto 40px; text-align: center;">
-            <h3 style="color: var(--copper);">The Digital Contact Hub</h3>
-            <p>The foundation of every package. A sleek, mobile-first splash page triggered the moment your card is tapped or scanned. Features a one-click 'Save Contact' vCard download, verified professional links, and a direct gateway to your full portfolio.</p>
-            <a href="hub-demo.html" target="_blank" class="card-link">View Hub Demo</a>
-        </div>
+<section id="contact" class="contact">
+  <h2>Apply to Build Your Footprint</h2>
+  <iframe src="YOUR_GOOGLE_FORM_EMBED_LINK"
+          width="100%" height="600"
+          frameborder="0">Loading…</iframe>
+</section>
 
-        <div class="grid-3">
-            <div class="card">
-                <h3>The Executive</h3>
-                <p>A clean, grid-based layout designed for analytical and corporate professionals. Focuses on clarity, metrics, and structured career progression.</p>
-                <a href="executive-demo.html" target="_blank" class="card-link">View Live Demo</a>
-            </div>
-            <div class="card">
-                <h3>The Consultant</h3>
-                <p>A highly visual, portfolio-first layout perfect for independent consultants and strategists showcasing in-depth case studies and ROI.</p>
-                <a href="consultant-demo.html" target="_blank" class="card-link">View Live Demo</a>
-            </div>
-            <div class="card">
-                <h3>The Developer</h3>
-                <p>A sleek, command-line-inspired dark mode template designed specifically for tech infrastructure and data analytics professionals.</p>
-                <a href="developer-demo.html" target="_blank" class="card-link">View Live Demo</a>
-            </div>
-        </div>
-    </section>
-
-    <section id="pricing">
-        <h2 class="section-title">Acquisition Tiers</h2>
-        <div class="section-subtitle">Modular Capital Outlay</div>
-        
-        <p style="text-align: center; margin-bottom: 40px; color: var(--charcoal); max-width: 800px; margin-left: auto; margin-right: auto;">All tiers include <strong>1 Premium PVC Smart QR Card</strong> and the high-resolution digital files. Select your required architecture below, then choose your physical upgrades.</p>
-
-        <div class="grid-3">
-            <div class="card pricing-tier">
-                <h3>The Networking Hub</h3>
-                <div style="font-size: 1.1rem; color: #A0AAB2; text-decoration: line-through; margin-top: 15px;">₹1,499</div>
-                <div class="price" style="margin-top: 0;">₹899</div>
-                <ul>
-                    <li>Deployment of The Digital Contact Hub</li>
-                    <li>Instant 'Save Contact' (vCard) functionality</li>
-                    <li><strong>Includes:</strong> 1 Custom PVC Smart Card</li>
-                    <li><strong>Includes:</strong> High-Res PDF & PNG Card Assets</li>
-                </ul>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeX1dQnp2KGXTtFTzcAmjDXupIjc46ryTFlJR_HpH6h2tlvlQ/viewform" target="_blank" class="btn btn-outline" style="width: 100%; text-align: center; margin-top: 20px;">Deploy Hub</a>
-            </div>
-
-            <div class="card pricing-tier featured">
-                <h3>The Executive Suite</h3>
-                <div style="font-size: 1.1rem; color: #8B9BB4; text-decoration: line-through; margin-top: 15px;">₹3,499</div>
-                <div class="price" style="margin-top: 0; border-bottom-color: var(--charcoal);">₹1,999</div>
-                <ul>
-                    <li><strong>Includes The Digital Hub</strong></li>
-                    <li>Deployment of "The Executive" Portfolio</li>
-                    <li><strong>Includes:</strong> 1 Custom PVC Smart Card</li>
-                    <li><strong>Includes:</strong> High-Res PDF & PNG Card Assets</li>
-                </ul>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeX1dQnp2KGXTtFTzcAmjDXupIjc46ryTFlJR_HpH6h2tlvlQ/viewform" target="_blank" class="btn" style="width: 100%; text-align: center; margin-top: 20px;">Deploy Executive</a>
-            </div>
-
-            <div class="card pricing-tier">
-                <h3>The Specialist Suite</h3>
-                <div style="font-size: 1.1rem; color: #A0AAB2; text-decoration: line-through; margin-top: 15px;">₹4,999</div>
-                <div class="price" style="margin-top: 0;">₹2,999</div>
-                <ul>
-                    <li><strong>Includes The Digital Hub</strong></li>
-                    <li>Choice of "Consultant" or "Developer"</li>
-                    <li><strong>Includes:</strong> 1 Custom PVC Smart Card</li>
-                    <li><strong>Includes:</strong> High-Res PDF & PNG Card Assets</li>
-                </ul>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeX1dQnp2KGXTtFTzcAmjDXupIjc46ryTFlJR_HpH6h2tlvlQ/viewform" target="_blank" class="btn btn-outline" style="width: 100%; text-align: center; margin-top: 20px;">Deploy Specialist</a>
-            </div>
-        </div>
-
-        <div class="hardware-banner">
-            <h3 style="font-family: var(--font-serif); font-size: 2rem; margin-bottom: 15px; color: var(--white);">Hardware Forging Upgrades & Add-ons</h3>
-            <p style="color: #A0AAB2; max-width: 600px; margin: 0 auto;">Elevate your physical networking presence. Upgrade your included PVC smart card to premium materials, or secure a legacy backup pack.</p>
-            <div class="hardware-options">
-                <div class="hardware-box">
-                    <span style="display: block; color: var(--copper); text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; margin-bottom: 5px;">Bamboo or Cherry Wood</span>
-                    <span style="font-family: var(--font-serif); font-size: 1.6rem; color: var(--white);">+ ₹999</span>
-                </div>
-                <div class="hardware-box">
-                    <span style="display: block; color: var(--copper); text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; margin-bottom: 5px;">Matte Black Metal</span>
-                    <span style="font-family: var(--font-serif); font-size: 1.6rem; color: var(--white);">+ ₹1,999</span>
-                </div>
-                <div class="hardware-box" style="border-color: var(--charcoal);">
-                    <span style="display: block; color: var(--copper); text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; margin-bottom: 5px;">Legacy Pack (100 Premium Printed Cards)</span>
-                    <span style="font-family: var(--font-serif); font-size: 1.6rem; color: var(--white);">+ ₹999</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="terms">
-        <h2 class="section-title">Operational Protocols</h2>
-        <div class="section-subtitle">Service Agreement</div>
-        <div class="terms-box">
-            <p>By proceeding with Footprint Forge services, you agree to the following streamlined protocols designed to ensure a precise, professional delivery:</p>
-            
-            <h4>1. Scope of Architecture</h4>
-            <p>Our service encompasses the deployment of static digital frameworks and the physical forging of smart cards. Ground-up custom web development or dynamic backend functionalities fall outside our structural scope. Clients receive PDF and PNG formats of their final card design for personal use.</p>
-            
-            <h4>2. Infrastructure & Routing</h4>
-            <p>GitHub Pages hosting incurs zero monthly fees. If the Client requires a custom top-level domain, the Client assumes responsibility for purchasing and renewing that domain. Footprint Forge will provide standard DNS routing assistance.</p>
-            
-            <h4>3. Hardware Forging</h4>
-            <p>Physical cards are manufactured using the client's selected tier. Wood and metal upgrades feature a precision laser-engraved monogram. Due to the bespoke nature of the hardware, physical products cannot be refunded once forging commences.</p>
-            
-            <h4>4. Capital Transfer</h4>
-            <p>A 50% non-refundable deposit is required to commence digital architecture and hardware allocation. The final 50% balance clears upon approval of the digital portfolio, prior to the dispatch of physical assets.</p>
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2026 Footprint Forge. Engineering Your Professional Presence. | Founded by Yogaprabhu S.</p>
-    </footer>
+<footer>
+  <p>© 2026 Footprint Forge. Engineering Presence.</p>
+</footer>
 
 </body>
 </html>
-
-
