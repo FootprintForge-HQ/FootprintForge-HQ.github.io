@@ -30,18 +30,38 @@
 
         .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
 
         header { padding: 40px 5%; display: flex; justify-content: space-between; align-items: center; }
         .logo { font-family: var(--font-serif); font-size: 1.8rem; font-weight: 700; color: var(--navy); text-decoration: none; }
         
-        .hero { padding: 80px 5% 100px; max-width: 1000px; margin: 0 auto; text-align: center; }
+        .hero { padding: 80px 5% 60px; max-width: 1000px; margin: 0 auto; text-align: center; }
         .hero-name { font-family: var(--font-serif); font-size: 5.5rem; color: var(--navy); margin-bottom: 5px; line-height: 1.1; letter-spacing: -2px; }
         .hero-role { font-size: 1.2rem; color: var(--copper); font-weight: 600; text-transform: uppercase; letter-spacing: 4px; display: block; margin-bottom: 40px; }
         .hero-tagline { font-family: var(--font-serif); font-size: 2.5rem; color: var(--charcoal); margin-bottom: 20px; line-height: 1.2; letter-spacing: -0.5px; }
         .hero p { font-size: 1.2rem; color: #5A6575; font-weight: 300; max-width: 700px; margin: 0 auto 40px; }
+        
+        /* A+ Upgrade: Impact Summary Bar */
+        .impact-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            background-color: var(--navy);
+            padding: 25px 40px;
+            border-radius: 8px;
+            box-shadow: 0 15px 30px rgba(15, 27, 45, 0.1);
+            max-width: 900px;
+            margin: 0 auto 40px;
+            flex-wrap: wrap;
+            border-bottom: 3px solid var(--copper);
+        }
+        .impact-item { text-align: center; }
+        .impact-item strong { display: block; color: var(--white); font-family: var(--font-serif); font-size: 1.8rem; }
+        .impact-item span { display: block; color: var(--copper); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; margin-top: 5px;}
 
         .case-studies { padding: 50px 5% 100px; max-width: 1200px; margin: 0 auto; }
-        
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; }
         
         .case-card { background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); transition: transform 0.4s ease, box-shadow 0.4s ease; border: 1px solid var(--border-color); }
@@ -63,6 +83,8 @@
         @media (max-width: 768px) { 
             .hero-name { font-size: 3.5rem; }
             .hero-tagline { font-size: 2rem; }
+            .impact-bar { gap: 20px; padding: 20px; }
+            .impact-item { width: 40%; }
         }
     </style>
 </head>
@@ -78,11 +100,18 @@
         <span class="hero-role">Independent Brand Strategist</span>
         <h2 class="hero-tagline">Turning complexity into market dominance.</h2>
         <p>I partner with emerging Indian D2C brands and tech startups to architect scalable brand identities, optimize conversion funnels, and engineer aggressive growth strategies.</p>
+        
+        <!-- A+ Upgrade: Impact Bar -->
+        <div class="impact-bar reveal delay-1">
+            <div class="impact-item"><strong>12+</strong><span>Engagements</span></div>
+            <div class="impact-item"><strong>₹180Cr</strong><span>Raised</span></div>
+            <div class="impact-item"><strong>210%</strong><span>Avg Growth</span></div>
+            <div class="impact-item"><strong>3x</strong><span>Valuation Bump</span></div>
+        </div>
     </section>
 
     <section class="case-studies">
         <div class="grid">
-            
             <div class="case-card reveal delay-1">
                 <div class="case-img" style="background: url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800') center/cover;">
                     <div class="case-industry">E-Commerce / D2C</div>
@@ -110,7 +139,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </section>
 
