@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footprint Forge | Business Card Proof</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --navy: #0F1B2D;
+            --copper: #B87333;
+            --white: #FFFFFF;
+            --charcoal: #2B2F33;
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #E1E5EA;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: var(--font-sans);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .instruction {
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--charcoal);
+        }
+
+        .instruction h2 {
+            font-family: var(--font-serif);
+            color: var(--navy);
+            margin-bottom: 5px;
+            font-size: 1.8rem;
+        }
+
+        .instruction p {
+            font-size: 0.95rem;
+            color: #5A6575;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .control-btn {
+            background: var(--white);
+            color: var(--navy);
+            border: 1px solid var(--charcoal);
+            padding: 10px 20px;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            border-color: var(--copper);
+            color: var(--copper);
+        }
+
+        /* Scaling wrapper to display the high-res card 
+           comfortably on standard computer monitors.
+        */
+        .card-scaler {
+            transform: scale(0.42);
+            transform-origin: top center;
+            height: 268px; /* 638px * 0.42 */
+            margin-bottom: 20px;
+        }
+
+        /* 1011px x 638px = Exact CR80 standard at 300 DPI 
+           (85.6mm x 54.0mm) 
+        */
+        .card-container {
+            width: 1011px;
+            height: 638px; 
+            perspective: 2000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+            border-radius: 36px;
+        }
+
+        .card-container.is-flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            border-radius: 36px;
+            background-color: var(--navy);
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.08);
+        }
+
+        .card-face::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(0,0,0,0.3) 100%);
+            pointer-events: none;
+        }
+
+        /* --- FRONT OF CARD --- */
+        .card-front {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-img {
+            width: 240px;
+            height: 240px;
+            margin-bottom: 35px;
+            mix-blend-mode: screen; 
+            border-radius: 50%;
+            object-fit: contain;
+        }
+
+        .brand-name {
+            font-family: var(--font-serif);
+            color: var(--white);
+            font-size: 4.2rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+        }
+
+        .brand-tagline {
+            color: var(--copper);
+            font-size: 1.5rem;
+            letter-spacing: 10px;
+            text-transform: uppercase;
+            margin-top: 15px;
+        }
+
+        /* --- BACK OF CARD --- */
+        .card-back {
+            transform: rotateY(180deg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 80px 90px;
+            box-sizing: border-box;
+        }
+
+        .info-section {
+            display: flex;
+            flex-direction: column;
+            gap: 45px;
+        }
+
+        .person-details h3 {
+            margin: 0;
+            color: var(--white);
+            font-family: var(--font-serif);
+            font-size: 3.5rem;
+            letter-spacing: 1px;
+        }
+
+        .person-details .role {
+            color: var(--copper);
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            color: #A0AAB2;
+            font-size: 1.8rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .contact-item i {
+            color: var(--copper);
+        }
+
+        .qr-section {
+            background: var(--white);
+            padding: 18px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-section img {
+            width: 240px;
+            height: 240px;
+            display: block;
+        }
+
+        /* Print Media Query: PHANTOM-SPACE FIX */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 20mm;
+            }
+
+            body { 
+                background: white !important; 
+                padding: 0 !important; 
+                margin: 0 !important;
+                display: block !important; 
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            
+            .instruction, .controls { display: none !important; }
+            
+            .card-scaler { 
+                /* Create a strict boundary to prevent browser from reading the unscaled inner contents */
+                position: relative !important;
+                width: 334px !important;  
+                height: 450px !important; 
+                margin: 0 !important;
+                display: block !important;
+                transform: none !important; /* Stop parent transform */
+                overflow: visible !important;
+            }
+            
+            .card-container { 
+                /* Absolute position strips it out of the document flow, neutralizing phantom space */
+                position: absolute !important; 
+                top: 0 !important;
+                left: 0 !important;
+                transform: scale(0.33) !important; 
+                transform-origin: top left !important;
+                perspective: none !important; 
+                width: 1011px !important;
+                height: auto !important;
+            }
+            
+            .card-inner { 
+                transform: none !important; 
+                box-shadow: none !important; 
+                display: flex !important; 
+                flex-direction: column !important; 
+                gap: 50px !important; 
+                height: auto !important;
+            }
+            
+            .card-face { 
+                position: relative !important; 
+                transform: none !important;
+                background-color: var(--navy) !important;
+                border: 3px dashed #A0AAB2 !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                backface-visibility: visible !important;
+                width: 1011px !important;
+                height: 638px !important;
+            }
+            
+            .card-front, .card-back {
+                display: flex !important;
+            }
+
+            .card-back { transform: none !important; }
+            
+            .card-face::before { display: none !important; } 
+            
+            .logo-img { mix-blend-mode: normal !important; }
+
+            .brand-name, .person-details h3 { color: var(--white) !important; }
+            .brand-tagline, .person-details .role, .contact-item i { color: var(--copper) !important; }
+            .contact-item { color: #A0AAB2 !important; }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .card-scaler {
+                transform: scale(0.32);
+                height: 204px;
+            }
+            .controls { flex-direction: column; gap: 10px; width: 100%; max-width: 300px; }
+            .control-btn { justify-content: center; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="instruction">
+        <h2>Print-Ready Architecture Proof</h2>
+        <p>This proof is rendered at 300 DPI (CR80 standard). Click the card to view the reverse side, or use the controls below to configure.</p>
+    </div>
+
+    <div class="controls">
+        <label class="control-btn">
+            <input type="file" id="logoUpload" accept="image/png, image/jpeg, image/jpg" style="display: none;">
+            <i data-lucide="image" width="18" height="18"></i>
+            Upload Custom Logo
+        </label>
+        <button class="control-btn" onclick="window.print()">
+            <i data-lucide="printer" width="18" height="18"></i>
+            Export as PDF
+        </button>
+    </div>
+
+    <!-- Interactive & Scaled Card Wrapper -->
+    <div class="card-scaler">
+        <div class="card-container" id="card">
+            <div class="card-inner">
+                
+                <!-- FRONT OF CARD -->
+                <div class="card-face card-front">
+                    <img src="FootprintForge_CircularSeal.jpg" id="frontLogo" alt="Footprint Forge Logo" class="logo-img">
+                    <div class="brand-name">Footprint Forge</div>
+                    <div class="brand-tagline">Engineering Your Presence</div>
+                </div>
+
+                <!-- BACK OF CARD -->
+                <div class="card-face card-back">
+                    <div class="info-section">
+                        <div class="person-details">
+                            <h3>Yogaprabhu S.</h3>
+                            <span class="role">Founder & Lead Architect</span>
+                        </div>
+
+                        <div class="contact-list">
+                            <div class="contact-item">
+                                <i data-lucide="mail" width="40" height="40"></i>
+                                Footprintforge@gmail.com
+                            </div>
+                            <div class="contact-item">
+                                <i data-lucide="phone" width="40" height="40"></i>
+                                +91 98843 66634
+                            </div>
+                            <div class="contact-item">
+                                <i data-lucide="globe" width="40" height="40"></i>
+                                footprintforge-hq.github.io
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scannable High-Res QR Code -->
+                    <div class="qr-section">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://footprintforge-hq.github.io" alt="QR Code to Digital Hub">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize high-res Lucide Icons
+        lucide.createIcons();
+
+        // 3D Flip Interaction
+        document.getElementById('card').addEventListener('click', function() {
+            this.classList.toggle('is-flipped');
+        });
+
+        // Dynamic Logo Upload Logic
+        document.getElementById('logoUpload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgElement = document.getElementById('frontLogo');
+                    imgElement.src = e.target.result;
+                    
+                    // Slightly adjust blending mode depending on transparency 
+                    if (file.type === "image/png") {
+                        imgElement.style.mixBlendMode = "normal";
+                        imgElement.style.backgroundColor = "transparent";
+                    } else {
+                        imgElement.style.mixBlendMode = "screen";
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
