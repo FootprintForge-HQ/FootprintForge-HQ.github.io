@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About | Footprint Forge</title>
     
+    <!-- Premium Font Imports -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -13,6 +14,7 @@
         /* Engineered Brand Color System */
         :root {
             --navy: #0F1B2D;
+            --navy-alpha: rgba(15, 27, 45, 0.95);
             --charcoal: #2B2F33;
             --copper: #B87333;
             --bg-light: #F8F9FA;
@@ -21,6 +23,9 @@
             
             --font-serif: 'Playfair Display', serif;
             --font-sans: 'Inter', sans-serif;
+            
+            --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 10px 30px rgba(15, 27, 45, 0.15);
         }
 
         * {
@@ -35,6 +40,7 @@
             font-family: var(--font-sans);
             line-height: 1.7;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
         h1, h2, h3, h4 {
@@ -43,14 +49,27 @@
             color: var(--navy);
         }
 
-        /* Structural Navigation */
+        /* Smooth Reveal Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Frosted Glass Navigation */
         nav {
-            background-color: var(--navy);
+            background-color: var(--navy-alpha);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             padding: 20px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--copper);
+            border-bottom: 1px solid rgba(184, 115, 51, 0.3);
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -67,6 +86,11 @@
             height: 45px;
             width: auto;
             display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .brand-container:hover .nav-logo {
+            transform: scale(1.05);
         }
 
         .nav-text {
@@ -92,62 +116,104 @@
         }
 
         .nav-links a {
-            margin-left: 30px;
+            margin-left: 35px;
             text-decoration: none;
-            color: var(--white);
-            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
             font-weight: 500;
             letter-spacing: 1px;
             text-transform: uppercase;
-            transition: color 0.3s;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--copper);
+            transition: width 0.3s ease;
         }
 
         .nav-links a:hover {
-            color: var(--copper);
+            color: var(--white);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
         }
 
         /* Page Header */
         header {
             background-color: var(--white);
-            padding: 100px 5%;
+            padding: 120px 5%;
             text-align: center;
             border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 100%;
+            background: radial-gradient(circle, rgba(184, 115, 51, 0.03) 0%, rgba(255, 255, 255, 0) 70%);
+            pointer-events: none;
         }
 
         header h1 {
-            font-size: 3.5rem;
+            font-size: 3.8rem;
             margin-bottom: 15px;
-            letter-spacing: -0.5px;
+            letter-spacing: -1px;
+            position: relative;
+            z-index: 1;
         }
 
         header p {
             font-size: 1.1rem;
             color: var(--copper);
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             font-weight: 600;
+            position: relative;
+            z-index: 1;
         }
 
         /* Content Architecture */
         .container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 80px 5%;
+            padding: 100px 5%;
         }
 
         .story-block {
             background: var(--white);
-            padding: 50px;
+            padding: 60px;
             border: 1px solid var(--border-color);
             border-top: 4px solid var(--navy);
             margin-bottom: 40px;
+            border-radius: 4px;
+            box-shadow: var(--shadow-subtle);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .story-block:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
         }
 
         .story-block h2 {
-            font-size: 2rem;
-            margin-bottom: 25px;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
             position: relative;
             padding-bottom: 15px;
+            letter-spacing: -0.5px;
         }
 
         .story-block h2::after {
@@ -155,113 +221,162 @@
             position: absolute;
             left: 0;
             bottom: 0;
-            width: 50px;
+            width: 60px;
             height: 3px;
             background-color: var(--copper);
         }
 
         .story-block p {
-            margin-bottom: 20px;
-            font-size: 1.05rem;
-            color: #4A5568;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            color: #5A6575;
             font-weight: 300;
+            line-height: 1.8;
         }
 
         /* Founder Section */
         .founder-grid {
             display: grid;
             grid-template-columns: 1fr 2fr;
-            gap: 40px;
+            gap: 50px;
             align-items: start;
-            margin-top: 60px;
-            padding-top: 60px;
+            margin-top: 80px;
+            padding-top: 80px;
             border-top: 1px solid var(--border-color);
         }
 
-        .founder-image-placeholder {
+        .founder-image-wrapper {
             width: 100%;
             background-color: var(--charcoal);
             border: 2px solid var(--copper);
-            padding: 4px;
-            border-radius: 2px;
+            padding: 6px;
+            border-radius: 4px;
+            box-shadow: var(--shadow-hover);
+            overflow: hidden; /* For image zoom effect */
         }
 
-        .founder-image-placeholder img {
+        .founder-image-wrapper img {
             width: 100%;
             height: auto;
-            object-fit: cover;
             display: block;
             background-color: var(--navy);
+            transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .founder-image-wrapper:hover img {
+            transform: scale(1.03);
         }
 
         .founder-content h3 {
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             margin-bottom: 5px;
+            letter-spacing: -0.5px;
         }
 
         .founder-content .title {
             color: var(--copper);
             font-family: var(--font-sans);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 5px;
             display: block;
+        }
+        
+        .personal-link {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 35px;
+            color: var(--navy);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--copper);
+            padding-bottom: 4px;
+            transition: all 0.3s ease;
+            gap: 5px;
+        }
+        
+        .personal-link:hover {
+            color: var(--copper);
+            padding-bottom: 0px;
+            border-bottom-width: 2px;
+        }
+
+        .founder-content p {
+            font-size: 1.05rem;
+            color: #5A6575;
+            font-weight: 300;
+            line-height: 1.8;
+            margin-bottom: 20px;
         }
 
         .quote-block {
-            border-left: 3px solid var(--copper);
-            padding-left: 20px;
-            margin: 30px 0;
+            border-left: 4px solid var(--copper);
+            padding-left: 25px;
+            margin: 40px 0;
             font-family: var(--font-serif);
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             color: var(--navy);
             font-style: italic;
+            background: linear-gradient(90deg, rgba(184, 115, 51, 0.05) 0%, rgba(255,255,255,0) 100%);
+            padding-top: 15px;
+            padding-bottom: 15px;
         }
 
         /* CTA */
         .cta-section {
             text-align: center;
-            padding: 60px 0;
+            padding: 80px 0 20px;
         }
 
         .btn {
             display: inline-block;
             background-color: var(--copper);
             color: var(--white);
-            padding: 14px 36px;
+            padding: 16px 40px;
             text-decoration: none;
             font-family: var(--font-sans);
             font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
             border-radius: 2px;
-            transition: all 0.3s ease;
+            border: 1px solid var(--copper);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: var(--shadow-subtle);
         }
 
         .btn:hover {
-            background-color: var(--navy);
+            background-color: var(--white);
+            color: var(--navy);
+            border-color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(184, 115, 51, 0.2);
         }
 
         /* Footer */
         footer {
             background-color: var(--navy);
-            color: #A0AAB2;
+            color: #8B9BB4;
             text-align: center;
-            padding: 40px 5%;
+            padding: 50px 5%;
             font-size: 0.9rem;
+            letter-spacing: 0.5px;
         }
 
         @media (max-width: 768px) {
-            .founder-grid { grid-template-columns: 1fr; }
+            .founder-grid { grid-template-columns: 1fr; gap: 30px;}
             .nav-links, .nav-tagline { display: none; }
-            header h1 { font-size: 2.5rem; }
+            header h1 { font-size: 2.8rem; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Navigation -->
     <nav>
         <a href="index.html" class="brand-container">
             <img src="FootprintForge_Master.jpg" alt="Footprint Forge Logo" class="nav-logo">
@@ -279,34 +394,35 @@
         </div>
     </nav>
 
-    <header>
+    <header class="reveal">
         <h1>The Architecture of Identity</h1>
         <p>Forged for the Modern Executive</p>
     </header>
 
     <div class="container">
-        <div class="story-block">
+        <div class="story-block reveal">
             <h2>The Problem with Paper</h2>
             <p>For decades, the standard for professional introduction has been the paper business card—a static, inefficient tool that inevitably ends up in a desk drawer or the trash. Conversely, the alternative—building and maintaining a custom personal website—often requires navigating bloated CMS platforms, paying perpetual monthly hosting fees, and wrestling with design templates.</p>
             <p>Corporate leaders, consultants, and tech specialists need a streamlined way to present complex career data, case studies, and quantifiable metrics at a moment's notice. They need a system that acts as an authoritative extension of their professional identity.</p>
             <p>Footprint Forge was established to bridge this exact gap.</p>
         </div>
 
-        <div class="story-block" style="border-top-color: var(--copper);">
+        <div class="story-block reveal" style="border-top-color: var(--copper);">
             <h2>Our Architectural Philosophy</h2>
             <p>We do not believe in recurring subscriptions for static data. We engineer zero-overhead, highly optimized digital portfolios deployed on robust, open-source infrastructure. We then forge a bespoke physical asset—a premium PVC, wood, or metal smart card—that triggers your digital footprint with a single scan.</p>
             <p>By treating personal branding as a structural engineering problem rather than a design exercise, we deliver investment-grade digital presence designed strictly for utility, speed, and executive authority.</p>
         </div>
 
-        <div class="founder-grid">
-            <div class="founder-image-placeholder">
+        <div class="founder-grid reveal">
+            <div class="founder-image-wrapper">
                 <img src="founder-headshot.jpg" alt="Yogaprabhu S. - Founder of Footprint Forge">
             </div>
             <div class="founder-content">
                 <h3>Yogaprabhu S.</h3>
-                <span class="title" style="margin-bottom: 5px;">Founder & Lead Architect</span>
+                <span class="title">Founder & Lead Architect</span>
                 
-                <a href="https://prabhuofyoga.github.io/yogaprabhu-portfolio/card.html" target="_blank" style="display: inline-block; margin-bottom: 25px; color: var(--navy); text-decoration: none; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--copper); padding-bottom: 2px; transition: color 0.3s;">
+                <!-- Personal Portfolio Link -->
+                <a href="https://prabhuofyoga.github.io" target="_blank" class="personal-link">
                     Explore Personal Architecture ↗
                 </a>
 
@@ -321,17 +437,43 @@
             </div>
         </div>
 
-        <div class="cta-section">
+        <div class="cta-section reveal">
             <a href="index.html#pricing" class="btn">Deploy Your Architecture</a>
         </div>
     </div>
 
+    <!-- Footer -->
     <footer>
         <p>&copy; 2026 Footprint Forge. Engineering Your Professional Presence. | Founded by Yogaprabhu S.</p>
     </footer>
 
+    <!-- Intersection Observer Script for Smooth Reveal Animations -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+            
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                });
+            }, revealOptions);
+
+            reveals.forEach(reveal => {
+                revealOnScroll.observe(reveal);
+            });
+            
+            // Trigger header animation immediately
+            setTimeout(() => {
+                document.querySelector('header.reveal').classList.add('active');
+            }, 100);
+        });
+    </script>
 </body>
 </html>
-
-
-
