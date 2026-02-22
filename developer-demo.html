@@ -3,394 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>David Chen | Cloud Infrastructure Architect</title>
+    <title>Developer Portfolio | Alex Chen</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* Engineered Brand Color System - Dark Mode Priority */
         :root {
-            --navy: #0F1B2D;
-            --navy-light: #1A2A42;
-            --charcoal: #2B2F33;
-            --copper: #B87333;
-            --copper-dim: rgba(184, 115, 51, 0.15);
-            --text-main: #E1E5EA;
-            --text-muted: #8B9BB4;
-            --border-color: #2A3B55;
+            --bg-dark: #0A0E17;
+            --surface: #111827;
+            --border: #1F2937;
+            --text-main: #E5E7EB;
+            --text-muted: #9CA3AF;
+            --accent-blue: #3B82F6;
+            --accent-green: #10B981;
             
-            --font-serif: 'Playfair Display', serif;
+            --font-mono: 'Fira Code', monospace;
             --font-sans: 'Inter', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
 
         body {
-            background-color: var(--navy);
+            background-color: var(--bg-dark);
             color: var(--text-main);
             font-family: var(--font-sans);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
 
-        /* Top Bar - Structural Line */
-        .top-bar {
-            height: 4px;
-            background-color: var(--copper);
-            width: 100%;
-        }
+        nav { padding: 30px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .logo { font-family: var(--font-mono); font-size: 1.2rem; color: var(--text-main); text-decoration: none; font-weight: 600; }
+        .logo span { color: var(--accent-blue); }
+        
+        .nav-links a { color: var(--text-muted); text-decoration: none; margin-left: 30px; font-size: 0.9rem; transition: color 0.3s; font-family: var(--font-mono); }
+        .nav-links a:hover { color: var(--accent-blue); }
 
-        /* Hero / Header Section */
-        header {
-            padding: 80px 0 60px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .header-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 50px;
-            align-items: center;
-        }
-
-        h1 {
-            font-family: var(--font-serif);
-            font-size: 3.2rem;
-            color: #FFFFFF;
-            line-height: 1.1;
-            margin-bottom: 10px;
-            letter-spacing: -0.5px;
-        }
-
-        .title {
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            color: var(--copper);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 25px;
-        }
-
-        .profile-text {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            font-weight: 300;
-            margin-bottom: 30px;
-        }
-
-        .contact-links {
-            display: flex;
-            gap: 20px;
-        }
-
-        .contact-links a {
-            color: var(--text-main);
-            text-decoration: none;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .contact-links a:hover {
-            border-color: var(--copper);
-            color: var(--copper);
-            background-color: var(--copper-dim);
-        }
-
-        /* Simulated IDE / Code Window */
-        .code-window {
-            background-color: var(--charcoal);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
+        .terminal-header { padding: 100px 5%; max-width: 900px; margin: 0 auto; }
+        
+        .terminal-window {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
-        .code-header {
-            background-color: #1E2226;
-            padding: 10px 15px;
-            display: flex;
-            gap: 8px;
-            border-bottom: 1px solid var(--border-color);
-        }
+        .terminal-bar { background-color: #1F2937; padding: 10px 15px; display: flex; gap: 8px; align-items: center; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot.r { background-color: #EF4444; }
+        .dot.y { background-color: #F59E0B; }
+        .dot.g { background-color: #10B981; }
 
-        .code-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: #4A5568;
-        }
+        .terminal-body { padding: 40px; font-family: var(--font-mono); font-size: 1.1rem; }
+        .prompt { color: var(--accent-green); margin-right: 10px; }
+        .command { color: var(--accent-blue); }
+        
+        .output { margin-top: 20px; color: var(--text-muted); line-height: 1.8; }
+        .output strong { color: var(--text-main); font-weight: 500; }
 
-        .code-body {
-            padding: 25px;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.7;
-            overflow-x: auto;
-        }
+        section { padding: 80px 5%; max-width: 1000px; margin: 0 auto; }
+        .section-title { font-family: var(--font-mono); font-size: 1.5rem; color: var(--text-main); margin-bottom: 40px; display: flex; align-items: center; gap: 10px;}
+        .section-title::before { content: '/>'; color: var(--accent-blue); }
 
-        .syntax-keyword { color: #82AAFF; }
-        .syntax-string { color: #C3E88D; }
-        .syntax-function { color: var(--copper); }
-        .syntax-comment { color: #676E95; font-style: italic; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
 
-        /* Section Architecture */
-        section {
-            padding: 80px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        h2 {
-            font-family: var(--font-serif);
-            font-size: 2rem;
-            color: #FFFFFF;
-            margin-bottom: 40px;
-        }
-
-        /* Tech Stack Grid */
-        .stack-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .tech-tag {
-            background-color: var(--navy-light);
-            color: var(--text-main);
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            padding: 8px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 2px;
-        }
-
-        /* Featured Repositories / Projects */
-        .repo-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        .repo-card {
-            background-color: var(--navy-light);
-            border: 1px solid var(--border-color);
+        .project-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
             padding: 30px;
-            border-top: 3px solid var(--charcoal);
-            transition: transform 0.3s, border-color 0.3s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
-        .repo-card:hover {
+        .project-card:hover {
+            border-color: var(--accent-blue);
             transform: translateY(-5px);
-            border-top-color: var(--copper);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
         }
 
-        .repo-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
+        .project-card h3 { font-family: var(--font-mono); font-size: 1.2rem; color: var(--text-main); margin-bottom: 10px; }
+        .project-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; }
+        
+        .tech-stack { display: flex; gap: 10px; flex-wrap: wrap; }
+        .tech-stack span { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-green); background-color: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 4px; }
 
-        .repo-title {
-            font-family: var(--font-mono);
-            font-size: 1.1rem;
-            color: var(--copper);
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .repo-desc {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            margin-bottom: 25px;
-        }
-
-        .repo-footer {
-            display: flex;
-            gap: 15px;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: #8B9BB4;
-        }
-
-        /* Footer / Footprint Forge Branding */
-        footer {
-            text-align: center;
-            padding: 40px 0;
-        }
-
-        .powered-by {
-            font-family: var(--font-sans);
-            font-size: 0.8rem;
-            color: #4A5568;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .powered-by:hover {
-            color: var(--copper);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 850px) {
-            .header-grid, .repo-grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-            .code-window {
-                margin-top: 20px;
-            }
-        }
+        @media (max-width: 768px) { .terminal-body { padding: 20px; font-size: 0.95rem; } }
     </style>
 </head>
 <body>
 
-    <div class="top-bar"></div>
+    <nav>
+        <a href="#" class="logo">alex<span>.dev</span></a>
+        <div class="nav-links">
+            <a href="#work">~/projects</a>
+            <a href="hub-demo.html" style="color: var(--text-main);">../hub</a>
+        </div>
+    </nav>
 
-    <header>
-        <div class="container header-grid">
-            <div>
-                <div class="title">> system.identity</div>
-                <h1>David Chen</h1>
-                <p class="profile-text">Lead Cloud Infrastructure Architect specializing in designing secure, highly-available distributed systems. Bridging the gap between raw code and enterprise-grade scalability through robust CI/CD pipelines and infrastructure-as-code.</p>
-                <div class="contact-links">
-                    <a href="#">> github.com/dchen-arch</a>
-                    <a href="mailto:david@example.com">> email_init</a>
-                </div>
+    <div class="terminal-header reveal">
+        <div class="terminal-window">
+            <div class="terminal-bar">
+                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
             </div>
-            
-            <div class="code-window">
-                <div class="code-header">
-                    <div class="code-dot"></div>
-                    <div class="code-dot"></div>
-                    <div class="code-dot"></div>
-                </div>
-                <div class="code-body">
-<span class="syntax-comment">// Core Deployment Protocol</span>
-<span class="syntax-keyword">class</span> <span class="syntax-function">CloudArchitect</span> {
-  <span class="syntax-keyword">constructor</span>() {
-    <span class="syntax-keyword">this</span>.name = <span class="syntax-string">'David Chen'</span>;
-    <span class="syntax-keyword">this</span>.focus = <span class="syntax-string">'Distributed Systems'</span>;
-    <span class="syntax-keyword">this</span>.availability = <span class="syntax-string">'99.999%'</span>;
-  }
-
-  <span class="syntax-function">deployInfrastructure</span>() {
-    <span class="syntax-keyword">return</span> {
-      security: <span class="syntax-string">'Zero-Trust Architecture'</span>,
-      scaling: <span class="syntax-string">'Automated Elasticity'</span>,
-      state: <span class="syntax-string">'Immutable'</span>
-    };
-  }
-}
+            <div class="terminal-body">
+                <div><span class="prompt">guest@portfolio:~$</span> <span class="command">cat whoami.txt</span></div>
+                <div class="output">
+                    <strong>Alex Chen</strong><br>
+                    Senior Cloud Infrastructure Engineer & Backend Developer.<br><br>
+                    Specializing in designing highly available microservices, architecting AWS infrastructure, and writing robust Python/Go backends for data-intensive applications.
                 </div>
             </div>
         </div>
-    </header>
-
-    <div class="container">
-        
-        <section>
-            <h2>Technical Stack</h2>
-            <div class="stack-grid">
-                <span class="tech-tag">AWS (Solutions Architect Prof.)</span>
-                <span class="tech-tag">Kubernetes / Docker</span>
-                <span class="tech-tag">Terraform / CloudFormation</span>
-                <span class="tech-tag">Python</span>
-                <span class="tech-tag">Go (Golang)</span>
-                <span class="tech-tag">CI/CD (GitHub Actions / Jenkins)</span>
-                <span class="tech-tag">PostgreSQL / Redis</span>
-                <span class="tech-tag">Datadog / Prometheus</span>
-            </div>
-        </section>
-
-        <section style="border-bottom: none;">
-            <h2>System Architectures & Open Source</h2>
-            <div class="repo-grid">
-                
-                <div class="repo-card">
-                    <div>
-                        <div class="repo-header">
-                            <a href="#" class="repo-title">k8s-auto-scaler-mesh</a>
-                        </div>
-                        <p class="repo-desc">A custom Kubernetes operator built in Go that dynamically scales microservices based on predictive queue latency rather than traditional CPU thresholds.</p>
-                    </div>
-                    <div class="repo-footer">
-                        <span>● Go</span>
-                        <span>⭐ 1.2k</span>
-                        <span>⑂ 340</span>
-                    </div>
-                </div>
-
-                <div class="repo-card">
-                    <div>
-                        <div class="repo-header">
-                            <a href="#" class="repo-title">terraform-zero-trust-aws</a>
-                        </div>
-                        <p class="repo-desc">Comprehensive suite of Terraform modules deploying a strict zero-trust network architecture across AWS multi-account environments.</p>
-                    </div>
-                    <div class="repo-footer">
-                        <span>● HCL</span>
-                        <span>⭐ 850</span>
-                        <span>⑂ 120</span>
-                    </div>
-                </div>
-
-                <div class="repo-card">
-                    <div>
-                        <div class="repo-header">
-                            <a href="#" class="repo-title">fin-data-pipeline</a>
-                        </div>
-                        <p class="repo-desc">High-throughput data ingestion pipeline utilizing Apache Kafka and Python to process and sanitize 5TB+ of financial ledger data daily.</p>
-                    </div>
-                    <div class="repo-footer">
-                        <span>● Python</span>
-                        <span>Enterprise Architecture</span>
-                    </div>
-                </div>
-
-                <div class="repo-card">
-                    <div>
-                        <div class="repo-header">
-                            <a href="#" class="repo-title">secure-vault-init</a>
-                        </div>
-                        <p class="repo-desc">Automated secret rotation and management scripting for HashiCorp Vault deployments in heavily regulated financial environments.</p>
-                    </div>
-                    <div class="repo-footer">
-                        <span>● Shell</span>
-                        <span>Security Audited</span>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
     </div>
 
-    <footer>
-        <a href="#" class="powered-by">Digital Architecture by Footprint Forge</a>
-    </footer>
+    <section id="work">
+        <h2 class="section-title reveal">Featured Deployments</h2>
+        <div class="grid">
+            
+            <div class="project-card reveal" style="transition-delay: 0.1s;">
+                <h3>Nexus Payment Gateway</h3>
+                <p>Architected a distributed payment processing service handling 5k+ TPS. Implemented robust idempotency keys and Kafka event streaming for real-time transaction ledgers.</p>
+                <div class="tech-stack">
+                    <span>Go</span><span>Kafka</span><span>PostgreSQL</span><span>Kubernetes</span>
+                </div>
+            </div>
 
+            <div class="project-card reveal" style="transition-delay: 0.2s;">
+                <h3>Telemetry Data Pipeline</h3>
+                <p>Built an automated ETL pipeline processing 2TB of IoT sensor data daily. Reduced query latency by 80% through optimized Snowflake indexing and aggressive Redis caching.</p>
+                <div class="tech-stack">
+                    <span>Python</span><span>AWS Kinesis</span><span>Snowflake</span><span>Redis</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        setTimeout(() => document.querySelector('.terminal-header.reveal').classList.add('active'), 100);
+    </script>
 </body>
 </html>
