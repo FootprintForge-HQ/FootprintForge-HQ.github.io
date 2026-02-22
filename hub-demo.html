@@ -3,205 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elena Rostova | Digital Contact Hub</title>
+    <title>Digital Hub | John Doe</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
-        /* Engineered Brand Color System */
         :root {
             --navy: #0F1B2D;
-            --charcoal: #2B2F33;
             --copper: #B87333;
-            --bg-light: #F8F9FA;
+            --charcoal: #2B2F33;
             --white: #FFFFFF;
+            --bg-dark: #080C16;
             
             --font-serif: 'Playfair Display', serif;
             --font-sans: 'Inter', sans-serif;
+            
+            --shadow-glow: 0 0 20px rgba(184, 115, 51, 0.2);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background-color: var(--navy);
+            background-color: var(--bg-dark);
             color: var(--white);
             font-family: var(--font-sans);
-            /* Mobile-first alignment */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
             padding: 40px 20px;
+            overflow-x: hidden;
         }
 
-        /* The Mobile Container - Constrains width on desktop to look like a phone */
-        .mobile-container {
-            width: 100%;
-            max-width: 400px; /* Standard mobile width */
+        /* Ambient Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 100vw;
+            max-width: 600px;
+            max-height: 600px;
+            background: radial-gradient(circle, rgba(184, 115, 51, 0.15) 0%, rgba(8, 12, 22, 0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+
+        .profile-container {
             text-align: center;
-        }
-
-        /* Profile Architecture */
-        .profile-img-container {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 20px;
-            border: 2px solid var(--copper);
-            padding: 4px; /* Creates a double-border effect */
-            border-radius: 4px; /* Sharp corners, not a circle */
+            margin-bottom: 40px;
+            width: 100%;
+            max-width: 400px;
         }
 
         .profile-img {
-            width: 100%;
-            height: 100%;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
             object-fit: cover;
-            border-radius: 2px;
-            background-color: var(--charcoal); /* Placeholder color */
+            border: 2px solid var(--copper);
+            padding: 4px;
+            margin-bottom: 20px;
+            background-color: var(--navy);
+            box-shadow: var(--shadow-glow);
         }
 
         h1 {
             font-family: var(--font-serif);
-            font-size: 1.8rem;
+            font-size: 2rem;
             margin-bottom: 5px;
             letter-spacing: 0.5px;
         }
 
         .title {
             color: var(--copper);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-weight: 600;
+            font-weight: 500;
             margin-bottom: 15px;
+            display: block;
         }
 
         .company {
-            color: #A0AAB2;
-            font-size: 0.9rem;
-            margin-bottom: 30px;
+            color: #8B9BB4;
+            font-size: 0.95rem;
+            font-weight: 300;
         }
 
-        /* The Link Grid */
-        .link-container {
+        .primary-action {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            background-color: var(--copper);
+            color: var(--white);
+            text-align: center;
+            padding: 18px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(184, 115, 51, 0.2);
+        }
+
+        .primary-action:hover {
+            background-color: var(--white);
+            color: var(--navy);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(184, 115, 51, 0.4);
+        }
+
+        .links-grid {
+            width: 100%;
+            max-width: 400px;
             display: flex;
             flex-direction: column;
             gap: 15px;
-            margin-bottom: 40px;
         }
 
-        .hub-btn {
-            display: block;
-            width: 100%;
-            background-color: var(--charcoal);
-            color: var(--white);
-            padding: 16px;
+        .link-card {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 18px 20px;
+            border-radius: 4px;
             text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            letter-spacing: 1px;
-            border: 1px solid #3A4047;
-            border-left: 4px solid var(--copper); /* Structural accent */
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             transition: all 0.3s ease;
-            text-align: left;
-            position: relative;
+            backdrop-filter: blur(5px);
         }
 
-        .hub-btn::after {
-            content: "→";
-            position: absolute;
-            right: 20px;
+        .link-card:hover {
+            border-color: var(--copper);
+            background-color: rgba(184, 115, 51, 0.05);
+            transform: translateX(5px);
+        }
+
+        .link-card span {
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .link-card i {
             color: var(--copper);
+            font-style: normal;
+            font-size: 1.2rem;
         }
 
-        .hub-btn:hover {
-            background-color: var(--white);
-            color: var(--navy);
-            border-color: var(--white);
-        }
-
-        /* Highlighted Primary Button */
-        .btn-primary {
-            background-color: var(--copper);
-            border: 1px solid var(--copper);
-            border-left: none;
-            text-align: center;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        .btn-primary::after {
-            content: "↓"; /* Download arrow */
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
-            background-color: #9c602a;
-            color: var(--white);
-            border-color: #9c602a;
-        }
-
-        /* Portfolio Upsell Button */
-        .btn-portfolio {
-            background-color: transparent;
-            border: 1px solid var(--copper);
-            border-left: none;
-            text-align: center;
-            color: var(--copper);
-        }
-
-        .btn-portfolio:hover {
-            background-color: var(--copper);
-            color: var(--white);
-        }
-
-        /* Branding Footer */
-        .forge-branding {
+        .footer-branding {
             margin-top: auto;
-            padding-top: 40px;
+            padding-top: 50px;
+            text-align: center;
             font-size: 0.75rem;
-            color: #4A5568;
+            color: rgba(255, 255, 255, 0.3);
             text-transform: uppercase;
             letter-spacing: 2px;
-            text-decoration: none;
-        }
-
-        .forge-branding span {
-            color: var(--copper);
         }
     </style>
 </head>
 <body>
 
-    <div class="mobile-container">
-        
-        <div class="profile-img-container">
-            <img src="FootprintForge_Master.jpg" alt="Elena Rostova" class="profile-img">
-        </div>
-        
-        <h1>Elena Rostova</h1>
-        <div class="title">Senior Strategy Director</div>
-        <div class="company">Sterling & Partners | London, UK</div>
-
-        <div class="link-container">
-            <a href="elena-rostova.vcf" class="hub-btn btn-primary">Save Contact</a>
-            
-            <a href="mailto:e.rostova@example.com" class="hub-btn">Email Me</a>
-            <a href="https://linkedin.com/in/example" class="hub-btn" target="_blank">LinkedIn Profile</a>
-            
-            <a href="executive-demo.html" class="hub-btn btn-portfolio">View Full Digital Portfolio</a>
-        </div>
-
+    <div class="profile-container reveal">
+        <img src="https://via.placeholder.com/150/0F1B2D/B87333?text=JD" alt="John Doe" class="profile-img">
+        <h1>John Doe</h1>
+        <span class="title">Senior Strategy Director</span>
+        <span class="company">Acme Global Consulting</span>
     </div>
 
-    <a href="index.html" class="forge-branding">Forged by <span>Footprint Forge</span></a>
+    <a href="#" class="primary-action reveal delay-1" onclick="alert('This triggers a vCard (.vcf) download to instantly save contact info to the phone.')">
+        Save Contact
+    </a>
 
+    <div class="links-grid">
+        <a href="executive-demo.html" class="link-card reveal delay-2">
+            <span>View Executive Portfolio</span>
+            <i>→</i>
+        </a>
+        <a href="#" class="link-card reveal delay-2">
+            <span>Connect on LinkedIn</span>
+            <i>↗</i>
+        </a>
+        <a href="mailto:contact@example.com" class="link-card reveal delay-3">
+            <span>Send Secure Email</span>
+            <i>✉</i>
+        </a>
+        <a href="tel:+1234567890" class="link-card reveal delay-3">
+            <span>Direct Line</span>
+            <i>📞</i>
+        </a>
+    </div>
+
+    <div class="footer-branding reveal delay-3">
+        Forged by Footprint Forge
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+            }, 100);
+        });
+    </script>
 </body>
-
 </html>
