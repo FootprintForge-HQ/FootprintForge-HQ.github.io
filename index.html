@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Footprint Forge | Engineering Your Professional Presence</title>
+    <title>Footprint Forge | Professional Identity Infrastructure</title>
     
     <!-- Premium Font Imports -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         /* Engineered Brand Color System */
@@ -28,12 +28,7 @@
             --shadow-hover: 0 10px 30px rgba(15, 27, 45, 0.15);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            scroll-behavior: smooth;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
 
         body {
             background-color: var(--bg-light);
@@ -44,579 +39,313 @@
             overflow-x: hidden;
         }
 
-        h1, h2, h3, h4, .serif-text {
-            font-family: var(--font-serif);
-            font-weight: 600;
-        }
+        h1, h2, h3, h4, .serif-text { font-family: var(--font-serif); font-weight: 600; }
 
         /* Smooth Reveal Animation Classes */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
         .delay-1 { transition-delay: 0.1s; }
         .delay-2 { transition-delay: 0.2s; }
         .delay-3 { transition-delay: 0.3s; }
 
-        /* Launch Banner */
+        /* Scarcity Launch Banner */
         .launch-banner {
-            background-color: var(--copper);
+            background-color: var(--charcoal);
             color: var(--white);
             text-align: center;
             padding: 12px 5%;
             font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 1.5px;
+            font-weight: 500;
+            letter-spacing: 1px;
             text-transform: uppercase;
+            border-bottom: 2px solid var(--copper);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .pulse-dot {
+            height: 10px; width: 10px; background-color: #ef4444; border-radius: 50%;
+            display: inline-block; animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
 
         /* Frosted Glass Navigation */
         nav {
-            background-color: var(--navy-alpha);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 20px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(184, 115, 51, 0.3);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            transition: padding 0.3s ease;
+            background-color: var(--navy-alpha); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 20px 5%; display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000; transition: padding 0.3s ease;
         }
 
-        .brand-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            text-decoration: none;
-        }
+        .brand-container { display: flex; align-items: center; gap: 15px; text-decoration: none; }
+        .nav-logo { height: 45px; width: auto; display: block; transition: transform 0.3s ease; }
+        .brand-container:hover .nav-logo { transform: scale(1.05); }
+        .nav-text { display: flex; flex-direction: column; }
+        .nav-title { color: var(--white); font-family: var(--font-serif); font-size: 1.4rem; letter-spacing: 2px; text-transform: uppercase; line-height: 1.1; }
+        .nav-tagline { color: var(--copper); font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; }
 
-        .nav-logo {
-            height: 45px;
-            width: auto;
-            display: block;
-            transition: transform 0.3s ease;
-        }
-
-        .brand-container:hover .nav-logo {
-            transform: scale(1.05);
-        }
-
-        .nav-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-title {
-            color: var(--white);
-            font-family: var(--font-serif);
-            font-size: 1.4rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            line-height: 1.1;
-        }
-
-        .nav-tagline {
-            color: var(--copper);
-            font-family: var(--font-sans);
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-        }
-
+        .nav-links { display: flex; align-items: center; }
         .nav-links a {
-            margin-left: 35px;
-            text-decoration: none;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-            position: relative;
+            margin-left: 35px; text-decoration: none; color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem; font-weight: 500; letter-spacing: 1px; text-transform: uppercase;
+            transition: all 0.3s ease; position: relative;
         }
+        .nav-links a::after { content: ''; position: absolute; width: 0; height: 1px; bottom: -4px; left: 0; background-color: var(--copper); transition: width 0.3s ease; }
+        .nav-links a:hover { color: var(--white); }
+        .nav-links a:hover::after { width: 100%; }
 
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 1px;
-            bottom: -4px;
-            left: 0;
-            background-color: var(--copper);
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--white);
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        /* Mobile Menu Toggle */
-        .menu-toggle {
-            display: none;
-        }
+        .menu-toggle { display: none; }
 
         /* Hero Section */
         .hero {
-            background-color: var(--navy);
-            color: var(--white);
-            padding: 140px 5% 120px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
+            background-color: var(--navy); color: var(--white);
+            padding: 100px 5% 120px; text-align: center; position: relative; overflow: hidden;
         }
-
-        /* Subtle Hero Background Glow */
         .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(184, 115, 51, 0.05) 0%, rgba(15, 27, 45, 0) 70%);
-            z-index: 0;
-            pointer-events: none;
+            content: ''; position: absolute; top: -50%; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(184, 115, 51, 0.05) 0%, rgba(15, 27, 45, 0) 70%); z-index: 0; pointer-events: none;
+        }
+        .hero-content { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
+        
+        .category-tag {
+            display: inline-block; padding: 8px 16px; border: 1px solid rgba(184, 115, 51, 0.5);
+            color: var(--copper); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;
+            border-radius: 50px; margin-bottom: 30px; font-weight: 600;
         }
 
-        .hero h1, .hero p, .hero a {
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            margin-bottom: 24px;
-            color: var(--white);
-            letter-spacing: -1px;
-            line-height: 1.1;
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            color: #A0AAB2;
-            max-width: 750px;
-            margin: 0 auto 40px;
-            font-weight: 300;
-            line-height: 1.8;
-        }
+        .hero h1 { font-size: 4.2rem; margin-bottom: 24px; color: var(--white); letter-spacing: -1.5px; line-height: 1.1; }
+        .hero p { font-size: 1.25rem; color: #A0AAB2; max-width: 750px; margin: 0 auto 40px; font-weight: 300; line-height: 1.8; }
+        .hero p strong { color: var(--white); font-weight: 500; }
 
         .btn {
-            display: inline-block;
-            background-color: var(--copper);
-            color: var(--white);
-            padding: 16px 40px;
-            text-decoration: none;
-            font-family: var(--font-sans);
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            border-radius: 2px; 
-            border: 1px solid var(--copper);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
+            display: inline-block; background-color: var(--copper); color: var(--white);
+            padding: 16px 40px; text-decoration: none; font-family: var(--font-sans);
+            font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+            border-radius: 2px; border: 1px solid var(--copper); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative; overflow: hidden; cursor: pointer;
         }
+        .btn:hover { background-color: var(--white); color: var(--navy); border-color: var(--white); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(184, 115, 51, 0.2); }
 
-        .btn:hover {
-            background-color: var(--white);
-            color: var(--navy);
-            border-color: var(--white);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(184, 115, 51, 0.2);
-        }
+        /* Comparison Section (The Logic Layer) */
+        .comparison-section { padding: 100px 5%; background-color: var(--white); border-bottom: 1px solid var(--border-color); }
+        .comparison-container { max-width: 1000px; margin: 0 auto; }
+        .comparison-header { text-align: center; margin-bottom: 50px; }
+        .comparison-header h2 { font-size: 2.5rem; color: var(--navy); margin-bottom: 15px; letter-spacing: -0.5px; }
+        .comparison-header p { color: #5A6575; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        
+        .comparison-table { width: 100%; border-collapse: collapse; background: var(--white); box-shadow: var(--shadow-subtle); border-radius: 8px; overflow: hidden; border: 1px solid #E1E5EA; }
+        .comparison-table th, .comparison-table td { padding: 20px; text-align: left; border-bottom: 1px solid #E1E5EA; font-size: 0.95rem;}
+        .comparison-table th { background-color: var(--navy); color: var(--white); font-family: var(--font-sans); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem;}
+        .comparison-table th.highlight { background-color: var(--copper); }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table td:first-child { font-weight: 600; color: var(--navy); }
+        .comparison-table td:nth-child(2) { color: #8B9BB4; }
+        .comparison-table td:nth-child(3) { color: var(--navy); font-weight: 600; background-color: rgba(184, 115, 51, 0.05); }
 
         /* Shared Section Layout */
-        section {
-            padding: 120px 5%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        section { padding: 100px 5%; max-width: 1200px; margin: 0 auto; }
+        .section-title { text-align: center; font-size: 2.8rem; color: var(--navy); margin-bottom: 10px; letter-spacing: -0.5px; }
+        .section-subtitle { text-align: center; color: var(--copper); font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 3px; font-size: 0.85rem; margin-bottom: 60px; font-weight: 600; }
+        
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
 
-        .section-title {
-            text-align: center;
-            font-size: 2.8rem;
-            color: var(--navy);
-            margin-bottom: 10px;
-            letter-spacing: -0.5px;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            color: var(--copper);
-            font-family: var(--font-sans);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            font-size: 0.8rem;
-            margin-bottom: 70px;
-            font-weight: 600;
-        }
-
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-        }
-
-        /* Elevated Structural Cards */
+        /* Structural Cards */
         .card {
-            background: var(--white);
-            padding: 50px 40px;
-            border: 1px solid #E1E5EA;
-            border-top: 4px solid var(--navy);
-            border-radius: 4px;
-            box-shadow: var(--shadow-subtle);
+            background: var(--white); padding: 50px 40px; border: 1px solid #E1E5EA;
+            border-top: 4px solid var(--navy); border-radius: 4px; box-shadow: var(--shadow-subtle);
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
-        .card:hover {
-            transform: translateY(-8px);
-            border-top-color: var(--copper);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .card h3 {
-            color: var(--navy);
-            margin-bottom: 15px;
-            font-size: 1.6rem;
-        }
-
-        .card p {
-            color: #5A6575;
-            font-weight: 300;
-            line-height: 1.7;
-        }
-
+        .card:hover { transform: translateY(-8px); border-top-color: var(--copper); box-shadow: var(--shadow-hover); }
+        .card h3 { color: var(--navy); margin-bottom: 15px; font-size: 1.6rem; }
+        .card p { color: #5A6575; font-weight: 300; line-height: 1.7; }
+        
         .card-link {
-            display: inline-flex;
-            align-items: center;
-            margin-top: 25px;
-            color: var(--copper);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            transition: gap 0.3s ease;
-            gap: 5px;
+            display: inline-flex; align-items: center; margin-top: 25px; color: var(--copper);
+            text-decoration: none; font-weight: 600; font-size: 0.85rem; text-transform: uppercase;
+            letter-spacing: 1.5px; transition: gap 0.3s ease; gap: 5px;
         }
+        .card-link::after { content: '→'; transition: transform 0.3s ease; }
+        .card-link:hover { gap: 10px; }
 
-        .card-link::after {
-            content: '→';
-            transition: transform 0.3s ease;
-        }
-
-        .card-link:hover {
-            gap: 10px;
-        }
+        /* Social Proof Grid */
+        .social-proof-section { background-color: var(--navy); padding: 100px 5%; color: var(--white); }
+        .social-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .testimonial-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 40px; border-radius: 4px; border-top: 2px solid var(--copper); }
+        .testimonial-card p { font-family: var(--font-serif); font-size: 1.15rem; color: var(--white); line-height: 1.6; font-style: italic; margin-bottom: 20px; }
+        .testimonial-card cite { display: block; font-family: var(--font-sans); font-size: 0.8rem; color: #A0AAB2; font-style: normal; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
 
         /* Pricing Architecture */
-        .pricing-tier {
-            border-top: 4px solid var(--charcoal);
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .pricing-tier.featured {
-            border-top: 4px solid var(--copper);
-            background-color: var(--navy);
-            color: var(--white);
-            transform: scale(1.02);
-        }
+        .pricing-tier { border-top: 4px solid var(--charcoal); display: flex; flex-direction: column; }
+        .pricing-tier.featured { border-top: 4px solid var(--copper); background-color: var(--navy); color: var(--white); transform: scale(1.02); }
+        .pricing-tier.featured:hover { transform: scale(1.02) translateY(-8px); }
+        .pricing-tier.featured h3, .pricing-tier.featured .price, .pricing-tier.featured p, .pricing-tier.featured ul li { color: var(--white); }
 
-        .pricing-tier.featured:hover {
-            transform: scale(1.02) translateY(-8px);
-        }
+        .price { font-family: var(--font-serif); font-size: 3.2rem; color: var(--navy); margin: 5px 0 20px; border-bottom: 1px solid #E1E5EA; padding-bottom: 25px; line-height: 1; }
+        .pricing-tier.featured .price { border-bottom-color: rgba(255,255,255,0.1); }
+        .pricing-tier ul { list-style: none; margin-bottom: 40px; flex-grow: 1; }
+        .pricing-tier ul li { margin-bottom: 18px; padding-left: 30px; position: relative; font-size: 0.95rem; color: #4A5568; }
+        .pricing-tier ul li::before { content: "▪"; color: var(--copper); position: absolute; left: 0; font-size: 1.2rem; line-height: 1; }
 
-        .pricing-tier.featured h3, 
-        .pricing-tier.featured .price,
-        .pricing-tier.featured p,
-        .pricing-tier.featured ul li {
-            color: var(--white);
-        }
+        .btn-outline { background-color: transparent; color: var(--navy); border: 1px solid var(--navy); }
+        .btn-outline:hover { background-color: var(--navy); color: var(--white); }
+        .pricing-tier.featured .btn { background-color: var(--copper); color: var(--white); border-color: var(--copper); }
+        .pricing-tier.featured .btn:hover { background-color: var(--white); color: var(--navy); }
 
-        .price {
-            font-family: var(--font-serif);
-            font-size: 3.2rem;
-            color: var(--navy);
-            margin: 5px 0 20px;
-            border-bottom: 1px solid #E1E5EA;
-            padding-bottom: 25px;
-            line-height: 1;
-        }
+        /* Founder Credibility Section */
+        .founder-micro { max-width: 800px; margin: 0 auto 80px; text-align: center; padding: 40px; border: 1px solid #E1E5EA; background: var(--white); border-radius: 4px; box-shadow: var(--shadow-subtle);}
+        .founder-micro h4 { font-size: 1.2rem; color: var(--navy); margin-bottom: 10px; font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 1px;}
+        .founder-micro p { color: #5A6575; font-size: 1rem; line-height: 1.7; }
+        .founder-micro .quote { font-family: var(--font-serif); color: var(--copper); font-style: italic; font-size: 1.2rem; margin-top: 15px; display: block;}
 
-        .pricing-tier.featured .price {
-            border-bottom-color: rgba(255,255,255,0.1);
-        }
-
-        .pricing-tier ul {
-            list-style: none;
-            margin-bottom: 40px;
-            flex-grow: 1;
-        }
-
-        .pricing-tier ul li {
-            margin-bottom: 18px;
-            padding-left: 30px;
-            position: relative;
-            font-size: 0.95rem;
-            color: #4A5568;
-        }
-
-        .pricing-tier ul li::before {
-            content: "▪"; 
-            color: var(--copper);
-            position: absolute;
-            left: 0;
-            font-size: 1.2rem;
-            line-height: 1;
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: var(--navy);
-            border: 1px solid var(--navy);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--navy);
-            color: var(--white);
-        }
-        
-        .pricing-tier.featured .btn {
-            background-color: var(--copper);
-            color: var(--white);
-            border-color: var(--copper);
-        }
-        .pricing-tier.featured .btn:hover {
-            background-color: var(--white);
-            color: var(--navy);
-        }
-
-        /* Hardware Banner */
-        .hardware-banner {
-            margin-top: 80px;
-            background-color: var(--navy);
-            color: var(--white);
-            padding: 70px 50px;
-            border-radius: 4px;
-            border-top: 4px solid var(--copper);
-            text-align: center;
-            box-shadow: var(--shadow-hover);
-        }
-
-        .hardware-options {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 40px;
-        }
-
-        .hardware-box {
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 25px 40px;
-            background-color: rgba(255,255,255,0.03);
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .hardware-box:hover {
-            border-color: var(--copper);
-            background-color: rgba(184, 115, 51, 0.05);
-            transform: translateY(-3px);
-        }
-
-        /* Terms Box */
-        .terms-box {
-            background: var(--white);
-            padding: 60px;
-            border: 1px solid #E1E5EA;
-            border-radius: 4px;
-            box-shadow: var(--shadow-subtle);
-        }
-
-        .terms-box h4 {
-            color: var(--navy);
-            margin-top: 35px;
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-family: var(--font-sans);
-        }
-        
-        .terms-box p {
-            color: #5A6575;
-            font-weight: 300;
-        }
+        /* Expandable Terms */
+        details { background: var(--white); border: 1px solid #E1E5EA; border-radius: 4px; margin-bottom: 10px; overflow: hidden; transition: all 0.3s ease; }
+        summary { padding: 20px; font-weight: 600; color: var(--navy); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+        summary::-webkit-details-marker { display: none; }
+        summary::after { content: '+'; color: var(--copper); font-size: 1.5rem; line-height: 1; transition: transform 0.3s ease; }
+        details[open] summary::after { content: '-'; }
+        details p { padding: 0 20px 20px; color: #5A6575; font-size: 0.95rem; line-height: 1.7; }
 
         /* Footer */
-        footer {
-            background-color: var(--navy);
-            color: #8B9BB4;
-            text-align: center;
-            padding: 50px 5%;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-        }
+        footer { background-color: var(--navy); color: #8B9BB4; text-align: center; padding: 50px 5%; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; letter-spacing: 0.5px; }
 
-        /* Responsive Mobile Optimizations */
+        /* Responsive */
         @media (max-width: 850px) {
-            /* Navbar & Mobile Menu */
             .nav-tagline { display: none; }
-            
-            .menu-toggle {
-                display: flex;
-                flex-direction: column;
-                gap: 5px;
-                cursor: pointer;
-                z-index: 1001;
-            }
-            
-            .menu-toggle span {
-                display: block;
-                width: 26px;
-                height: 2px;
-                background-color: var(--white);
-                transition: all 0.3s ease;
-                border-radius: 2px;
-            }
-
-            .menu-toggle.active span:nth-child(1) {
-                transform: translateY(7px) rotate(45deg);
-            }
-            .menu-toggle.active span:nth-child(2) {
-                opacity: 0;
-            }
-            .menu-toggle.active span:nth-child(3) {
-                transform: translateY(-7px) rotate(-45deg);
-            }
+            .menu-toggle { display: flex; flex-direction: column; gap: 5px; cursor: pointer; z-index: 1001; }
+            .menu-toggle span { display: block; width: 26px; height: 2px; background-color: var(--white); transition: all 0.3s ease; border-radius: 2px; }
+            .menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+            .menu-toggle.active span:nth-child(2) { opacity: 0; }
+            .menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
             .nav-links {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background-color: var(--navy-alpha);
-                backdrop-filter: blur(15px);
-                -webkit-backdrop-filter: blur(15px);
-                flex-direction: column;
-                padding: 30px 5%;
-                gap: 20px;
-                border-bottom: 1px solid rgba(184, 115, 51, 0.3);
-                clip-path: circle(0px at top right);
-                transition: clip-path 0.5s ease-out;
-                opacity: 0;
-                pointer-events: none;
+                position: absolute; top: 100%; left: 0; width: 100%; background-color: var(--navy-alpha);
+                backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); flex-direction: column;
+                padding: 30px 5%; gap: 20px; border-bottom: 1px solid rgba(184, 115, 51, 0.3);
+                clip-path: circle(0px at top right); transition: clip-path 0.5s ease-out; opacity: 0; pointer-events: none;
             }
+            .nav-links.active { clip-path: circle(150% at top right); opacity: 1; pointer-events: all; }
+            .nav-links a { margin: 0; font-size: 1.2rem; padding: 10px 0; }
 
-            .nav-links.active {
-                clip-path: circle(150% at top right);
-                opacity: 1;
-                pointer-events: all;
-            }
-
-            .nav-links a {
-                margin: 0;
-                font-size: 1.2rem;
-                padding: 10px 0;
-            }
-
-            /* Adjust Hero Spacing and Typography */
             .hero { padding: 80px 5% 70px; }
-            .hero h1 { font-size: 2.6rem; letter-spacing: -0.5px; margin-bottom: 15px; }
+            .hero h1 { font-size: 2.8rem; letter-spacing: -0.5px; margin-bottom: 15px; }
             .hero p { font-size: 1.05rem; margin-bottom: 35px; }
             
-            /* Section Spacing */
+            .comparison-table { display: block; overflow-x: auto; white-space: nowrap; }
+            
             section { padding: 70px 5%; }
             .section-title { font-size: 2.2rem; }
             .section-subtitle { margin-bottom: 40px; }
-            
-            /* Card Refinements */
             .card { padding: 35px 25px; }
             .grid-3 { grid-template-columns: 1fr; gap: 30px; }
-            
-            /* Pricing */
             .price { font-size: 2.6rem; }
             .pricing-tier.featured { transform: scale(1); }
             .pricing-tier.featured:hover { transform: translateY(-5px); }
-            
-            /* Hardware Banner */
-            .hardware-banner { padding: 40px 25px; margin-top: 50px; }
-            .hardware-banner h3 { font-size: 1.8rem; }
-            .hardware-options { flex-direction: column; gap: 15px; }
-            
-            /* Terms Box */
-            .terms-box { padding: 30px 20px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Launch Offer Banner -->
+    <!-- Scarcity Urgency Banner -->
     <div class="launch-banner">
-        Foundational Client Intake Open: Secure launch pricing for the first 10 deployments.
+        <span>Launch Pricing Ends When 10 Deployments Are Filled</span>
+        <span style="color: #ef4444; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+            <div class="pulse-dot"></div> 6 Spots Remaining
+        </span>
     </div>
 
     <!-- Navigation -->
     <nav>
         <a href="index.html" class="brand-container">
-            <img src="FootprintForge_Master.jpg" alt="Footprint Forge Logo" class="nav-logo">
+            <img src="FootprintForge_CircularSeal.jpg" alt="Footprint Forge Logo" class="nav-logo" style="border-radius: 50%;">
             <div class="nav-text">
                 <span class="nav-title">Footprint Forge</span>
                 <span class="nav-tagline">Engineering Your Professional Presence</span>
             </div>
         </a>
         
-        <!-- Mobile Hamburger Icon -->
         <div class="menu-toggle" id="mobile-menu">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span></span><span></span><span></span>
         </div>
 
         <div class="nav-links">
-            <a href="#architecture">Architecture</a>
-            <a href="#pricing">Acquisition</a>
-            <a href="#terms">Protocol</a>
+            <a href="#why-forge">Why The Forge</a>
+            <a href="#portfolios">Portfolios</a>
+            <a href="#pricing">Packages</a>
             <a href="about.html">About</a>
-            <a href="mailto:Footprintforge@gmail.com">Contact</a>
+            <a href="#faq">FAQ</a>
+            <a href="mailto:footprintforge@gmail.com?subject=Footprint%20Forge%20Portfolio%20Inquiry">Contact</a>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero reveal">
-        <h1>Engineered Digital Presence.<br>Forged for the Executive.</h1>
-        <p>We deploy highly structured, data-driven digital portfolios—hosted with zero ongoing fees—and pair them with bespoke smart networking cards for instant, tap-to-share connections.</p>
-        <a href="#pricing" class="btn">View Modular Packages</a>
+        <div class="hero-content">
+            <span class="category-tag">Professional Identity Infrastructure</span>
+            <h1>The Ownership-Based Alternative to Subscription Networking.</h1>
+            <p>Designed specifically for finance, consulting, and tech professionals. A structured digital portfolio system paired with a premium smart networking card. <strong>Control how the world sees you — without paying rent to a platform.</strong></p>
+            <a href="#pricing" class="btn">View Packages (6 Spots Left)</a>
+        </div>
+    </section>
+
+    <!-- The Logic Layer (Comparison Table) -->
+    <section id="why-forge" class="comparison-section reveal">
+        <div class="comparison-container">
+            <div class="comparison-header">
+                <h2>Why We Built The Forge</h2>
+                <p>Professionals pay monthly fees for digital networking tools they don’t actually own. We engineered an ownership-based alternative. Pay once. Own permanently.</p>
+            </div>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Subscription Platforms (SaaS)</th>
+                        <th class="highlight">Footprint Forge Architecture</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Monthly Recurring Fees</td>
+                        <td>Yes ($10 - $20/month)</td>
+                        <td>None (Zero ongoing cost)</td>
+                    </tr>
+                    <tr>
+                        <td>Digital Ownership</td>
+                        <td>Platform Controlled</td>
+                        <td>100% Client Owned (Static Deployment)</td>
+                    </tr>
+                    <tr>
+                        <td>Visual Customization</td>
+                        <td>Limited Basic Templates</td>
+                        <td>Structured, Corporate-Grade Frameworks</td>
+                    </tr>
+                    <tr>
+                        <td>Smart Hardware Included</td>
+                        <td>Usually Extra ($50+)</td>
+                        <td>Premium PVC/Metal Custom Card Included</td>
+                    </tr>
+                    <tr>
+                        <td>Security & Vulnerabilities</td>
+                        <td>Exposed Backend Databases</td>
+                        <td>Zero Backend (Unhackable Static Infrastructure)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </section>
 
     <!-- Templates Section -->
-    <section id="architecture">
-        <h2 class="section-title reveal">Digital Architecture</h2>
-        <div class="section-subtitle reveal">Corporate-Standard Frameworks</div>
+    <section id="portfolios">
+        <h2 class="section-title reveal">Digital Portfolios</h2>
+        <div class="section-subtitle reveal">Choose the architecture that aligns with your professional positioning.</div>
         
         <!-- The Foundational Hub -->
         <div class="card reveal" style="border-top: 4px solid var(--copper); max-width: 900px; margin: 0 auto 50px; text-align: center;">
@@ -644,12 +373,34 @@
         </div>
     </section>
 
+    <!-- Trust Architecture (Social Proof) -->
+    <section class="social-proof-section reveal">
+        <div class="comparison-header" style="margin-bottom: 40px;">
+            <h2 style="color: var(--white);">Trusted Infrastructure</h2>
+            <p style="color: #A0AAB2;">Deployed for corporate professionals & tech founders across India.</p>
+        </div>
+        <div class="social-grid">
+            <div class="testimonial-card">
+                <p>"Finally, a digital card that actually looks like it belongs in a boardroom. The zero-subscription model makes it an absolute no-brainer."</p>
+                <cite>— Senior Credit Underwriter, Commercial Banking</cite>
+            </div>
+            <div class="testimonial-card">
+                <p>"I handed my Forge card to a Managing Director and his exact words were 'Who built this for you?'. Instant ROI on the first tap."</p>
+                <cite>— Independent Strategy Consultant</cite>
+            </div>
+            <div class="testimonial-card">
+                <p>"Fast, static deployment with no backend vulnerabilities. Perfect DNS control. Exactly the architecture I wanted for my personal brand."</p>
+                <cite>— Lead Cloud Architect, FinTech</cite>
+            </div>
+        </div>
+    </section>
+
     <!-- Modular Pricing Section -->
     <section id="pricing">
-        <h2 class="section-title reveal">Acquisition Tiers</h2>
-        <div class="section-subtitle reveal">Modular Capital Outlay</div>
+        <h2 class="section-title reveal">Deployment Packages</h2>
+        <div class="section-subtitle reveal">Pay once. Own permanently.</div>
         
-        <p class="reveal" style="text-align: center; margin-bottom: 50px; color: #5A6575; max-width: 800px; margin-left: auto; margin-right: auto; font-size: 1.05rem;">All tiers include <strong>1 Premium PVC Smart QR Card</strong> and high-resolution digital files. Select your required architecture below, then choose your physical upgrades.</p>
+        <p class="reveal" style="text-align: center; margin-bottom: 50px; color: #5A6575; max-width: 800px; margin-left: auto; margin-right: auto; font-size: 1.05rem;">All packages include <strong>1 Premium PVC Smart QR Card</strong> and high-resolution digital files. Select your required architecture below, then choose your physical upgrades.</p>
 
         <div class="grid-3">
             <!-- Tier 1 -->
@@ -694,46 +445,38 @@
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSeX1dQnp2KGXTtFTzcAmjDXupIjc46ryTFlJR_HpH6h2tlvlQ/viewform" target="_blank" class="btn btn-outline" style="width: 100%; text-align: center; margin-top: auto;">Deploy Specialist</a>
             </div>
         </div>
-
-        <!-- Hardware Upsell Banner -->
-        <div class="hardware-banner reveal">
-            <h3 style="font-family: var(--font-serif); font-size: 2.2rem; margin-bottom: 15px; color: var(--white); letter-spacing: -0.5px;">Hardware Forging Upgrades & Add-ons</h3>
-            <p style="color: #A0AAB2; max-width: 650px; margin: 0 auto; font-size: 1.1rem; font-weight: 300;">Elevate your physical networking presence. Upgrade your included PVC smart card to premium materials, or secure a legacy backup pack.</p>
-            <div class="hardware-options">
-                <div class="hardware-box">
-                    <span style="display: block; color: var(--copper); text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; margin-bottom: 8px;">Bamboo or Cherry Wood</span>
-                    <span style="font-family: var(--font-serif); font-size: 1.8rem; color: var(--white);">+ ₹999</span>
-                </div>
-                <div class="hardware-box">
-                    <span style="display: block; color: var(--copper); text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; margin-bottom: 8px;">Matte Black Metal</span>
-                    <span style="font-family: var(--font-serif); font-size: 1.8rem; color: var(--white);">+ ₹1,999</span>
-                </div>
-                <div class="hardware-box">
-                    <span style="display: block; color: var(--copper); text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; margin-bottom: 8px;">Legacy Pack (100 Printed)</span>
-                    <span style="font-family: var(--font-serif); font-size: 1.8rem; color: var(--white);">+ ₹999</span>
-                </div>
-            </div>
-        </div>
     </section>
 
-    <!-- Terms & Conditions -->
-    <section id="terms">
-        <h2 class="section-title reveal">Operational Protocols</h2>
-        <div class="section-subtitle reveal">Service Agreement</div>
-        <div class="terms-box reveal">
-            <p style="font-size: 1.1rem; color: var(--charcoal); margin-bottom: 30px;">By proceeding with Footprint Forge services, you agree to the following streamlined protocols designed to ensure a precise, professional delivery:</p>
-            
-            <h4>1. Scope of Architecture</h4>
-            <p>Our service encompasses the deployment of static digital frameworks and the physical forging of smart cards. Ground-up custom web development or dynamic backend functionalities fall outside our structural scope. Clients receive PDF and PNG formats of their final card design for personal use.</p>
-            
-            <h4>2. Infrastructure & Routing</h4>
-            <p>GitHub Pages hosting incurs zero monthly fees. If the Client requires a custom top-level domain, the Client assumes responsibility for purchasing and renewing that domain. Footprint Forge will provide standard DNS routing assistance.</p>
-            
-            <h4>3. Hardware Forging</h4>
-            <p>Physical cards are manufactured using the client's selected tier. Wood and metal upgrades feature a precision laser-engraved monogram. Due to the bespoke nature of the hardware, physical products cannot be refunded once forging commences.</p>
-            
-            <h4>4. Capital Transfer</h4>
-            <p>A 50% non-refundable deposit is required to commence digital architecture and hardware allocation. The final 50% balance clears upon approval of the digital portfolio, prior to the dispatch of physical assets.</p>
+    <!-- Founder Credibility & FAQ -->
+    <section id="faq" style="padding-top: 20px;">
+        
+        <!-- Founder Micro-Credibility -->
+        <div class="founder-micro reveal">
+            <h4>Built by a Commercial Banker for the Modern Executive</h4>
+            <p>Yogaprabhu S. combines corporate finance acumen with digital infrastructure expertise to solve a fundamental networking inefficiency: renting your professional identity.</p>
+            <span class="quote">"Don't be sorry. Be Better."</span>
+        </div>
+
+        <h2 class="section-title reveal">Service Agreements & FAQ</h2>
+        <div class="section-subtitle reveal">Operational Protocols</div>
+        
+        <div class="reveal" style="max-width: 800px; margin: 0 auto;">
+            <details>
+                <summary>How does the zero monthly fee structure work?</summary>
+                <p>We deploy your static digital framework on robust, open-source infrastructure (like GitHub Pages) which incurs zero monthly server costs. You pay a one-time deployment fee to Footprint Forge. If you choose to link a custom domain name (e.g., yourname.com), you only pay the standard annual renewal fee to your domain registrar (usually around ₹800/year). We do not charge you rent.</p>
+            </details>
+            <details>
+                <summary>What is included in the Scope of Architecture?</summary>
+                <p>Our service encompasses the deployment of static digital frameworks (based on your chosen tier) and the physical manufacturing of smart cards. Ground-up custom web development, dynamic backend databases, or ongoing content management fall outside our structural scope. Clients also receive PDF and PNG formats of their final card design for personal use.</p>
+            </details>
+            <details>
+                <summary>How long does hardware manufacturing take?</summary>
+                <p>Physical cards are manufactured using the client's selected tier. Premium PVC cards typically ship within 5-7 business days after your digital portfolio is approved. Due to the bespoke nature of the hardware, physical products cannot be refunded once manufacturing commences.</p>
+            </details>
+            <details>
+                <summary>What are the payment terms?</summary>
+                <p>A 50% non-refundable deposit is required to commence digital architecture and allocate hardware materials. The final 50% balance clears upon your approval of the live digital portfolio, prior to the dispatch of your physical assets.</p>
+            </details>
         </div>
     </section>
 
@@ -773,7 +516,7 @@
                 entries.forEach(entry => {
                     if (!entry.isIntersecting) return;
                     entry.target.classList.add('active');
-                    observer.unobserve(entry.target); // Stop observing once revealed
+                    observer.unobserve(entry.target);
                 });
             }, revealOptions);
 
