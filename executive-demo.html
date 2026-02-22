@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elena Rostova | Executive Portfolio</title>
+    <title>Executive Portfolio | John Doe</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
-        /* Engineered Brand Color System */
         :root {
             --navy: #0F1B2D;
             --charcoal: #2B2F33;
@@ -21,13 +20,12 @@
             
             --font-serif: 'Playfair Display', serif;
             --font-sans: 'Inter', sans-serif;
+            
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 10px 30px rgba(15, 27, 45, 0.1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
 
         body {
             background-color: var(--bg-light);
@@ -37,295 +35,178 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 0 20px;
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        nav {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        /* Top Bar - Structural Line */
-        .top-bar {
-            height: 6px;
-            background-color: var(--navy);
-            width: 100%;
-        }
+        .nav-name { font-family: var(--font-serif); font-size: 1.5rem; color: var(--navy); font-weight: 600; text-decoration: none; }
+        .nav-links a { margin-left: 20px; text-decoration: none; color: var(--charcoal); font-size: 0.85rem; text-transform: uppercase; font-weight: 500; letter-spacing: 1px; }
 
-        /* Hero / Header Section */
         header {
-            background-color: var(--white);
-            padding: 80px 0 60px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .header-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 40px;
-            align-items: end;
-        }
-
-        h1 {
-            font-family: var(--font-serif);
-            font-size: 3.2rem;
-            color: var(--navy);
-            line-height: 1.1;
-            margin-bottom: 10px;
-            letter-spacing: -0.5px;
-        }
-
-        .title {
-            font-family: var(--font-sans);
-            font-size: 1.1rem;
-            color: var(--copper);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 600;
-        }
-
-        .contact-info {
-            text-align: right;
-            font-size: 0.9rem;
-            color: var(--charcoal);
-        }
-
-        .contact-info a {
-            color: var(--navy);
-            text-decoration: none;
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .contact-info a:hover {
-            color: var(--copper);
-        }
-
-        /* Section Architecture */
-        section {
-            padding: 60px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        h2 {
-            font-family: var(--font-serif);
-            font-size: 2rem;
-            color: var(--navy);
-            margin-bottom: 30px;
+            padding: 120px 5%;
+            background-color: var(--navy);
+            color: var(--white);
             position: relative;
-            padding-bottom: 10px;
+            overflow: hidden;
         }
 
-        h2::after {
+        header::before {
             content: '';
             position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 40px;
-            height: 3px;
-            background-color: var(--copper);
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(184, 115, 51, 0.1));
         }
 
-        /* Content Grids */
-        .profile-text {
-            font-size: 1.1rem;
-            color: var(--charcoal);
-            max-width: 800px;
-            font-weight: 300;
-        }
+        .header-content { max-width: 800px; margin: 0 auto; position: relative; z-index: 1; }
+        
+        header h1 { font-family: var(--font-serif); font-size: 4rem; margin-bottom: 10px; line-height: 1.1; }
+        header .title { color: var(--copper); font-size: 1rem; text-transform: uppercase; letter-spacing: 3px; font-weight: 600; display: block; margin-bottom: 30px; }
+        header p { font-size: 1.1rem; color: #A0AAB2; font-weight: 300; max-width: 600px; }
+
+        section { padding: 100px 5%; max-width: 1000px; margin: 0 auto; }
+        .section-title { font-family: var(--font-serif); font-size: 2.5rem; color: var(--navy); margin-bottom: 50px; border-bottom: 2px solid var(--copper); padding-bottom: 10px; display: inline-block; }
 
         .timeline-item {
-            margin-bottom: 40px;
-            display: grid;
-            grid-template-columns: 1fr 3fr;
-            gap: 30px;
-        }
-
-        .timeline-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .timeline-meta h3 {
-            font-family: var(--font-sans);
-            font-size: 1.2rem;
-            color: var(--navy);
-            margin-bottom: 5px;
-        }
-
-        .timeline-meta .date {
-            font-size: 0.85rem;
-            color: #A0AAB2;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 500;
-        }
-
-        .timeline-content h4 {
-            font-family: var(--font-serif);
-            font-size: 1.4rem;
-            color: var(--charcoal);
-            margin-bottom: 10px;
-        }
-
-        .timeline-content ul {
-            list-style: none;
-        }
-
-        .timeline-content ul li {
-            margin-bottom: 10px;
-            padding-left: 20px;
-            position: relative;
-            font-size: 0.95rem;
-        }
-
-        .timeline-content ul li::before {
-            content: "▪";
-            color: var(--copper);
-            position: absolute;
-            left: 0;
-            font-size: 1.2rem;
-            line-height: 1;
-        }
-
-        /* Two Column Grid for Education/Skills */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-        }
-
-        .info-block {
             background: var(--white);
-            padding: 30px;
+            padding: 40px;
             border: 1px solid var(--border-color);
             border-left: 4px solid var(--navy);
+            margin-bottom: 30px;
+            border-radius: 2px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
         }
 
-        .info-block h3 {
-            font-family: var(--font-serif);
-            color: var(--navy);
-            margin-bottom: 5px;
-            font-size: 1.3rem;
+        .timeline-item:hover {
+            transform: translateX(10px);
+            border-left-color: var(--copper);
+            box-shadow: var(--shadow-hover);
         }
 
-        .info-block p {
-            font-size: 0.9rem;
-            color: var(--charcoal);
+        .timeline-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;}
+        .timeline-header h3 { font-size: 1.4rem; color: var(--navy); }
+        .timeline-date { color: var(--copper); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .timeline-company { font-weight: 500; color: #5A6575; margin-bottom: 15px; display: block; }
+        .timeline-item p { color: #5A6575; font-size: 0.95rem; font-weight: 300; line-height: 1.7; }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
 
-        /* Footer / Footprint Forge Branding */
-        footer {
-            text-align: center;
-            padding: 40px 0;
+        .metric-card {
             background-color: var(--bg-light);
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
         }
 
-        .powered-by {
-            font-size: 0.8rem;
-            color: #A0AAB2;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
+        .metric-card strong { display: block; color: var(--navy); font-size: 1.5rem; font-family: var(--font-serif); }
+        .metric-card span { font-size: 0.8rem; color: #5A6575; text-transform: uppercase; letter-spacing: 1px; }
 
-        .powered-by:hover {
-            color: var(--copper);
-        }
+        footer { background-color: var(--navy); color: #8B9BB4; text-align: center; padding: 40px; font-size: 0.9rem; }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
-            .header-grid, .timeline-item, .grid-2 {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .contact-info {
-                text-align: left;
-            }
-            h1 {
-                font-size: 2.5rem;
-            }
+            header h1 { font-size: 3rem; }
+            .nav-links { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <div class="top-bar"></div>
+    <nav>
+        <a href="#" class="nav-name">John Doe.</a>
+        <div class="nav-links">
+            <a href="#experience">Experience</a>
+            <a href="#education">Education</a>
+            <a href="hub-demo.html" style="color: var(--copper);">← Digital Hub</a>
+        </div>
+    </nav>
 
-    <header>
-        <div class="container header-grid">
-            <div>
-                <h1>Elena Rostova</h1>
-                <div class="title">Senior Strategy Director</div>
-            </div>
-            <div class="contact-info">
-                <a href="mailto:e.rostova@example.com">Email. e.rostova@example.com</a>
-                <a href="#">Tel. +44 20 7946 0958</a>
-                <a href="#">Loc. London, United Kingdom</a>
-                <a href="#">Link. linkedin.com/in/elenarostova</a>
-            </div>
+    <header class="reveal">
+        <div class="header-content">
+            <h1>John Doe</h1>
+            <span class="title">Senior Strategy Director</span>
+            <p>Driving operational efficiency and executing high-level market expansion strategies for global Fortune 500 enterprises. Specializing in M&A integration and restructuring.</p>
         </div>
     </header>
 
-    <div class="container">
-        <section>
-            <h2>Executive Profile</h2>
-            <p class="profile-text">Seasoned strategy director specializing in M&A integration and market entry for the enterprise SaaS sector. Proven track record of architecting scalable growth frameworks, optimizing cross-functional operations, and advising C-suite stakeholders on high-stakes capital allocation to drive sustainable revenue growth.</p>
-        </section>
-
-        <section>
-            <h2>Professional Experience</h2>
-            
-            <div class="timeline-item">
-                <div class="timeline-meta">
-                    <h3>Sterling & Partners</h3>
-                    <span class="date">2021 &mdash; Present</span>
-                </div>
-                <div class="timeline-content">
-                    <h4>Principal Consultant</h4>
-                    <ul>
-                        <li>Spearheaded post-merger integration strategies for three major fintech acquisitions, realizing $45M in operational synergies within the first fiscal year.</li>
-                        <li>Designed and deployed comprehensive data-driven risk assessment models to evaluate target company viability.</li>
-                        <li>Led a cross-border advisory team of 15 consultants, consistently exceeding quarterly billable targets by 18%.</li>
-                    </ul>
-                </div>
+    <section id="experience">
+        <h2 class="section-title reveal">Executive Experience</h2>
+        
+        <div class="timeline-item reveal">
+            <div class="timeline-header">
+                <h3>Senior Strategy Director</h3>
+                <span class="timeline-date">2022 - Present</span>
             </div>
-
-            <div class="timeline-item">
-                <div class="timeline-meta">
-                    <h3>Global Tech Ventures</h3>
-                    <span class="date">2017 &mdash; 2021</span>
-                </div>
-                <div class="timeline-content">
-                    <h4>Strategy Manager</h4>
-                    <ul>
-                        <li>Engineered go-to-market strategies for emerging cloud infrastructure products across the EMEA region.</li>
-                        <li>Conducted rigorous competitive landscape analysis to inform executive-level product pricing and positioning decisions.</li>
-                    </ul>
-                </div>
+            <span class="timeline-company">Acme Global Consulting | New York, NY</span>
+            <p>Spearheaded the integration strategy for a $2B cross-border acquisition, harmonizing operational protocols across three continents. Directed a team of 45 analysts and managers to streamline post-merger supply chain redundancies.</p>
+            <div class="metrics-grid">
+                <div class="metric-card"><strong>$45M</strong><span>Cost Savings Realized</span></div>
+                <div class="metric-card"><strong>18%</strong><span>EBITDA Margin Increase</span></div>
             </div>
-        </section>
+        </div>
 
-        <section style="border-bottom: none;">
-            <h2>Education & Credentials</h2>
-            <div class="grid-2">
-                <div class="info-block">
-                    <h3>Master of Business Administration</h3>
-                    <p style="margin-bottom: 10px; color: var(--copper); font-weight: 500; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">London Business School | June 2017</p>
-                    <p>Concentration in Corporate Finance and Strategic Management. Graduated with Distinction.</p>
-                </div>
-                <div class="info-block">
-                    <h3>B.Sc. in Economics</h3>
-                    <p style="margin-bottom: 10px; color: var(--copper); font-weight: 500; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">London School of Economics | June 2013</p>
-                    <p>Comprehensive focus on macroeconomic theory, econometrics, and quantitative market analysis.</p>
-                </div>
+        <div class="timeline-item reveal">
+            <div class="timeline-header">
+                <h3>Vice President, Operations</h3>
+                <span class="timeline-date">2018 - 2022</span>
             </div>
-        </section>
-    </div>
+            <span class="timeline-company">Stark Logistics | Chicago, IL</span>
+            <p>Overhauled the legacy logistics framework, implementing automated routing algorithms that reduced delivery friction by 30%. Managed an annual departmental operating budget of $120M.</p>
+        </div>
+    </section>
+
+    <section id="education" style="padding-top: 0;">
+        <h2 class="section-title reveal">Education & Credentials</h2>
+        
+        <div class="timeline-item reveal">
+            <div class="timeline-header">
+                <h3>Master of Business Administration (MBA)</h3>
+                <span class="timeline-date">2016</span>
+            </div>
+            <span class="timeline-company">Wharton School of the University of Pennsylvania</span>
+            <p>Concentration in Finance and Strategic Management. Graduated with Honors.</p>
+        </div>
+    </section>
 
     <footer>
-        <a href="#" class="powered-by">Digital Architecture by Footprint Forge</a>
+        <p>Engineered by Footprint Forge. Private & Confidential.</p>
     </footer>
 
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        setTimeout(() => document.querySelector('header.reveal').classList.add('active'), 100);
+    </script>
 </body>
 </html>
