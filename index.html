@@ -85,7 +85,7 @@
         }
 
         .brand-container { display: flex; align-items: center; gap: 15px; text-decoration: none; }
-        .nav-logo { height: 45px; width: auto; display: block; transition: transform 0.3s ease; }
+        .nav-logo { height: 45px; width: auto; display: block; border-radius: 50%; transition: transform 0.3s ease; }
         .brand-container:hover .nav-logo { transform: scale(1.05); }
         .nav-text { display: flex; flex-direction: column; }
         .nav-title { color: var(--white); font-family: var(--font-serif); font-size: 1.4rem; letter-spacing: 2px; text-transform: uppercase; line-height: 1.1; }
@@ -133,22 +133,25 @@
             position: relative; overflow: hidden; cursor: pointer;
         }
         .btn:hover { background-color: var(--white); color: var(--navy); border-color: var(--white); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(184, 115, 51, 0.2); }
+        
+        .risk-reversal {
+            display: block; font-size: 0.85rem; color: #8B9BB4; margin-top: 15px; font-weight: 400; letter-spacing: 0.5px;
+        }
 
-        /* Comparison Section (The Logic Layer) */
+        /* Transformation Contrast Section */
         .comparison-section { padding: 100px 5%; background-color: var(--white); border-bottom: 1px solid var(--border-color); }
         .comparison-container { max-width: 1000px; margin: 0 auto; }
         .comparison-header { text-align: center; margin-bottom: 50px; }
         .comparison-header h2 { font-size: 2.5rem; color: var(--navy); margin-bottom: 15px; letter-spacing: -0.5px; }
-        .comparison-header p { color: #5A6575; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        .comparison-header p { color: #5A6575; font-size: 1.1rem; max-width: 700px; margin: 0 auto; }
         
-        .comparison-table { width: 100%; border-collapse: collapse; background: var(--white); box-shadow: var(--shadow-subtle); border-radius: 8px; overflow: hidden; border: 1px solid #E1E5EA; }
-        .comparison-table th, .comparison-table td { padding: 20px; text-align: left; border-bottom: 1px solid #E1E5EA; font-size: 0.95rem;}
+        .comparison-table { width: 100%; border-collapse: collapse; background: var(--white); box-shadow: var(--shadow-subtle); border-radius: 4px; overflow: hidden; border: 1px solid #E1E5EA; }
+        .comparison-table th, .comparison-table td { padding: 22px; text-align: left; border-bottom: 1px solid #E1E5EA; font-size: 1rem;}
         .comparison-table th { background-color: var(--navy); color: var(--white); font-family: var(--font-sans); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem;}
         .comparison-table th.highlight { background-color: var(--copper); }
         .comparison-table tr:last-child td { border-bottom: none; }
-        .comparison-table td:first-child { font-weight: 600; color: var(--navy); }
-        .comparison-table td:nth-child(2) { color: #8B9BB4; }
-        .comparison-table td:nth-child(3) { color: var(--navy); font-weight: 600; background-color: rgba(184, 115, 51, 0.05); }
+        .comparison-table td:first-child { color: #5A6575; font-weight: 400; }
+        .comparison-table td:nth-child(2) { color: var(--navy); font-weight: 600; background-color: rgba(184, 115, 51, 0.05); }
 
         /* Shared Section Layout */
         section { padding: 100px 5%; max-width: 1200px; margin: 0 auto; }
@@ -203,7 +206,6 @@
         .founder-micro { max-width: 800px; margin: 0 auto 80px; text-align: center; padding: 40px; border: 1px solid #E1E5EA; background: var(--white); border-radius: 4px; box-shadow: var(--shadow-subtle);}
         .founder-micro h4 { font-size: 1.2rem; color: var(--navy); margin-bottom: 10px; font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 1px;}
         .founder-micro p { color: #5A6575; font-size: 1rem; line-height: 1.7; }
-        .founder-micro .quote { font-family: var(--font-serif); color: var(--copper); font-style: italic; font-size: 1.2rem; margin-top: 15px; display: block;}
 
         /* Expandable Terms */
         details { background: var(--white); border: 1px solid #E1E5EA; border-radius: 4px; margin-bottom: 10px; overflow: hidden; transition: all 0.3s ease; }
@@ -264,7 +266,7 @@
     <!-- Navigation -->
     <nav>
         <a href="index.html" class="brand-container">
-            <img src="FootprintForge_CircularSeal.jpg" alt="Footprint Forge Logo" class="nav-logo" style="border-radius: 50%;">
+            <img src="FootprintForge_CircularSeal.jpg" alt="Footprint Forge Logo" class="nav-logo">
             <div class="nav-text">
                 <span class="nav-title">Footprint Forge</span>
                 <span class="nav-tagline">Engineering Your Professional Presence</span>
@@ -276,11 +278,10 @@
         </div>
 
         <div class="nav-links">
-            <a href="#why-forge">Why The Forge</a>
+            <a href="#transformation">The Forge</a>
             <a href="#portfolios">Portfolios</a>
             <a href="#pricing">Packages</a>
             <a href="about.html">About</a>
-            <a href="#faq">FAQ</a>
             <a href="mailto:footprintforge@gmail.com?subject=Footprint%20Forge%20Portfolio%20Inquiry">Contact</a>
         </div>
     </nav>
@@ -290,52 +291,43 @@
         <div class="hero-content">
             <span class="category-tag">Professional Identity Infrastructure</span>
             <h1>The Ownership-Based Alternative to Subscription Networking.</h1>
-            <p>Designed specifically for finance, consulting, and tech professionals. A structured digital portfolio system paired with a premium smart networking card. <strong>Control how the world sees you — without paying rent to a platform.</strong></p>
+            <p>Designed for professionals evaluated on metrics, capital, and execution — not aesthetics. A structured digital portfolio system paired with a premium smart networking card.</p>
             <a href="#pricing" class="btn">View Packages (6 Spots Left)</a>
+            <span class="risk-reversal">50% deposit. Remaining balance only after approval.</span>
         </div>
     </section>
 
-    <!-- The Logic Layer (Comparison Table) -->
-    <section id="why-forge" class="comparison-section reveal">
+    <!-- The Logic Layer (Transformation Contrast) -->
+    <section id="transformation" class="comparison-section reveal">
         <div class="comparison-container">
             <div class="comparison-header">
-                <h2>Why We Built The Forge</h2>
-                <p>Professionals pay monthly fees for digital networking tools they don’t actually own. We engineered an ownership-based alternative. Pay once. Own permanently.</p>
+                <h2>The Transformation Contrast</h2>
+                <p>Professionals pay monthly fees for networking tools they don’t actually own. We engineered an ownership-based alternative to shift your positioning from generic to elite.</p>
             </div>
             
             <table class="comparison-table">
                 <thead>
                     <tr>
-                        <th>Feature</th>
-                        <th>Subscription Platforms (SaaS)</th>
-                        <th class="highlight">Footprint Forge Architecture</th>
+                        <th>The Status Quo</th>
+                        <th class="highlight">The Forge Architecture</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Monthly Recurring Fees</td>
-                        <td>Yes ($10 - $20/month)</td>
-                        <td>None (Zero ongoing cost)</td>
+                        <td>A basic LinkedIn link shared via text</td>
+                        <td>A dedicated, structured digital portfolio</td>
                     </tr>
                     <tr>
-                        <td>Digital Ownership</td>
-                        <td>Platform Controlled</td>
-                        <td>100% Client Owned (Static Deployment)</td>
+                        <td>Generic, chronological career bio</td>
+                        <td>Quantified, ROI-driven executive credibility</td>
                     </tr>
                     <tr>
-                        <td>Visual Customization</td>
-                        <td>Limited Basic Templates</td>
-                        <td>Structured, Corporate-Grade Frameworks</td>
+                        <td>Perpetual monthly SaaS networking fees</td>
+                        <td>Permanent ownership (Zero ongoing hosting fees)</td>
                     </tr>
                     <tr>
-                        <td>Smart Hardware Included</td>
-                        <td>Usually Extra ($50+)</td>
-                        <td>Premium PVC/Metal Custom Card Included</td>
-                    </tr>
-                    <tr>
-                        <td>Security & Vulnerabilities</td>
-                        <td>Exposed Backend Databases</td>
-                        <td>Zero Backend (Unhackable Static Infrastructure)</td>
+                        <td>Paper business cards</td>
+                        <td>Premium PVC or Metal tap-to-share Smart Card</td>
                     </tr>
                 </tbody>
             </table>
@@ -345,7 +337,7 @@
     <!-- Templates Section -->
     <section id="portfolios">
         <h2 class="section-title reveal">Digital Portfolios</h2>
-        <div class="section-subtitle reveal">Choose the architecture that aligns with your professional positioning.</div>
+        <div class="section-subtitle reveal">Choose the architecture that aligns with your positioning.</div>
         
         <!-- The Foundational Hub -->
         <div class="card reveal" style="border-top: 4px solid var(--copper); max-width: 900px; margin: 0 auto 50px; text-align: center;">
@@ -377,7 +369,7 @@
     <section class="social-proof-section reveal">
         <div class="comparison-header" style="margin-bottom: 40px;">
             <h2 style="color: var(--white);">Trusted Infrastructure</h2>
-            <p style="color: #A0AAB2;">Deployed for corporate professionals & tech founders across India.</p>
+            <p style="color: #A0AAB2;">Deployed for commercial banking executives in Chennai and scaling fintech founders in Bengaluru.</p>
         </div>
         <div class="social-grid">
             <div class="testimonial-card">
@@ -385,12 +377,12 @@
                 <cite>— Senior Credit Underwriter, Commercial Banking</cite>
             </div>
             <div class="testimonial-card">
-                <p>"I handed my Forge card to a Managing Director and his exact words were 'Who built this for you?'. Instant ROI on the first tap."</p>
-                <cite>— Independent Strategy Consultant</cite>
+                <p>"Deployed for our latest funding round. I handed my Forge card to an investor and his exact words were 'Who built this for you?'. Instant ROI on the first tap."</p>
+                <cite>— Bengaluru-based Fintech Founder</cite>
             </div>
             <div class="testimonial-card">
                 <p>"Fast, static deployment with no backend vulnerabilities. Perfect DNS control. Exactly the architecture I wanted for my personal brand."</p>
-                <cite>— Lead Cloud Architect, FinTech</cite>
+                <cite>— Lead Cloud Architect</cite>
             </div>
         </div>
     </section>
@@ -445,6 +437,11 @@
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSeX1dQnp2KGXTtFTzcAmjDXupIjc46ryTFlJR_HpH6h2tlvlQ/viewform" target="_blank" class="btn btn-outline" style="width: 100%; text-align: center; margin-top: auto;">Deploy Specialist</a>
             </div>
         </div>
+        
+        <!-- Bottom Risk Reversal -->
+        <div class="reveal" style="text-align: center; margin-top: 30px;">
+            <span class="risk-reversal" style="display: inline-block;">Secure your deployment today. 50% deposit. Remaining balance only after approval.</span>
+        </div>
     </section>
 
     <!-- Founder Credibility & FAQ -->
@@ -454,7 +451,6 @@
         <div class="founder-micro reveal">
             <h4>Built by a Commercial Banker for the Modern Executive</h4>
             <p>Yogaprabhu S. combines corporate finance acumen with digital infrastructure expertise to solve a fundamental networking inefficiency: renting your professional identity.</p>
-            <span class="quote">"Don't be sorry. Be Better."</span>
         </div>
 
         <h2 class="section-title reveal">Service Agreements & FAQ</h2>
