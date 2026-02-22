@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | Footprint Forge</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* Engineered Brand Color System */
+        :root {
+            --navy: #0F1B2D;
+            --charcoal: #2B2F33;
+            --copper: #B87333;
+            --bg-light: #F8F9FA;
+            --white: #FFFFFF;
+            --border-color: #E1E5EA;
+            
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--charcoal);
+            font-family: var(--font-sans);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-serif);
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        /* Structural Navigation */
+        nav {
+            background-color: var(--navy);
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--copper);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+
+        .nav-logo {
+            height: 45px;
+            width: auto;
+            display: block;
+        }
+
+        .nav-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-title {
+            color: var(--white);
+            font-family: var(--font-serif);
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+
+        .nav-tagline {
+            color: var(--copper);
+            font-family: var(--font-sans);
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-links a {
+            margin-left: 30px;
+            text-decoration: none;
+            color: var(--white);
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--copper);
+        }
+
+        /* Page Header */
+        header {
+            background-color: var(--white);
+            padding: 100px 5%;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: var(--copper);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        /* Content Architecture */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 80px 5%;
+        }
+
+        .story-block {
+            background: var(--white);
+            padding: 50px;
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--navy);
+            margin-bottom: 40px;
+        }
+
+        .story-block h2 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .story-block h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--copper);
+        }
+
+        .story-block p {
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+            color: #4A5568;
+            font-weight: 300;
+        }
+
+        /* Founder Section */
+        .founder-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 40px;
+            align-items: start;
+            margin-top: 60px;
+            padding-top: 60px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .founder-image-placeholder {
+            width: 100%;
+            aspect-ratio: 1;
+            background-color: var(--charcoal);
+            border: 2px solid var(--copper);
+            padding: 4px;
+            border-radius: 2px;
+        }
+
+        .founder-image-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: var(--navy);
+        }
+
+        .founder-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .founder-content .title {
+            color: var(--copper);
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .quote-block {
+            border-left: 3px solid var(--copper);
+            padding-left: 20px;
+            margin: 30px 0;
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            color: var(--navy);
+            font-style: italic;
+        }
+
+        /* CTA */
+        .cta-section {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--copper);
+            color: var(--white);
+            padding: 14px 36px;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--navy);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--navy);
+            color: #A0AAB2;
+            text-align: center;
+            padding: 40px 5%;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .founder-grid { grid-template-columns: 1fr; }
+            .nav-links, .nav-tagline { display: none; }
+            header h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="brand-container">
+            <img src="FootprintForge_Master.jpg" alt="Footprint Forge Logo" class="nav-logo">
+            <div class="nav-text">
+                <span class="nav-title">Footprint Forge</span>
+                <span class="nav-tagline">Engineering Your Professional Presence</span>
+            </div>
+        </a>
+        <div class="nav-links">
+            <a href="index.html#architecture">Architecture</a>
+            <a href="index.html#pricing">Acquisition</a>
+            <a href="about.html">About</a>
+            <a href="mailto:Footprintforge@gmail.com">Contact</a>
+        </div>
+    </nav>
+
+    <header>
+        <h1>The Architecture of Identity</h1>
+        <p>Forged for the Modern Executive</p>
+    </header>
+
+    <div class="container">
+        <div class="story-block">
+            <h2>The Problem with Paper</h2>
+            <p>For decades, the standard for professional introduction has been the paper business card—a static, inefficient tool that inevitably ends up in a desk drawer or the trash. Conversely, the alternative—building and maintaining a custom personal website—often requires navigating bloated CMS platforms, paying perpetual monthly hosting fees, and wrestling with design templates.</p>
+            <p>Corporate leaders, consultants, and tech specialists need a streamlined way to present complex career data, case studies, and quantifiable metrics at a moment's notice. They need a system that acts as an authoritative extension of their professional identity.</p>
+            <p>Footprint Forge was established to bridge this exact gap.</p>
+        </div>
+
+        <div class="story-block" style="border-top-color: var(--copper);">
+            <h2>Our Architectural Philosophy</h2>
+            <p>We do not believe in recurring subscriptions for static data. We engineer zero-overhead, highly optimized digital portfolios deployed on robust, open-source infrastructure. We then forge a bespoke physical asset—a premium PVC, wood, or metal smart card—that triggers your digital footprint with a single scan.</p>
+            <p>By treating personal branding as a structural engineering problem rather than a design exercise, we deliver investment-grade digital presence designed strictly for utility, speed, and executive authority.</p>
+        </div>
+
+        <div class="founder-grid">
+            <div class="founder-image-placeholder">
+                <img src="founder-headshot.jpg" alt="Yogaprabhu S.">
+            </div>
+            <div class="founder-content">
+                <h3>Yogaprabhu S.</h3>
+                <span class="title">Founder & Lead Architect</span>
+                <p>Operating at the intersection of corporate finance and digital infrastructure, Yogaprabhu founded Footprint Forge to solve a fundamental inefficiency in professional networking.</p>
+                <p>As a Commercial Banker and Credit Underwriter, he understands that in high-level business environments, the presentation of data is just as critical as the data itself. A messy PDF resume or a generic LinkedIn profile fails to communicate authority. Combining an accounting background with a deep expertise in tech macro-infrastructure, he designed a modular system that allows professionals to command their digital narrative.</p>
+                
+                <div class="quote-block">
+                    "Don't be sorry. Be Better."
+                </div>
+                
+                <p>This core philosophy drives the Forge. It is a commitment to continuous optimization, stripping away obsolete tools, and building superior systems for the modern corporate landscape.</p>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <a href="index.html#pricing" class="btn">Deploy Your Architecture</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Footprint Forge. Engineering Your Professional Presence. | Founded by Yogaprabhu S.</p>
+    </footer>
+
+</body>
+</html>
