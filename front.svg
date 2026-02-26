@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1087 709" width="92mm" height="60mm">
+  <!-- 300 DPI Standard CR80 Card with 92x60mm Bleed -->
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&amp;display=swap');
+      .brand-text {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 300;
+        fill: #c27e42;
+        font-size: 38px;
+        letter-spacing: 22px;
+      }
+    </style>
+  </defs>
+
+  <!-- Matte Black PVC Background -->
+  <rect width="1087" height="709" fill="#111111"/>
+
+  <!-- Logo Placement -->
+  <!-- Note for Printer: Ensure 'FootprintForge_CircularSeal.jpg' is in the exact same folder as this SVG, or embed the image directly before printing. -->
+  <image href="FootprintForge_CircularSeal.jpg" x="353" y="124" width="380" height="380" />
+
+  <!-- Brand Name -->
+  <text x="554.5" y="600" text-anchor="middle" class="brand-text">FOOTPRINT FORGE</text>
+</svg>
