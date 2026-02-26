@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1087 709" width="92mm" height="60mm">
+  <!-- 300 DPI Standard CR80 Card with 92x60mm Bleed -->
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&amp;display=swap');
+      .tagline {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 300;
+        fill: #c27e42;
+        font-size: 44px;
+        letter-spacing: 6px;
+      }
+      .cta {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 400;
+        fill: #a8907b;
+        font-size: 20px;
+        letter-spacing: 4px;
+        opacity: 0.8;
+      }
+    </style>
+  </defs>
+
+  <!-- Matte Black PVC Background -->
+  <rect width="1087" height="709" fill="#111111"/>
+
+  <!-- Tagline -->
+  <text x="110" y="174" class="tagline">YOUR REPUTATION</text>
+  <text x="110" y="239" class="tagline">DESERVES</text>
+  <text x="110" y="304" class="tagline">INFRASTRUCTURE.</text>
+
+  <!-- Call to Action -->
+  <text x="110" y="559" class="cta">SCAN TO BUILD YOUR</text>
+  <text x="110" y="594" class="cta">PREMIUM DIGITAL IDENTITY.</text>
+
+  <!-- QR Code Border for Premium Feel -->
+  <rect x="707" y="214.5" width="280" height="280" fill="none" stroke="#c27e42" stroke-width="2" stroke-opacity="0.3" rx="8" />
+
+  <!-- QR Code Image -->
+  <image href="https://api.qrserver.com/v1/create-qr-code/?size=300x300&amp;data=https://footprintforge-hq.github.io&amp;color=c27e42&amp;bgcolor=111111&amp;margin=0" x="717" y="224.5" width="260" height="260" />
+</svg>
