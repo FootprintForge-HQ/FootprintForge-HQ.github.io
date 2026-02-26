@@ -1,530 +1,925 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Footprint Forge | Premium Digital Portfolios & Smart Cards</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Footprint Forge | Identity Infrastructure</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel for parsing JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background-color: #0a0f1c; /* Prevents white flash before Tailwind loads */
+    }
     
-    <!-- Premium Font Imports -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <style>
-        /* Engineered Brand Color System */
-        :root {
-            --navy: #0F1B2D;
-            --navy-alpha: rgba(15, 27, 45, 0.95);
-            --charcoal: #2B2F33;
-            --copper: #B87333;
-            --copper-hover: #9c602a;
-            --bg-light: #F8F9FA;
-            --white: #FFFFFF;
-            
-            --font-serif: 'Playfair Display', serif;
-            --font-sans: 'Inter', sans-serif;
-            
-            --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.05);
-            --shadow-hover: 0 10px 30px rgba(15, 27, 45, 0.15);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
-
-        body {
-            background-color: var(--bg-light);
-            color: var(--charcoal);
-            font-family: var(--font-sans);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-
-        h1, h2, h3, h4, .serif-text { font-family: var(--font-serif); font-weight: 600; }
-
-        /* Smooth Reveal Animation Classes */
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-        .delay-1 { transition-delay: 0.1s; }
-        .delay-2 { transition-delay: 0.2s; }
-        .delay-3 { transition-delay: 0.3s; }
-
-        /* Scarcity Launch Banner */
-        .launch-banner {
-            background-color: var(--charcoal);
-            color: var(--white);
-            text-align: center;
-            padding: 12px 5%;
-            font-size: 0.8rem;
-            font-weight: 500;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            border-bottom: 1px solid var(--copper);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        
-        .pulse-dot {
-            height: 8px; width: 8px; background-color: var(--copper); border-radius: 50%;
-            display: inline-block; animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(184, 115, 51, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(184, 115, 51, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(184, 115, 51, 0); }
-        }
-
-        /* Frosted Glass Navigation */
-        nav {
-            background-color: var(--navy-alpha); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            padding: 20px 5%; display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 1000; transition: padding 0.3s ease;
-        }
-
-        .brand-container { display: flex; align-items: center; gap: 15px; text-decoration: none; }
-        .nav-logo { height: 45px; width: auto; display: block; border-radius: 50%; transition: transform 0.3s ease; }
-        .brand-container:hover .nav-logo { transform: scale(1.05); }
-        .nav-text { display: flex; flex-direction: column; }
-        .nav-title { color: var(--white); font-family: var(--font-serif); font-size: 1.4rem; letter-spacing: 2px; text-transform: uppercase; line-height: 1.1; }
-        .nav-tagline { color: var(--copper); font-family: var(--font-sans); font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; }
-
-        .nav-links { display: flex; align-items: center; }
-        .nav-links a {
-            margin-left: 35px; text-decoration: none; color: rgba(255, 255, 255, 0.8);
-            font-size: 0.85rem; font-weight: 500; letter-spacing: 1px; text-transform: uppercase;
-            transition: all 0.3s ease; position: relative;
-        }
-        .nav-links a::after { content: ''; position: absolute; width: 0; height: 1px; bottom: -4px; left: 0; background-color: var(--copper); transition: width 0.3s ease; }
-        .nav-links a:hover { color: var(--white); }
-        .nav-links a:hover::after { width: 100%; }
-
-        .menu-toggle { display: none; }
-
-        /* Hero Section */
-        .hero {
-            background-color: var(--navy); color: var(--white);
-            padding: 100px 5% 120px; text-align: center; position: relative; overflow: hidden;
-        }
-        .hero::before {
-            content: ''; position: absolute; top: -50%; left: 50%; transform: translateX(-50%);
-            width: 100%; max-width: 800px; height: 800px;
-            background: radial-gradient(circle, rgba(184, 115, 51, 0.05) 0%, rgba(15, 27, 45, 0) 70%); z-index: 0; pointer-events: none;
-        }
-        .hero-content { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
-        
-        .category-tag {
-            display: inline-block; padding: 8px 16px; border: 1px solid rgba(184, 115, 51, 0.5);
-            color: var(--copper); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;
-            border-radius: 50px; margin-bottom: 30px; font-weight: 600;
-        }
-
-        .hero h1 { font-size: 4.2rem; margin-bottom: 24px; color: var(--white); letter-spacing: -1px; line-height: 1.1; }
-        .hero p { font-size: 1.25rem; color: #A0AAB2; max-width: 750px; margin: 0 auto 40px; font-weight: 300; line-height: 1.8; }
-        .hero p strong { color: var(--white); font-weight: 500; }
-
-        .btn {
-            display: inline-block; background-color: var(--copper); color: var(--white);
-            padding: 16px 40px; text-decoration: none; font-family: var(--font-sans);
-            font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
-            border-radius: 2px; border: 1px solid var(--copper); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative; overflow: hidden; cursor: pointer;
-        }
-        .btn:hover { background-color: var(--white); color: var(--navy); border-color: var(--white); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(184, 115, 51, 0.2); }
-        
-        .risk-reversal {
-            display: block; font-size: 0.85rem; color: #8B9BB4; margin-top: 15px; font-weight: 400; letter-spacing: 0.5px;
-        }
-
-        /* Transformation Contrast Section */
-        .comparison-section { padding: 100px 5%; background-color: var(--white); border-bottom: 1px solid var(--border-color); }
-        .comparison-container { max-width: 1000px; margin: 0 auto; }
-        .comparison-header { text-align: center; margin-bottom: 50px; }
-        .comparison-header h2 { font-size: 2.5rem; color: var(--navy); margin-bottom: 15px; letter-spacing: -0.5px; }
-        .comparison-header p { color: #5A6575; font-size: 1.1rem; max-width: 700px; margin: 0 auto; }
-        
-        .comparison-table { width: 100%; border-collapse: collapse; background: var(--white); box-shadow: var(--shadow-subtle); border-radius: 4px; overflow: hidden; border: 1px solid #E1E5EA; }
-        .comparison-table th, .comparison-table td { padding: 22px; text-align: left; border-bottom: 1px solid #E1E5EA; font-size: 1rem;}
-        .comparison-table th { background-color: var(--navy); color: var(--white); font-family: var(--font-sans); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem;}
-        .comparison-table th.highlight { background-color: var(--copper); }
-        .comparison-table tr:last-child td { border-bottom: none; }
-        .comparison-table td:first-child { color: #5A6575; font-weight: 400; }
-        .comparison-table td:nth-child(2) { color: var(--navy); font-weight: 600; background-color: rgba(184, 115, 51, 0.05); }
-
-        /* Shared Section Layout */
-        section { padding: 100px 5%; max-width: 1200px; margin: 0 auto; }
-        .section-title { text-align: center; font-size: 2.8rem; color: var(--navy); margin-bottom: 10px; letter-spacing: -0.5px; }
-        .section-subtitle { text-align: center; color: var(--copper); font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 3px; font-size: 0.85rem; margin-bottom: 60px; font-weight: 600; }
-        
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
-
-        /* Structural Cards */
-        .card {
-            background: var(--white); padding: 50px 40px; border: 1px solid #E1E5EA;
-            border-top: 4px solid var(--navy); border-radius: 4px; box-shadow: var(--shadow-subtle);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .card:hover { transform: translateY(-8px); border-top-color: var(--copper); box-shadow: var(--shadow-hover); }
-        .card h3 { color: var(--navy); margin-bottom: 15px; font-size: 1.6rem; }
-        .card p { color: #5A6575; font-weight: 300; line-height: 1.7; }
-        
-        .card-link {
-            display: inline-flex; align-items: center; margin-top: 25px; color: var(--copper);
-            text-decoration: none; font-weight: 600; font-size: 0.85rem; text-transform: uppercase;
-            letter-spacing: 1.5px; transition: gap 0.3s ease; gap: 5px;
-        }
-        .card-link::after { content: '→'; transition: transform 0.3s ease; }
-        .card-link:hover { gap: 10px; }
-
-        /* Social Proof Grid */
-        .social-proof-section { background-color: var(--navy); padding: 100px 5%; color: var(--white); }
-        .social-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
-        .testimonial-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 40px; border-radius: 4px; border-top: 2px solid var(--copper); }
-        .testimonial-card p { font-family: var(--font-serif); font-size: 1.15rem; color: var(--white); line-height: 1.6; font-style: italic; margin-bottom: 20px; }
-        .testimonial-card cite { display: block; font-family: var(--font-sans); font-size: 0.8rem; color: #A0AAB2; font-style: normal; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* Pricing Architecture */
-        .pricing-tier { border-top: 4px solid var(--charcoal); display: flex; flex-direction: column; }
-        .pricing-tier.featured { border-top: 4px solid var(--copper); background-color: var(--navy); color: var(--white); transform: scale(1.02); }
-        .pricing-tier.featured:hover { transform: scale(1.02) translateY(-8px); }
-        .pricing-tier.featured h3, .pricing-tier.featured .price, .pricing-tier.featured p, .pricing-tier.featured ul li { color: var(--white); }
-
-        .price { font-family: var(--font-serif); font-size: 3.2rem; color: var(--navy); margin: 5px 0 20px; border-bottom: 1px solid #E1E5EA; padding-bottom: 25px; line-height: 1; }
-        .pricing-tier.featured .price { border-bottom-color: rgba(255,255,255,0.1); }
-        .pricing-tier ul { list-style: none; margin-bottom: 40px; flex-grow: 1; }
-        .pricing-tier ul li { margin-bottom: 18px; padding-left: 30px; position: relative; font-size: 0.95rem; color: #4A5568; }
-        .pricing-tier ul li::before { content: "▪"; color: var(--copper); position: absolute; left: 0; font-size: 1.2rem; line-height: 1; }
-
-        .btn-outline { background-color: transparent; color: var(--navy); border: 1px solid var(--navy); }
-        .btn-outline:hover { background-color: var(--navy); color: var(--white); }
-        .pricing-tier.featured .btn { background-color: var(--copper); color: var(--white); border-color: var(--copper); }
-        .pricing-tier.featured .btn:hover { background-color: var(--white); color: var(--navy); }
-
-        /* Founder Credibility Section */
-        .founder-micro { max-width: 800px; margin: 0 auto 80px; text-align: center; padding: 40px; border: 1px solid #E1E5EA; background: var(--white); border-radius: 4px; box-shadow: var(--shadow-subtle);}
-        .founder-micro h4 { font-size: 1.2rem; color: var(--navy); margin-bottom: 10px; font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 1px;}
-        .founder-micro p { color: #5A6575; font-size: 1rem; line-height: 1.7; }
-
-        /* Expandable Terms */
-        details { background: var(--white); border: 1px solid #E1E5EA; border-radius: 4px; margin-bottom: 10px; overflow: hidden; transition: all 0.3s ease; }
-        summary { padding: 20px; font-weight: 600; color: var(--navy); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
-        summary::-webkit-details-marker { display: none; }
-        summary::after { content: '+'; color: var(--copper); font-size: 1.5rem; line-height: 1; transition: transform 0.3s ease; }
-        details[open] summary::after { content: '-'; }
-        details p { padding: 0 20px 20px; color: #5A6575; font-size: 0.95rem; line-height: 1.7; }
-
-        /* Footer */
-        footer { background-color: var(--navy); color: #8B9BB4; text-align: center; padding: 50px 5%; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; letter-spacing: 0.5px; }
-
-        /* Responsive */
-        @media (max-width: 850px) {
-            .nav-tagline { display: none; }
-            .menu-toggle { display: flex; flex-direction: column; gap: 5px; cursor: pointer; z-index: 1001; }
-            .menu-toggle span { display: block; width: 26px; height: 2px; background-color: var(--white); transition: all 0.3s ease; border-radius: 2px; }
-            .menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-            .menu-toggle.active span:nth-child(2) { opacity: 0; }
-            .menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-            .nav-links {
-                position: absolute; top: 100%; left: 0; width: 100%; background-color: var(--navy-alpha);
-                backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); flex-direction: column;
-                padding: 30px 5%; gap: 20px; border-bottom: 1px solid rgba(184, 115, 51, 0.3);
-                clip-path: circle(0px at top right); transition: clip-path 0.5s ease-out; opacity: 0; pointer-events: none;
-            }
-            .nav-links.active { clip-path: circle(150% at top right); opacity: 1; pointer-events: all; }
-            .nav-links a { margin: 0; font-size: 1.2rem; padding: 10px 0; }
-
-            .hero { padding: 80px 5% 70px; }
-            .hero h1 { font-size: 2.8rem; letter-spacing: -0.5px; margin-bottom: 15px; }
-            .hero p { font-size: 1.05rem; margin-bottom: 35px; }
-            
-            .comparison-table { display: block; overflow-x: auto; white-space: nowrap; }
-            
-            section { padding: 70px 5%; }
-            .section-title { font-size: 2.2rem; }
-            .section-subtitle { margin-bottom: 40px; }
-            .card { padding: 35px 25px; }
-            .grid-3 { grid-template-columns: 1fr; gap: 30px; }
-            .price { font-size: 2.6rem; }
-            .pricing-tier.featured { transform: scale(1); }
-            .pricing-tier.featured:hover { transform: translateY(-5px); }
-        }
-    </style>
+    /* Custom Scrollbar for Mockup to keep it clean */
+    .mockup-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+    .mockup-scroll::-webkit-scrollbar-track {
+      background: #0B1F3A; 
+    }
+    .mockup-scroll::-webkit-scrollbar-thumb {
+      background: #1F3558; 
+      border-radius: 4px;
+    }
+    .mockup-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: #1F3558 #0B1F3A;
+    }
+    
+    @keyframes fadeInMockup {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-mockup-in {
+      animation: fadeInMockup 0.2s ease-out forwards;
+    }
+  </style>
 </head>
 <body>
+  <div id="root"></div>
 
-    <!-- Scarcity Urgency Banner -->
-    <div class="launch-banner">
-        <span>Launch Offer: 4 of 10 Spots Secured</span>
-        <span style="color: var(--copper); font-weight: 700; display: flex; align-items: center; gap: 8px;">
-            <div class="pulse-dot"></div> Now Accepting Orders
-        </span>
-    </div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
 
-    <!-- Navigation -->
-    <nav>
-        <a href="index.html" class="brand-container">
-            <img src="FootprintForge_CircularSeal.jpg" alt="Footprint Forge Logo" class="nav-logo">
-            <div class="nav-text">
-                <span class="nav-title">Footprint Forge</span>
-                <span class="nav-tagline">Engineering Your Professional Presence</span>
+    function App() {
+      const [isScrolled, setIsScrolled] = useState(false);
+      const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+      const [activeMockup, setActiveMockup] = useState(null);
+
+      // Shrink navbar on scroll
+      useEffect(() => {
+        const handleScroll = () => {
+          setIsScrolled(window.scrollY > 50);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+
+      // Lock body scroll when mockup modal is open
+      useEffect(() => {
+        if (activeMockup) {
+          document.body.style.overflow = 'hidden';
+        } else {
+          document.body.style.overflow = 'unset';
+        }
+        return () => { document.body.style.overflow = 'unset'; };
+      }, [activeMockup]);
+
+      const scrollToSection = (id) => {
+        setIsMobileMenuOpen(false);
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      };
+
+      const renderMockupContent = () => {
+        // Shared Header Component Function
+        const renderHeader = (initials, name, roleLabel, location) => (
+          <div className="pt-12 px-6">
+            <div className="w-14 h-14 bg-[#132A4F] text-[#EAEAEA] flex items-center justify-center text-xl font-bold mb-6 border border-[#1F3558] rounded-sm">
+              {initials}
             </div>
-        </a>
-        
-        <div class="menu-toggle" id="mobile-menu">
-            <span></span><span></span><span></span>
-        </div>
-
-        <div class="nav-links">
-            <a href="#transformation">The Forge</a>
-            <a href="#portfolios">Designs</a>
-            <a href="#pricing">Packages</a>
-            <a href="about.html">About</a>
-            <a href="mailto:footprintforge@gmail.com?subject=Footprint%20Forge%20Portfolio%20Inquiry">Contact</a>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero reveal">
-        <div class="hero-content">
-            <span class="category-tag">Digital Portfolios & Smart Cards</span>
-            <h1>Own Your Digital Presence. Zero Monthly Fees.</h1>
-            <p>A premium digital portfolio and tap-to-share smart card built for ambitious professionals. <strong>Stand out in any meeting without paying monthly subscription fees.</strong></p>
-            <a href="#pricing" class="btn">View Pricing</a>
-            <span class="risk-reversal">Pay 50% to start. Pay the rest only when you love the final result.</span>
-        </div>
-    </section>
-
-    <!-- The Logic Layer (Transformation Contrast) -->
-    <section id="transformation" class="comparison-section reveal">
-        <div class="comparison-container">
-            <div class="comparison-header">
-                <h2>The Old Way vs. The Forge</h2>
-                <p>Stop paying monthly rent for basic networking tools. We build you a premium digital portfolio that you own forever.</p>
+            <h1 className={`font-bold text-[#EAEAEA] tracking-tight ${activeMockup === 'strategist' ? 'text-4xl' : 'text-[28px] leading-tight'}`}>
+              {name}
+            </h1>
+            <div className="mt-2 text-[#9CA3AF] text-[15px]">{roleLabel}</div>
+            <p className="text-[#9CA3AF] text-xs mt-1 tracking-wide">{location}</p>
+            <div className="w-full h-[2px] bg-[#B87433] mt-5 mb-6"></div>
+            <div className="flex gap-3">
+              <button className="flex-1 bg-[#B87433] hover:bg-[#9a6029] transition-colors text-[#EAEAEA] text-sm font-bold py-2.5 rounded-[6px]">Connect</button>
+              <button className="flex-1 border border-[#B87433] hover:bg-[#B87433]/10 transition-colors text-[#B87433] text-sm font-bold py-2.5 rounded-[6px]">LinkedIn</button>
             </div>
-            
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>The Old Way</th>
-                        <th class="highlight">The Footprint Forge Way</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>A boring text message link</td>
-                        <td>A dedicated, professional website</td>
-                    </tr>
-                    <tr>
-                        <td>Standard resume text</td>
-                        <td>A visual, numbers-driven portfolio</td>
-                    </tr>
-                    <tr>
-                        <td>Paying $10-$20 every single month</td>
-                        <td>One-time payment (No hidden fees)</td>
-                    </tr>
-                    <tr>
-                        <td>Paper business cards that get lost</td>
-                        <td>A premium metal or PVC tap-to-share card</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+          </div>
+        );
 
-    <!-- Templates Section -->
-    <section id="portfolios">
-        <h2 class="section-title reveal">Choose Your Design</h2>
-        <div class="section-subtitle reveal">Pick the layout that best fits your career.</div>
-        
-        <!-- The Foundational Hub -->
-        <div class="card reveal" style="border-top: 4px solid var(--copper); max-width: 900px; margin: 0 auto 50px; text-align: center;">
-            <h3 style="color: var(--copper);">The Digital Contact Hub</h3>
-            <p style="max-width: 700px; margin: 0 auto;">The foundation of every package. A sleek page that loads on someone's phone the second your smart card is tapped. Includes a one-click 'Save Contact' button, your professional links, and a gateway to your full website.</p>
-            <a href="hub-demo.html" target="_blank" class="card-link">View Hub Demo</a>
-        </div>
+        if (activeMockup === 'banker') {
+          return (
+            <div className="flex flex-col bg-[#0B1F3A] min-h-full font-sans animate-mockup-in">
+              {renderHeader("AC", "Alexander Chen", "Director, Commercial Banking", "Chennai, Tamil Nadu")}
+              
+              <div className="px-6 flex flex-col gap-[80px] pt-4 pb-16">
+                {/* Section 1 — Authority Snapshot */}
+                <div className="grid grid-cols-2 gap-y-10 gap-x-4">
+                  <div>
+                    <div className="text-3xl font-bold text-[#B87433]">₹120Cr+</div>
+                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">Loan Portfolio</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-[#B87433]">14</div>
+                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">Active Deals</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-[#B87433]">0.2%</div>
+                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">NPA Ratio</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-[#B87433]">12</div>
+                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">Years Exp</div>
+                  </div>
+                </div>
 
-        <div class="grid-3">
-            <div class="card reveal delay-1">
-                <h3>The Executive</h3>
-                <p>A clean, data-focused layout for corporate leaders. Best for showing clear career growth and big wins.</p>
-                <a href="executive-demo.html" target="_blank" class="card-link">View Live Demo</a>
+                {/* Section 2 — Core Competencies */}
+                <div className="border-l-[3px] border-[#B87433] pl-5 flex flex-col gap-4">
+                  <div className="text-[#EAEAEA] font-medium tracking-wide">Working Capital Structuring</div>
+                  <div className="text-[#EAEAEA] font-medium tracking-wide">Credit Risk Evaluation</div>
+                  <div className="text-[#EAEAEA] font-medium tracking-wide">SME Financing</div>
+                  <div className="text-[#EAEAEA] font-medium tracking-wide">Cash Flow Advisory</div>
+                </div>
+
+                {/* Section 3 — Experience Timeline */}
+                <div className="border-l border-[#1F3558] pl-6 relative space-y-12 ml-2">
+                  <div className="relative">
+                    <div className="absolute -left-[29px] top-1.5 w-[9px] h-[9px] rounded-full bg-[#1F3558]"></div>
+                    <h3 className="text-[#EAEAEA] font-bold text-lg">Standard Chartered</h3>
+                    <p className="text-[#9CA3AF] text-sm mt-1">Director, Commercial Banking | 2019–Present</p>
+                    <ul className="mt-4 text-[#9CA3AF] text-[13px] leading-relaxed space-y-2 list-disc pl-4 marker:text-[#1F3558]">
+                      <li>Managed ₹50Cr+ syndication for manufacturing client.</li>
+                      <li>Restructured SME credit lines improving yield by 12%.</li>
+                    </ul>
+                  </div>
+                  <div className="relative">
+                    <div className="absolute -left-[29px] top-1.5 w-[9px] h-[9px] rounded-full bg-[#1F3558]"></div>
+                    <h3 className="text-[#EAEAEA] font-bold text-lg">HDFC Bank</h3>
+                    <p className="text-[#9CA3AF] text-sm mt-1">Relationship Manager | 2015–2019</p>
+                    <ul className="mt-4 text-[#9CA3AF] text-[13px] leading-relaxed space-y-2 list-disc pl-4 marker:text-[#1F3558]">
+                      <li>Scaled mid-market portfolio across Tamil Nadu.</li>
+                      <li>Awarded top performer in working capital facilities.</li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Section 4 — Contact */}
+                <div>
+                  <button className="w-full bg-[#B87433] hover:bg-[#9a6029] transition-colors text-[#EAEAEA] font-bold py-3.5 rounded-[6px] text-sm tracking-wide">
+                    Discuss Structured Lending
+                  </button>
+                  <p className="text-center text-[#9CA3AF] text-xs mt-4 tracking-wide">alexander.c@institutional.com</p>
+                </div>
+              </div>
             </div>
-            <div class="card reveal delay-2">
-                <h3>The Consultant</h3>
-                <p>A highly visual layout for consultants and freelancers. Best for showing off case studies and client results.</p>
-                <a href="consultant-demo.html" target="_blank" class="card-link">View Live Demo</a>
+          );
+        }
+
+        if (activeMockup === 'analyst') {
+          return (
+            <div className="flex flex-col bg-[#0B1F3A] min-h-full font-sans animate-mockup-in">
+              {renderHeader("SJ", "Sarah Jenkins", <span>Investment Analyst | <span className="text-[#B87433] font-medium">Sector Focus: Industrials</span></span>, "Mumbai, Maharashtra")}
+              
+              <div className="px-6 flex flex-col gap-[80px] pt-4 pb-16">
+                {/* Section 2 — Analytical Metrics */}
+                <div className="grid grid-cols-2 gap-y-10 gap-x-4">
+                  <div>
+                    <div className="text-3xl font-bold text-[#B87433]">25+</div>
+                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">Models Built</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-[#B87433]">12</div>
+                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">Published Notes</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-[#B87433]">₹300Cr</div>
+                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">Deal Value</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-[#B87433] mt-1">Level II</div>
+                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">CFA Candidate</div>
+                  </div>
+                </div>
+
+                {/* Section 3 — Featured Research */}
+                <div className="space-y-6">
+                  <div className="bg-[#132A4F] border border-[#1F3558] p-6 rounded-[4px]">
+                    <h3 className="text-[#EAEAEA] font-bold text-base leading-snug">Q3 Industrial Automation Outlook</h3>
+                    <p className="text-[#9CA3AF] text-[13px] leading-relaxed mt-3">Comprehensive analysis of supply chain interventions and capex cycles in South India's manufacturing belt.</p>
+                    <div className="text-[#B87433] text-sm font-bold mt-5 tracking-wide flex items-center gap-2 cursor-pointer">
+                      Read Summary <i className="fa-solid fa-arrow-right text-xs"></i>
+                    </div>
+                  </div>
+                  <div className="bg-[#132A4F] border border-[#1F3558] p-6 rounded-[4px]">
+                    <h3 className="text-[#EAEAEA] font-bold text-base leading-snug">Emerging Tech Infrastructure</h3>
+                    <p className="text-[#9CA3AF] text-[13px] leading-relaxed mt-3">Evaluating valuation multiples for mid-cap data center operators post-2024 policy shifts.</p>
+                    <div className="text-[#B87433] text-sm font-bold mt-5 tracking-wide flex items-center gap-2 cursor-pointer">
+                      Read Summary <i className="fa-solid fa-arrow-right text-xs"></i>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 4 — Contact CTA */}
+                <div>
+                  <button className="w-full bg-[#B87433] hover:bg-[#9a6029] transition-colors text-[#EAEAEA] font-bold py-3.5 rounded-[6px] text-sm tracking-wide">
+                    Discuss an Investment Mandate
+                  </button>
+                  <p className="text-center text-[#9CA3AF] text-xs mt-4 tracking-wide">s.jenkins@institutional.com</p>
+                </div>
+              </div>
             </div>
-            <div class="card reveal delay-3">
-                <h3>The Developer</h3>
-                <p>A sleek, dark-mode design inspired by coding terminals. Perfect for tech, IT, and software professionals.</p>
-                <a href="developer-demo.html" target="_blank" class="card-link">View Live Demo</a>
+          );
+        }
+
+        if (activeMockup === 'consultant') {
+          return (
+            <div className="flex flex-col bg-[#0B1F3A] min-h-full font-sans animate-mockup-in">
+              {renderHeader("MT", "Marcus Thorne", "Enterprise Systems Consultant", "Bengaluru, Karnataka")}
+              
+              <div className="px-6 flex flex-col gap-[80px] pt-4 pb-16">
+                {/* Section 1 — Systems Expertise */}
+                <div>
+                   <div className="text-[#EAEAEA] font-bold tracking-widest uppercase text-sm mb-3">Core Stack</div>
+                   <div className="text-[#B87433] text-lg font-medium tracking-wide">SAP | ERP | Automation</div>
+                   <div className="w-12 h-[2px] bg-[#B87433] mt-5"></div>
+                </div>
+
+                {/* Section 2 — Measurable Impact */}
+                <div className="space-y-6">
+                  <div className="bg-[#132A4F] border-l-[4px] border-[#B87433] p-6">
+                    <div className="flex flex-col gap-2 border-b border-[#1F3558] pb-4 mb-4">
+                      <div className="text-[#9CA3AF] text-[13px]"><strong className="text-[#EAEAEA] font-medium">Problem:</strong> Legacy reporting lags.</div>
+                      <div className="text-[#9CA3AF] text-[13px]"><strong className="text-[#EAEAEA] font-medium">Intervention:</strong> Cloud ERP migration.</div>
+                    </div>
+                    <div className="text-[#B87433] font-bold text-sm leading-snug">
+                      Reduced reporting cycle from 14 days → 3 days.
+                    </div>
+                  </div>
+                  
+                  <div className="bg-[#132A4F] border-l-[4px] border-[#B87433] p-6">
+                    <div className="flex flex-col gap-2 border-b border-[#1F3558] pb-4 mb-4">
+                      <div className="text-[#9CA3AF] text-[13px]"><strong className="text-[#EAEAEA] font-medium">Problem:</strong> High procurement leakage.</div>
+                      <div className="text-[#9CA3AF] text-[13px]"><strong className="text-[#EAEAEA] font-medium">Intervention:</strong> Automated vendor matching.</div>
+                    </div>
+                    <div className="text-[#B87433] font-bold text-sm leading-snug">
+                      Recovered ₹18Cr in annual operational leakage.
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 3 — Certifications */}
+                <div>
+                  <h3 className="text-[#EAEAEA] font-bold text-sm uppercase tracking-widest mb-6 border-b border-[#1F3558] pb-3">Certifications</h3>
+                  <div className="flex flex-wrap gap-3">
+                    <div className="border border-[#B87433] text-[#EAEAEA] px-4 py-2 rounded-[4px] text-xs font-bold tracking-wide">SAP Certified</div>
+                    <div className="border border-[#B87433] text-[#EAEAEA] px-4 py-2 rounded-[4px] text-xs font-bold tracking-wide">Lean Six Sigma</div>
+                    <div className="border border-[#B87433] text-[#EAEAEA] px-4 py-2 rounded-[4px] text-xs font-bold tracking-wide">AWS Practitioner</div>
+                  </div>
+                </div>
+
+                {/* Section 4 — CTA */}
+                <div>
+                  <button className="w-full bg-[#B87433] hover:bg-[#9a6029] transition-colors text-[#EAEAEA] font-bold py-3.5 rounded-[6px] text-sm tracking-wide">
+                    Initiate Enterprise Consultation
+                  </button>
+                  <p className="text-center text-[#9CA3AF] text-xs mt-4 tracking-wide">marcus.t@institutional.com</p>
+                </div>
+              </div>
             </div>
+          );
+        }
+
+        if (activeMockup === 'strategist') {
+          return (
+            <div className="flex flex-col bg-[#0B1F3A] min-h-full font-sans animate-mockup-in">
+              {renderHeader("PS", "Priya Sharma", "Corporate Strategy & Expansion Advisory", "Chennai, Tamil Nadu")}
+              
+              <div className="px-6 flex flex-col gap-[96px] pt-4 pb-16">
+                {/* Section 2 — Strategic Impact Metrics */}
+                <div className="space-y-12">
+                  <div>
+                    <div className="text-5xl font-bold text-[#B87433] tracking-tighter">4</div>
+                    <div className="text-[11px] text-[#9CA3AF] mt-3 uppercase tracking-[0.2em] font-bold">Market Entries Led</div>
+                  </div>
+                  <div>
+                    <div className="text-5xl font-bold text-[#B87433] tracking-tighter">3x</div>
+                    <div className="text-[11px] text-[#9CA3AF] mt-3 uppercase tracking-[0.2em] font-bold">Revenue Growth</div>
+                  </div>
+                  <div>
+                    <div className="text-5xl font-bold text-[#B87433] tracking-tighter">2</div>
+                    <div className="text-[11px] text-[#9CA3AF] mt-3 uppercase tracking-[0.2em] font-bold">IPO-Ready Roadmaps</div>
+                  </div>
+                </div>
+
+                {/* Section 3 — Strategic Projects */}
+                <div className="flex flex-col">
+                  <h3 className="text-[#EAEAEA] font-bold text-sm uppercase tracking-widest mb-6">Key Engagements</h3>
+                  
+                  <div className="border-t border-[#1F3558] py-8">
+                    <h4 className="text-[#EAEAEA] text-lg font-bold mb-4">South India Retail Expansion</h4>
+                    <p className="text-[#9CA3AF] text-[13px] leading-relaxed mb-2"><strong className="text-[#EAEAEA] font-medium">Context:</strong> Stagnant regional growth.</p>
+                    <p className="text-[#9CA3AF] text-[13px] leading-relaxed mb-5"><strong className="text-[#EAEAEA] font-medium">Strategic Lever:</strong> Supply chain localization.</p>
+                    <div className="border-l-[3px] border-[#B87433] pl-4 py-1">
+                      <p className="text-[#B87433] font-bold text-sm">Achieved 28% YoY revenue growth.</p>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-b border-[#1F3558] py-8">
+                    <h4 className="text-[#EAEAEA] text-lg font-bold mb-4">B2B SaaS Pivot</h4>
+                    <p className="text-[#9CA3AF] text-[13px] leading-relaxed mb-2"><strong className="text-[#EAEAEA] font-medium">Context:</strong> High churn in legacy models.</p>
+                    <p className="text-[#9CA3AF] text-[13px] leading-relaxed mb-5"><strong className="text-[#EAEAEA] font-medium">Strategic Lever:</strong> Tiered enterprise pricing restructure.</p>
+                    <div className="border-l-[3px] border-[#B87433] pl-4 py-1">
+                      <p className="text-[#B87433] font-bold text-sm">Secured Series B valuation uplift.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 4 — Thought Leadership */}
+                <div>
+                  <h3 className="text-[#EAEAEA] font-bold text-sm uppercase tracking-widest mb-2 border-b border-[#1F3558] pb-4">Thought Leadership</h3>
+                  <div className="border-b border-[#1F3558] py-5 flex justify-between items-center cursor-pointer group">
+                    <span className="text-[#EAEAEA] font-bold text-[15px] group-hover:text-[#B87433] transition-colors">The Post-Digitization Boardroom</span>
+                    <i className="fa-solid fa-plus text-[#B87433] text-sm"></i>
+                  </div>
+                  <div className="border-b border-[#1F3558] py-5 flex justify-between items-center cursor-pointer group">
+                    <span className="text-[#EAEAEA] font-bold text-[15px] group-hover:text-[#B87433] transition-colors">M&A Integration Strategies 2025</span>
+                    <i className="fa-solid fa-plus text-[#B87433] text-sm"></i>
+                  </div>
+                </div>
+
+                {/* Section 5 — CTA */}
+                <div>
+                  <button className="w-full bg-[#B87433] hover:bg-[#9a6029] transition-colors text-[#EAEAEA] font-bold py-3.5 rounded-[6px] text-sm tracking-wide">
+                    Engage for Strategic Advisory
+                  </button>
+                  <p className="text-center text-[#9CA3AF] text-xs mt-4 tracking-wide">priya.s@institutional.com</p>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        return null;
+      };
+
+      return (
+        <div className="min-h-screen bg-[#0a0f1c] text-slate-200 font-sans selection:bg-[#c27e42]/30">
+          
+          {/* 1. NAVIGATION BAR */}
+          <nav 
+            className={`fixed top-0 w-full z-50 transition-all duration-300 border-b border-white/5 backdrop-blur-md ${
+              isScrolled ? 'py-3 bg-[#0a0f1c]/90' : 'py-6 bg-transparent'
+            }`}
+          >
+            <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
+              {/* Logo */}
+              <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo(0,0)}>
+                <img src="FootprintForge_CircularSeal.jpg" alt="Footprint Forge" className="w-8 h-8 rounded-full shadow-[0_0_10px_rgba(194,126,66,0.3)]" />
+                <span className="text-xl font-bold tracking-tight text-white">Footprint Forge</span>
+              </div>
+
+              {/* Desktop Nav */}
+              <div className="hidden md:flex items-center gap-8">
+                <button onClick={() => scrollToSection('hall-of-fame')} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Hall of Fame</button>
+                <button onClick={() => scrollToSection('process')} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Process</button>
+                <button onClick={() => scrollToSection('pricing')} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Pricing</button>
+                <button className="bg-[#c27e42] hover:bg-[#a66731] text-white text-sm font-medium px-6 py-2.5 rounded-sm flex items-center gap-2 transition-all">
+                  Build My Portfolio <i className="fa-solid fa-arrow-right text-sm ml-1"></i>
+                </button>
+              </div>
+
+              {/* Mobile Menu Toggle & CTA */}
+              <div className="flex items-center gap-4 md:hidden">
+                <button className="bg-[#c27e42] text-white text-xs font-medium px-4 py-2 rounded-sm">
+                  Build
+                </button>
+                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-slate-300">
+                  {isMobileMenuOpen ? <i className="fa-solid fa-xmark text-xl"></i> : <i className="fa-solid fa-bars text-xl"></i>}
+                </button>
+              </div>
+            </div>
+
+            {/* Mobile Dropdown */}
+            {isMobileMenuOpen && (
+              <div className="absolute top-full left-0 w-full bg-[#0a0f1c] border-b border-white/10 p-6 flex flex-col gap-6 md:hidden shadow-2xl">
+                <button onClick={() => scrollToSection('hall-of-fame')} className="text-left text-lg font-medium text-slate-300">Hall of Fame</button>
+                <button onClick={() => scrollToSection('process')} className="text-left text-lg font-medium text-slate-300">Process</button>
+                <button onClick={() => scrollToSection('pricing')} className="text-left text-lg font-medium text-slate-300">Pricing</button>
+                <button className="bg-[#c27e42] text-white text-lg font-medium px-6 py-4 rounded-sm flex justify-center items-center gap-2 mt-4">
+                  Build My Portfolio <i className="fa-solid fa-arrow-right text-base ml-1"></i>
+                </button>
+              </div>
+            )}
+          </nav>
+
+          {/* 2. HERO SECTION */}
+          <header className="relative pt-40 pb-24 md:pt-52 md:pb-32 overflow-hidden">
+            {/* Subtle background glow */}
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[#c27e42]/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+            <div className="max-w-7xl mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-16 lg:gap-8 items-center relative z-10">
+              
+              {/* Hero Copy */}
+              <div className="flex flex-col gap-8 max-w-2xl">
+                <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white leading-[1.1]">
+                  Your Reputation <br className="hidden md:block"/> Deserves <span className="text-[#c27e42]">Infrastructure.</span>
+                </h1>
+                <p className="text-lg md:text-xl text-slate-400 leading-relaxed max-w-xl">
+                  Premium QR-encoded PVC cards connected to bespoke, hand-coded digital portfolios — engineered for professionals in banking, finance, and tech.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-4 sm:items-center mt-4">
+                  <button className="bg-[#c27e42] hover:bg-[#a66731] text-white text-base font-semibold px-8 py-4 rounded-sm flex items-center justify-center gap-2 transition-all w-full sm:w-auto group">
+                    Build My Portfolio 
+                    <i className="fa-solid fa-arrow-right text-base group-hover:translate-x-1 transition-transform"></i>
+                  </button>
+                  <button onClick={() => scrollToSection('hall-of-fame')} className="text-slate-400 hover:text-white text-base font-medium px-8 py-4 flex items-center justify-center gap-2 transition-colors w-full sm:w-auto">
+                    View the Hall of Fame →
+                  </button>
+                </div>
+              </div>
+
+              {/* Hero Visual Mockup */}
+              <div className="relative h-[500px] w-full flex justify-center items-center perspective-1000">
+                {/* Mobile Mockup (Background) */}
+                <div className="absolute right-10 md:right-20 w-64 h-[450px] bg-[#0f1526] border border-white/10 rounded-3xl shadow-2xl p-4 transform rotate-6 translate-y-8 opacity-80 z-0 hidden sm:block">
+                  <div className="w-full h-full border border-white/5 rounded-2xl p-4 overflow-hidden relative flex flex-col gap-4">
+                    <div className="w-12 h-12 bg-slate-800 rounded-full mb-2"></div>
+                    <div className="w-3/4 h-4 bg-slate-800 rounded-sm"></div>
+                    <div className="w-1/2 h-3 bg-slate-800/50 rounded-sm"></div>
+                    <div className="mt-8 space-y-3">
+                      <div className="w-full h-16 bg-[#c27e42]/20 border border-[#c27e42]/20 rounded-md"></div>
+                      <div className="w-full h-16 bg-slate-800/30 rounded-md"></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Matte Black Card (Foreground) */}
+                <div className="relative w-80 h-48 bg-zinc-950 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] border border-zinc-800 flex flex-col justify-between p-6 transform -rotate-3 z-10 hover:rotate-0 transition-transform duration-500">
+                  {/* Metallic Edge Illusion */}
+                  <div className="absolute inset-0 rounded-xl border border-white/5 pointer-events-none"></div>
+                  
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-[#c27e42] rounded-sm shadow-[0_0_10px_rgba(194,126,66,0.5)]"></div>
+                      <span className="text-xs font-bold tracking-widest text-zinc-400 uppercase">Footprint</span>
+                    </div>
+                    <div className="bg-white p-1 rounded-sm flex items-center justify-center">
+                      <i className="fa-solid fa-qrcode text-3xl text-black"></i>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <h3 className="text-xl font-medium tracking-wide text-white">Alexander Chen</h3>
+                    <p className="text-xs text-zinc-500 uppercase tracking-widest">Director, Commercial Banking</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </header>
+
+          {/* 3. HALL OF FAME */}
+          <section id="hall-of-fame" className="py-24 bg-[#070b14] border-y border-white/5 relative z-10">
+            <div className="max-w-7xl mx-auto px-6 md:px-12">
+              
+              <div className="mb-16">
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">The Hall of Fame</h2>
+                <p className="text-lg text-slate-400 max-w-2xl">Built for professionals who treat their reputation as capital. Click to preview identity structures.</p>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Persona 1 */}
+                <div onClick={() => setActiveMockup('banker')} className="group bg-[#0a0f1c] border border-white/5 hover:border-[#c27e42]/30 p-8 rounded-lg cursor-pointer transition-all duration-300 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#c27e42]/5 rounded-bl-full -z-10 group-hover:bg-[#c27e42]/10 transition-colors"></div>
+                  <i className="fa-solid fa-briefcase text-3xl text-[#c27e42] mb-6"></i>
+                  <h3 className="text-xl font-bold text-white mb-2">The Commercial Banker</h3>
+                  <ul className="text-sm text-slate-400 space-y-2 mb-8">
+                    <li>• Clean corporate layout</li>
+                    <li>• Credit portfolio highlights</li>
+                    <li>• Deal summaries</li>
+                    <li>• Risk specialization</li>
+                  </ul>
+                  <div className="text-[#c27e42] text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                    Preview Structure <i className="fa-solid fa-arrow-right text-sm"></i>
+                  </div>
+                </div>
+
+                {/* Persona 2 */}
+                <div onClick={() => setActiveMockup('analyst')} className="group bg-[#0a0f1c] border border-white/5 hover:border-[#c27e42]/30 p-8 rounded-lg cursor-pointer transition-all duration-300 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#c27e42]/5 rounded-bl-full -z-10 group-hover:bg-[#c27e42]/10 transition-colors"></div>
+                  <i className="fa-solid fa-chart-line text-3xl text-[#c27e42] mb-6"></i>
+                  <h3 className="text-xl font-bold text-white mb-2">The Investment Analyst</h3>
+                  <ul className="text-sm text-slate-400 space-y-2 mb-8">
+                    <li>• Transaction experience</li>
+                    <li>• Financial modeling</li>
+                    <li>• Sector focus</li>
+                    <li>• Thesis links</li>
+                  </ul>
+                  <div className="text-[#c27e42] text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                    Preview Structure <i className="fa-solid fa-arrow-right text-sm"></i>
+                  </div>
+                </div>
+
+                {/* Persona 3 */}
+                <div onClick={() => setActiveMockup('consultant')} className="group bg-[#0a0f1c] border border-white/5 hover:border-[#c27e42]/30 p-8 rounded-lg cursor-pointer transition-all duration-300 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#c27e42]/5 rounded-bl-full -z-10 group-hover:bg-[#c27e42]/10 transition-colors"></div>
+                  <i className="fa-solid fa-microchip text-3xl text-[#c27e42] mb-6"></i>
+                  <h3 className="text-xl font-bold text-white mb-2">The Tech Consultant</h3>
+                  <ul className="text-sm text-slate-400 space-y-2 mb-8">
+                    <li>• Systems implemented</li>
+                    <li>• Impact metrics</li>
+                    <li>• Certifications</li>
+                    <li>• GitHub integration</li>
+                  </ul>
+                  <div className="text-[#c27e42] text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                    Preview Structure <i className="fa-solid fa-arrow-right text-sm"></i>
+                  </div>
+                </div>
+
+                {/* Persona 4 */}
+                <div onClick={() => setActiveMockup('strategist')} className="group bg-[#0a0f1c] border border-white/5 hover:border-[#c27e42]/30 p-8 rounded-lg cursor-pointer transition-all duration-300 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#c27e42]/5 rounded-bl-full -z-10 group-hover:bg-[#c27e42]/10 transition-colors"></div>
+                  <i className="fa-solid fa-building text-3xl text-[#c27e42] mb-6"></i>
+                  <h3 className="text-xl font-bold text-white mb-2">The Corp Strategist</h3>
+                  <ul className="text-sm text-slate-400 space-y-2 mb-8">
+                    <li>• Strategy projects</li>
+                    <li>• Market expansions</li>
+                    <li>• ROI metrics</li>
+                    <li>• Board positioning</li>
+                  </ul>
+                  <div className="text-[#c27e42] text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                    Preview Structure <i className="fa-solid fa-arrow-right text-sm"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-16 text-center">
+                <button className="bg-white hover:bg-slate-200 text-black text-sm font-bold uppercase tracking-wider px-8 py-4 rounded-sm transition-colors">
+                  Claim Your Identity
+                </button>
+              </div>
+
+            </div>
+          </section>
+
+          {/* 4. FEATURES SECTION */}
+          <section className="py-24 bg-[#0a0f1c]">
+            <div className="max-w-7xl mx-auto px-6 md:px-12">
+              
+              <div className="mb-20 text-center max-w-3xl mx-auto">
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6">Engineered for Professionals. <br/><span className="text-slate-500">Not Influencers.</span></h2>
+                <div className="w-24 h-1 bg-[#c27e42] mx-auto"></div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-12 lg:gap-20">
+                {/* Pillar 1 */}
+                <div className="flex gap-6">
+                  <div className="shrink-0">
+                    <div className="w-12 h-12 bg-[#c27e42]/10 border border-[#c27e42]/20 rounded-md flex items-center justify-center">
+                      <i className="fa-solid fa-code text-xl text-[#c27e42]"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-3">1. Hand-Coded. Not Drag-and-Drop.</h3>
+                    <p className="text-slate-400 leading-relaxed">
+                      Each portfolio is built from scratch. No templates. No branding dilution. No platform watermark. You get a bespoke digital asset.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Pillar 2 */}
+                <div className="flex gap-6">
+                  <div className="shrink-0">
+                    <div className="w-12 h-12 bg-[#c27e42]/10 border border-[#c27e42]/20 rounded-md flex items-center justify-center">
+                      <i className="fa-solid fa-credit-card text-xl text-[#c27e42]"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-3">2. Premium PVC with Permanent QR</h3>
+                    <p className="text-slate-400 leading-relaxed">
+                      Durable. Minimal. Executive-grade. Not a paper card. Not unreliable NFC gimmicks. A permanent, authoritative digital gateway.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Pillar 3 */}
+                <div className="flex gap-6">
+                  <div className="shrink-0">
+                    <div className="w-12 h-12 bg-[#c27e42]/10 border border-[#c27e42]/20 rounded-md flex items-center justify-center">
+                      <i className="fa-solid fa-mobile-screen text-xl text-[#c27e42]"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-3">3. Mobile-First Performance</h3>
+                    <p className="text-slate-400 leading-relaxed">
+                      Optimized for instant QR scans. Loads exceptionally fast on cellular networks. Built specifically for real-world, high-stakes interactions.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Pillar 4 */}
+                <div className="flex gap-6">
+                  <div className="shrink-0">
+                    <div className="w-12 h-12 bg-[#c27e42]/10 border border-[#c27e42]/20 rounded-md flex items-center justify-center">
+                      <i className="fa-solid fa-shield-halved text-xl text-[#c27e42]"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-3">4. Reputation Control</h3>
+                    <p className="text-slate-400 leading-relaxed">
+                      Centralize experience, metrics, publications, and contact info. Update your digital hub anytime—your physical card stays constant.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          {/* 5. PROCESS SECTION */}
+          <section id="process" className="py-24 bg-[#070b14] border-t border-white/5 relative overflow-hidden">
+            {/* Decorative line */}
+            <div className="hidden lg:block absolute left-1/2 top-48 bottom-48 w-px bg-white/10 -translate-x-1/2 z-0"></div>
+
+            <div className="max-w-4xl mx-auto px-6 md:px-12 relative z-10">
+              <div className="text-center mb-20">
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">Three Steps. Zero Friction.</h2>
+                <p className="text-slate-400 uppercase tracking-widest text-sm font-bold">No Subscriptions. No Lock-in.</p>
+              </div>
+
+              <div className="space-y-16">
+                {/* Step 1 */}
+                <div className="relative flex flex-col md:flex-row gap-8 items-start md:items-center">
+                  <div className="md:w-1/2 md:text-right">
+                    <h3 className="text-2xl font-bold text-white mb-2">Step 1: Apply</h3>
+                    <p className="text-slate-400">Submit your professional details through our structured, secure intake form.</p>
+                  </div>
+                  <div className="absolute left-0 md:left-1/2 top-0 md:top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-[#0a0f1c] border-2 border-[#c27e42] rounded-full flex items-center justify-center text-[#c27e42] font-bold text-xl z-10 hidden md:flex">
+                    1
+                  </div>
+                  <div className="w-12 h-12 bg-[#0a0f1c] border-2 border-[#c27e42] rounded-full flex items-center justify-center text-[#c27e42] font-bold text-xl md:hidden shrink-0">
+                    1
+                  </div>
+                  <div className="md:w-1/2">
+                    {/* Empty on desktop for layout, content on mobile */}
+                  </div>
+                </div>
+
+                {/* Step 2 */}
+                <div className="relative flex flex-col md:flex-row-reverse gap-8 items-start md:items-center">
+                  <div className="md:w-1/2 md:text-left">
+                    <h3 className="text-2xl font-bold text-white mb-2">Step 2: We Engineer</h3>
+                    <p className="text-slate-400">We design and hand-code your portfolio to precisely align with your domain and positioning.</p>
+                  </div>
+                  <div className="absolute left-0 md:left-1/2 top-0 md:top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-[#c27e42] rounded-full flex items-center justify-center text-white font-bold text-xl z-10 hidden md:flex shadow-[0_0_20px_rgba(194,126,66,0.4)]">
+                    2
+                  </div>
+                  <div className="w-12 h-12 bg-[#c27e42] rounded-full flex items-center justify-center text-white font-bold text-xl md:hidden shrink-0">
+                    2
+                  </div>
+                  <div className="md:w-1/2"></div>
+                </div>
+
+                {/* Step 3 */}
+                <div className="relative flex flex-col md:flex-row gap-8 items-start md:items-center">
+                  <div className="md:w-1/2 md:text-right">
+                    <h3 className="text-2xl font-bold text-white mb-2">Step 3: Go Live</h3>
+                    <p className="text-slate-400">Receive your premium matte PVC card. Start sharing your curated identity instantly.</p>
+                  </div>
+                  <div className="absolute left-0 md:left-1/2 top-0 md:top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-[#0a0f1c] border-2 border-slate-700 rounded-full flex items-center justify-center text-slate-400 font-bold text-xl z-10 hidden md:flex">
+                    3
+                  </div>
+                  <div className="w-12 h-12 bg-[#0a0f1c] border-2 border-slate-700 rounded-full flex items-center justify-center text-slate-400 font-bold text-xl md:hidden shrink-0">
+                    3
+                  </div>
+                  <div className="md:w-1/2"></div>
+                </div>
+              </div>
+
+              <div className="mt-20 text-center">
+                <p className="text-xl text-white font-medium">You own your identity.</p>
+              </div>
+            </div>
+          </section>
+
+          {/* 6. PRICING SECTION */}
+          <section id="pricing" className="py-24 bg-[#0a0f1c] border-t border-white/5">
+            <div className="max-w-7xl mx-auto px-6 md:px-12">
+              
+              <div className="mb-16 text-center">
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">Select Your Infrastructure</h2>
+                <p className="text-lg text-slate-400">Transparent engineering pricing. You only pay for the assets you own.</p>
+              </div>
+
+              <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
+                
+                {/* Tier 1 */}
+                <div className="bg-[#0f1526] border border-white/5 p-8 rounded-lg flex flex-col h-full">
+                  <h3 className="text-2xl font-bold text-white mb-2">The Executive</h3>
+                  <div className="mb-6">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-extrabold text-white">₹1,499</span>
+                      <span className="text-slate-400 font-medium">one-time</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1 font-medium tracking-wide">Zero recurring fees</p>
+                  </div>
+                  <p className="text-sm text-slate-400 mb-8 h-10">For early-career and growth-stage professionals.</p>
+                  
+                  <ul className="space-y-4 mb-8 flex-1">
+                    <li className="flex items-start gap-3 text-slate-300">
+                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
+                      <span>Standard single-page portfolio</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-slate-300">
+                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
+                      <span>Premium QR PVC card</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-slate-300">
+                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
+                      <span>Pay-As-You-Go updates (₹499/ea)</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-slate-300">
+                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
+                      <span>1-year premium hosting</span>
+                    </li>
+                  </ul>
+                  
+                  <button className="w-full bg-[#1a233a] hover:bg-[#222d4a] text-white text-sm font-bold uppercase tracking-wider py-4 rounded-sm transition-colors">
+                    Secure My Card
+                  </button>
+                </div>
+
+                {/* Tier 2 (Recommended) */}
+                <div className="bg-[#0a0f1c] border-2 border-[#c27e42] p-8 rounded-lg flex flex-col h-full relative transform lg:-translate-y-4 shadow-[0_0_30px_rgba(194,126,66,0.15)]">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#c27e42] text-white text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-sm">
+                    Recommended
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2 mt-2">The Authority</h3>
+                  <div className="mb-6">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-extrabold text-white">₹2,499</span>
+                      <span className="text-slate-400 font-medium">one-time</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1 font-medium tracking-wide">Zero recurring fees</p>
+                  </div>
+                  <p className="text-sm text-slate-400 mb-8 h-10">For senior bankers, analysts, and consultants.</p>
+                  
+                  <ul className="space-y-4 mb-8 flex-1">
+                    <li className="flex items-start gap-3 text-white">
+                      <i className="fa-solid fa-check text-base text-[#c27e42] shrink-0 mt-1"></i>
+                      <span>Advanced structured portfolio</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-white">
+                      <i className="fa-solid fa-check text-base text-[#c27e42] shrink-0 mt-1"></i>
+                      <span>Impact metrics & case sections</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-white">
+                      <i className="fa-solid fa-check text-base text-[#c27e42] shrink-0 mt-1"></i>
+                      <span>SEO optimization for personal brand</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-white">
+                      <i className="fa-solid fa-check text-base text-[#c27e42] shrink-0 mt-1"></i>
+                      <span>Premium QR PVC card</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-white">
+                      <i className="fa-solid fa-check text-base text-[#c27e42] shrink-0 mt-1"></i>
+                      <span>2 free update tickets/yr (then ₹499/ea)</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-white">
+                      <i className="fa-solid fa-check text-base text-[#c27e42] shrink-0 mt-1"></i>
+                      <span>Priority delivery</span>
+                    </li>
+                  </ul>
+                  
+                  <button className="w-full bg-[#c27e42] hover:bg-[#a66731] text-white text-sm font-bold uppercase tracking-wider py-4 rounded-sm transition-colors shadow-lg shadow-[#c27e42]/20">
+                    Build My Authority
+                  </button>
+                </div>
+
+                {/* Tier 3 */}
+                <div className="bg-[#0f1526] border border-white/5 p-8 rounded-lg flex flex-col h-full">
+                  <h3 className="text-2xl font-bold text-white mb-2">The Institution</h3>
+                  <div className="mb-6">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-extrabold text-white">₹4,999</span>
+                      <span className="text-slate-400 font-medium">one-time</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1 font-medium tracking-wide">Zero recurring fees</p>
+                  </div>
+                  <p className="text-sm text-slate-400 mb-8 h-10">For partners, founders, and CXOs.</p>
+                  
+                  <ul className="space-y-4 mb-8 flex-1">
+                    <li className="flex items-start gap-3 text-slate-300">
+                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
+                      <span>Multi-section executive portfolio</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-slate-300">
+                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
+                      <span>Thought leadership module</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-slate-300">
+                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
+                      <span>Press & publications integration</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-slate-300">
+                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
+                      <span>Custom domain configuration</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-slate-300">
+                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
+                      <span>Premium QR PVC card</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-slate-300">
+                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
+                      <span>4 free update tickets/yr (then ₹499/ea)</span>
+                    </li>
+                  </ul>
+                  
+                  <button className="w-full bg-[#1a233a] hover:bg-[#222d4a] text-white text-sm font-bold uppercase tracking-wider py-4 rounded-sm transition-colors">
+                    Apply for Build
+                  </button>
+                </div>
+
+              </div>
+
+              {/* SLA Banner */}
+              <div className="mt-24 max-w-4xl mx-auto bg-[#c27e42]/10 border border-[#c27e42]/20 rounded-lg p-8 md:p-10 text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-[#c27e42]"></div>
+                <h3 className="text-xl font-bold text-white mb-4 uppercase tracking-widest text-sm">Service Level Agreement (SLA)</h3>
+                <p className="text-slate-400 leading-relaxed text-lg">
+                  Footprint Forge operates on a strict <span className="text-white font-medium">Weekend Deployment schedule</span>. To keep our infrastructure costs zero and pass those savings to you, all portfolio updates submitted during the week are coded, tested, and pushed live by Sunday evening.
+                </p>
+              </div>
+
+            </div>
+          </section>
+
+          {/* 7. FOOTER CTA */}
+          <footer className="py-32 bg-[#04070d] border-t border-white/5 relative overflow-hidden">
+            {/* Abstract Background element */}
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#c27e42]/5 blur-[100px] rounded-full pointer-events-none"></div>
+
+            <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+              <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-6">
+                Your Name Is an Asset. <br className="hidden md:block"/>
+                <span className="text-[#c27e42]">Build It Accordingly.</span>
+              </h2>
+              <p className="text-xl text-slate-400 mb-12 max-w-2xl mx-auto">
+                Limited build capacity each month to ensure uncompromising engineering quality.
+              </p>
+              
+              <button className="bg-[#c27e42] hover:bg-[#a66731] text-white text-lg font-bold px-10 py-5 rounded-sm flex items-center justify-center gap-3 transition-all mx-auto group shadow-[0_0_30px_rgba(194,126,66,0.3)]">
+                Start My Build 
+                <i className="fa-solid fa-arrow-right text-xl group-hover:translate-x-1 transition-transform"></i>
+              </button>
+
+              <div className="mt-20 pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <img src="FootprintForge_CircularSeal.jpg" alt="Footprint Forge" className="w-8 h-8 rounded-full shadow-[0_0_10px_rgba(194,126,66,0.3)]" />
+                  <span className="font-bold tracking-tight text-white">Footprint Forge</span>
+                </div>
+                <p className="text-sm text-slate-500 font-medium tracking-wide">
+                  Built in Chennai. Engineered for global standards.
+                </p>
+              </div>
+            </div>
+          </footer>
+
+          {/* 8. MOBILE MOCKUP MODAL */}
+          {activeMockup && (
+            <div className="fixed inset-0 z-[100] bg-[#0a0f1c]/90 backdrop-blur-md flex items-center justify-center p-4">
+              
+              <button 
+                onClick={() => setActiveMockup(null)}
+                className="absolute top-6 right-6 md:top-10 md:right-10 text-slate-400 hover:text-[#EAEAEA] transition-colors bg-zinc-900/50 rounded-full p-2"
+              >
+                <i className="fa-solid fa-xmark text-3xl"></i>
+              </button>
+              
+              {/* Mobile Device Frame */}
+              <div className="relative w-full max-w-[360px] h-[800px] max-h-[85vh] bg-[#0B1F3A] border-[8px] border-zinc-950 rounded-[3rem] shadow-[0_0_50px_rgba(11,31,58,0.5)] overflow-hidden">
+                {/* Hardware Notch */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-zinc-950 rounded-b-2xl z-20"></div>
+                
+                {/* Scrollable Screen Content */}
+                <div 
+                  className="absolute inset-0 overflow-y-auto mockup-scroll" 
+                  style={{ scrollBehavior: 'smooth' }}
+                >
+                  {renderMockupContent()}
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
-    </section>
+      );
+    }
 
-    <!-- Trust Architecture (Social Proof) -->
-    <section class="social-proof-section reveal">
-        <div class="comparison-header" style="margin-bottom: 40px;">
-            <h2 style="color: var(--white);">Trusted by Professionals</h2>
-            <p style="color: #A0AAB2;">Built for banking executives, consultants, and tech founders across India.</p>
-        </div>
-        <div class="social-grid">
-            <div class="testimonial-card">
-                <p>"Finally, a digital card that actually looks like it belongs in a boardroom. The zero-subscription model makes it an absolute no-brainer."</p>
-                <cite>— Senior Credit Underwriter, Commercial Banking</cite>
-            </div>
-            <div class="testimonial-card">
-                <p>"Secured our Series A in Bengaluru. I handed the physical card to our lead investor—the digital portfolio spoke for itself before I even pitched."</p>
-                <cite>— Scaling FinTech Founder</cite>
-            </div>
-            <div class="testimonial-card">
-                <p>"Fast, clean, and zero monthly fees. Exactly the professional setup I wanted for my personal brand."</p>
-                <cite>— Lead Cloud Architect</cite>
-            </div>
-        </div>
-    </section>
-
-    <!-- Modular Pricing Section -->
-    <section id="pricing">
-        <h2 class="section-title reveal">Pricing Packages</h2>
-        <div class="section-subtitle reveal">Pay once. Own permanently.</div>
-        
-        <p class="reveal" style="text-align: center; margin-bottom: 50px; color: #5A6575; max-width: 800px; margin-left: auto; margin-right: auto; font-size: 1.05rem;">All packages include <strong>1 Premium PVC Smart QR Card</strong> and digital image files. Select your design below, then choose your physical card upgrades.</p>
-
-        <div class="grid-3">
-            <!-- Tier 1 -->
-            <div class="card pricing-tier reveal delay-1">
-                <h3>The Networking Hub</h3>
-                <div style="font-size: 1.1rem; color: #A0AAB2; text-decoration: line-through; margin-top: 15px;">₹1,499</div>
-                <div class="price">₹899</div>
-                <ul>
-                    <li>Setup of The Digital Contact Hub</li>
-                    <li>One-tap 'Save to Phone' button</li>
-                    <li><strong>Includes:</strong> 1 Custom PVC Smart Card</li>
-                    <li><strong>Includes:</strong> Digital files of your card design</li>
-                </ul>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeX1dQnp2KGXTtFTzcAmjDXupIjc46ryTFlJR_HpH6h2tlvlQ/viewform" target="_blank" class="btn btn-outline" style="width: 100%; text-align: center; margin-top: auto;">Choose Hub</a>
-            </div>
-
-            <!-- Tier 2 -->
-            <div class="card pricing-tier featured reveal delay-2">
-                <h3>The Executive Suite</h3>
-                <div style="font-size: 1.1rem; color: rgba(255,255,255,0.5); text-decoration: line-through; margin-top: 15px;">₹3,499</div>
-                <div class="price">₹1,999</div>
-                <ul>
-                    <li><strong>Includes The Digital Hub</strong></li>
-                    <li>Setup of "The Executive" Portfolio</li>
-                    <li><strong>Includes:</strong> 1 Custom PVC Smart Card</li>
-                    <li><strong>Includes:</strong> Digital files of your card design</li>
-                </ul>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeX1dQnp2KGXTtFTzcAmjDXupIjc46ryTFlJR_HpH6h2tlvlQ/viewform" target="_blank" class="btn" style="width: 100%; text-align: center; margin-top: auto;">Choose Executive</a>
-            </div>
-
-            <!-- Tier 3 -->
-            <div class="card pricing-tier reveal delay-3">
-                <h3>The Specialist Suite</h3>
-                <div style="font-size: 1.1rem; color: #A0AAB2; text-decoration: line-through; margin-top: 15px;">₹4,999</div>
-                <div class="price">₹2,999</div>
-                <ul>
-                    <li><strong>Includes The Digital Hub</strong></li>
-                    <li>Choice of "Consultant" or "Developer"</li>
-                    <li><strong>Includes:</strong> 1 Custom PVC Smart Card</li>
-                    <li><strong>Includes:</strong> Digital files of your card design</li>
-                </ul>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeX1dQnp2KGXTtFTzcAmjDXupIjc46ryTFlJR_HpH6h2tlvlQ/viewform" target="_blank" class="btn btn-outline" style="width: 100%; text-align: center; margin-top: auto;">Choose Specialist</a>
-            </div>
-        </div>
-        
-        <!-- Bottom Risk Reversal -->
-        <div class="reveal" style="text-align: center; margin-top: 30px;">
-            <span class="risk-reversal" style="display: inline-block;">Pay 50% to start. Pay the rest only when you approve the final result.</span>
-        </div>
-    </section>
-
-    <!-- Founder Credibility & FAQ -->
-    <section id="faq" style="padding-top: 20px;">
-        
-        <!-- Founder Micro-Credibility -->
-        <div class="founder-micro reveal">
-            <h4>Built for Professionals, by a Professional</h4>
-            <p>Yogaprabhu S. created Footprint Forge to solve a simple problem: professionals shouldn't have to pay monthly rent just to share their own contact info and career highlights.</p>
-        </div>
-
-        <h2 class="section-title reveal">Frequently Asked Questions</h2>
-        <div class="section-subtitle reveal">How It Works</div>
-        
-        <div class="reveal" style="max-width: 800px; margin: 0 auto;">
-            <details>
-                <summary>How does the zero monthly fee work?</summary>
-                <p>We build your website using free, secure platforms (like GitHub Pages) so there are no monthly hosting bills. You pay us once to build it. If you want a custom ".com" name, you just pay the standard yearly domain fee (around ₹800/year). We do not charge you rent.</p>
-            </details>
-            <details>
-                <summary>What exactly am I buying?</summary>
-                <p>You get a fully built digital portfolio based on the design you choose, plus a physical smart card. (Note: We build static portfolio sites, not complex web apps with login portals or databases.) You also get PDF and PNG copies of your card design.</p>
-            </details>
-            <details>
-                <summary>How long does it take to get my card?</summary>
-                <p>Once you review and approve the final design of your digital portfolio, your physical smart card is printed and shipped. This usually takes 5-7 business days.</p>
-            </details>
-            <details>
-                <summary>How does payment work?</summary>
-                <p>You pay a 50% deposit to get started. The final 50% is only paid after you review and approve your live digital portfolio, right before we ship your physical card.</p>
-            </details>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 Footprint Forge. Premium Digital Portfolios. | Founded by Yogaprabhu S.</p>
-    </footer>
-
-    <!-- Scripts for Functionality -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Mobile Menu Toggle Logic
-            const menuToggle = document.getElementById('mobile-menu');
-            const navLinks = document.querySelector('.nav-links');
-            
-            menuToggle.addEventListener('click', () => {
-                menuToggle.classList.toggle('active');
-                navLinks.classList.toggle('active');
-            });
-
-            // Close menu when a link is clicked
-            document.querySelectorAll('.nav-links a').forEach(link => {
-                link.addEventListener('click', () => {
-                    menuToggle.classList.remove('active');
-                    navLinks.classList.remove('active');
-                });
-            });
-
-            // Intersection Observer Script for Smooth Reveal Animations
-            const reveals = document.querySelectorAll('.reveal');
-            const revealOptions = {
-                threshold: 0.15,
-                rootMargin: "0px 0px -50px 0px"
-            };
-
-            const revealOnScroll = new IntersectionObserver(function(entries, observer) {
-                entries.forEach(entry => {
-                    if (!entry.isIntersecting) return;
-                    entry.target.classList.add('active');
-                    observer.unobserve(entry.target);
-                });
-            }, revealOptions);
-
-            reveals.forEach(reveal => {
-                revealOnScroll.observe(reveal);
-            });
-            
-            // Trigger hero animation immediately on load
-            setTimeout(() => {
-                document.querySelector('.hero').classList.add('active');
-            }, 100);
-        });
-    </script>
+    // Render the App
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
 </body>
 </html>
