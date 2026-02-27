@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Footprint Forge - Print Exporter</title>
+    <title>Footprint Forge - Business Card Exporter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
@@ -14,10 +14,10 @@
             box-shadow: 0 25px 50px -12px rgba(0,0,0,1);
             border: 1px solid #222;
             width: 100%;
-            max-width: 543px; 
-            aspect-ratio: 1087 / 709;
+            max-width: 537px; 
+            aspect-ratio: 1075 / 720; /* Standard Business Card with Bleed */
             margin: 0 auto;
-            border-radius: 8px;
+            border-radius: 4px; /* Standard cards have square corners usually, but slight rounding here for preview */
             overflow: hidden;
         }
         canvas { width: 100%; height: 100%; display: block; }
@@ -42,9 +42,9 @@
 
     <div class="max-w-6xl mx-auto">
         <div class="mb-12 text-center">
-            <h1 class="text-3xl font-light tracking-[0.2em] copper-text mb-4 uppercase">Final Print Generator</h1>
+            <h1 class="text-3xl font-light tracking-[0.2em] copper-text mb-4 uppercase">Business Card Generator</h1>
             <p class="text-zinc-400 text-sm max-w-2xl mx-auto leading-relaxed mb-8">
-                Type your details below. The card will update automatically. Once you are happy, click download to get the 300 DPI, uncompressed PNG files directly to your computer. These files are ready to be sent straight to your printer.
+                Updated for standard 85x55mm paper business cards (with 3mm bleed). Enter your details below and download the final 300 DPI files for your printer.
             </p>
             
             <div class="max-w-3xl mx-auto bg-[#0f0f0f] border border-[#222] p-6 rounded-lg text-left grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -70,29 +70,29 @@
         <div class="grid lg:grid-cols-2 gap-12">
             
             <div class="flex flex-col items-center">
-                <div class="flex justify-between w-full max-w-[543px] items-end mb-4">
+                <div class="flex justify-between w-full max-w-[537px] items-end mb-4">
                     <h2 class="text-lg tracking-[0.2em] text-zinc-300 font-light">FRONT</h2>
-                    <span class="text-xs text-zinc-600">1087 x 709 px (300 DPI)</span>
+                    <span class="text-xs text-zinc-600">1075 x 720 px (300 DPI)</span>
                 </div>
                 <div class="canvas-container bg-[#121212]">
-                    <canvas id="canvasFront" width="1087" height="709"></canvas>
+                    <canvas id="canvasFront" width="1075" height="720"></canvas>
                 </div>
-                <button onclick="downloadCanvas('canvasFront', 'FootprintForge_Front_Print.png')" 
-                        class="mt-6 copper-bg text-black font-semibold tracking-widest uppercase px-6 py-4 rounded hover:bg-white transition-colors text-sm w-full max-w-[543px] shadow-[0_0_15px_rgba(194,126,66,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+                <button onclick="downloadCanvas('canvasFront', 'FootprintForge_Front_BusinessCard.png')" 
+                        class="mt-6 copper-bg text-black font-semibold tracking-widest uppercase px-6 py-4 rounded hover:bg-white transition-colors text-sm w-full max-w-[537px] shadow-[0_0_15px_rgba(194,126,66,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
                     Download Front PNG
                 </button>
             </div>
 
             <div class="flex flex-col items-center">
-                <div class="flex justify-between w-full max-w-[543px] items-end mb-4">
+                <div class="flex justify-between w-full max-w-[537px] items-end mb-4">
                     <h2 class="text-lg tracking-[0.2em] text-zinc-300 font-light">BACK</h2>
-                    <span class="text-xs text-zinc-600">1087 x 709 px (300 DPI)</span>
+                    <span class="text-xs text-zinc-600">1075 x 720 px (300 DPI)</span>
                 </div>
                 <div class="canvas-container bg-[#121212]">
-                    <canvas id="canvasBack" width="1087" height="709"></canvas>
+                    <canvas id="canvasBack" width="1075" height="720"></canvas>
                 </div>
-                <button onclick="downloadCanvas('canvasBack', 'FootprintForge_Back_Print.png')" 
-                        class="mt-6 copper-bg text-black font-semibold tracking-widest uppercase px-6 py-4 rounded hover:bg-white transition-colors text-sm w-full max-w-[543px] shadow-[0_0_15px_rgba(194,126,66,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+                <button onclick="downloadCanvas('canvasBack', 'FootprintForge_Back_BusinessCard.png')" 
+                        class="mt-6 copper-bg text-black font-semibold tracking-widest uppercase px-6 py-4 rounded hover:bg-white transition-colors text-sm w-full max-w-[537px] shadow-[0_0_15px_rgba(194,126,66,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
                     Download Back PNG
                 </button>
             </div>
@@ -101,10 +101,11 @@
     </div>
 
     <script>
-        const W = 1087; 
-        const H = 709;
+        // 300 DPI Specs for 85x55mm card + 3mm bleed (91x61mm total)
+        const W = 1075; 
+        const H = 720;
         const COPPER = '#c27e42';
-        const BG_COLOR = '#111111';
+        const BG_COLOR = '#111111'; // Off-black is better for printing than pure #000000
         let globalLogo = null;
         let globalQr = null;
         
@@ -132,7 +133,6 @@
             };
 
             globalLogo.onerror = () => {
-                console.warn("Could not load logo image. Using fallback.");
                 drawFront();
                 globalQr.onload = drawBack;
             }
@@ -186,35 +186,35 @@
             ctx.textBaseline = "top";
             ctx.font = "300 38px Montserrat";
             ctx.letterSpacing = "6px";
-            ctx.fillText("YOUR REPUTATION", startX, 130);
-            ctx.fillText("DESERVES", startX, 185);
-            ctx.fillText("INFRASTRUCTURE.", startX, 240);
+            ctx.fillText("YOUR REPUTATION", startX, 135);
+            ctx.fillText("DESERVES", startX, 190);
+            ctx.fillText("INFRASTRUCTURE.", startX, 245);
 
             // Name
             ctx.fillStyle = "#ffffff";
             ctx.font = "500 34px Montserrat";
             ctx.letterSpacing = "4px";
-            ctx.fillText(name, startX, 360);
+            ctx.fillText(name, startX, 365);
             
             // Role
             ctx.fillStyle = COPPER;
             ctx.font = "300 20px Montserrat";
             ctx.letterSpacing = "4px";
-            ctx.fillText(role, startX, 405);
+            ctx.fillText(role, startX, 410);
 
             // Contact
             ctx.fillStyle = "#a8907b";
             ctx.font = "400 18px Montserrat";
             ctx.letterSpacing = "2px";
-            ctx.fillText(email, startX, 470);
-            ctx.fillText(phone, startX, 500);
+            ctx.fillText(email, startX, 475);
+            ctx.fillText(phone, startX, 505);
 
-            // Call to Action - NOW BOLDER AND BRIGHTER
+            // Call to Action
             ctx.fillStyle = "#a8907b";
-            ctx.font = "500 16px Montserrat"; // Increased weight and size
+            ctx.font = "500 16px Montserrat"; 
             ctx.letterSpacing = "3px";
-            ctx.fillText("SCAN TO BUILD YOUR", startX, 595);
-            ctx.fillText("PREMIUM DIGITAL IDENTITY.", startX, 620);
+            ctx.fillText("SCAN TO BUILD YOUR", startX, 605);
+            ctx.fillText("PREMIUM DIGITAL IDENTITY.", startX, 630);
 
             // QR Code
             if (globalQr && globalQr.complete) {
