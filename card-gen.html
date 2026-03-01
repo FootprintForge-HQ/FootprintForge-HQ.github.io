@@ -15,25 +15,15 @@ body {
   font-family: 'Inter', sans-serif;
   background: #0e0e10;
   color: white;
-  margin: 0;
   padding: 40px;
   display: flex;
-  gap: 50px;
+  gap: 60px;
   flex-wrap: wrap;
 }
 
+/* Controls */
 .controls {
   width: 320px;
-}
-
-.controls h2 {
-  font-weight: 500;
-  letter-spacing: 1px;
-}
-
-.controls label {
-  font-size: 12px;
-  opacity: 0.7;
 }
 
 .controls input {
@@ -47,7 +37,7 @@ body {
 }
 
 button {
-  padding: 10px 14px;
+  padding: 10px;
   background: #c27e42;
   border: none;
   color: white;
@@ -57,51 +47,52 @@ button {
   width: 100%;
 }
 
-/* CARD */
-
-.card-container {
-  display: flex;
-  gap: 40px;
-}
-
+/* Card */
 .card {
   width: 430px;
   height: 271px;
   background: #111111;
-  border-radius: 16px;
-  padding: 28px;
+  border-radius: 20px;
+  padding: 30px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.brand {
-  font-size: 13px;
-  letter-spacing: 4px;
+.copper {
+  color: #c27e42;
+}
+
+.brand-name {
+  font-size: 18px;
+  letter-spacing: 6px;
   font-weight: 500;
 }
 
 .tagline {
-  font-size: 10px;
-  opacity: 0.6;
+  font-size: 12px;
+  opacity: 0.85;
 }
 
 .logo {
-  max-width: 100px;
-  max-height: 45px;
-  margin-bottom: 10px;
+  max-width: 120px;
+  margin-bottom: 20px;
+}
+
+.center {
+  text-align: center;
 }
 
 #qrcode {
-  width: 120px;
-  height: 120px;
-  margin: auto;
+  width: 160px;
+  height: 160px;
+  margin: 0 auto;
 }
 
 .name {
-  font-size: 16px;
   font-weight: 600;
+  font-size: 15px;
 }
 
 .role {
@@ -112,7 +103,7 @@ button {
 .details {
   font-size: 11px;
   line-height: 1.6;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 </style>
 </head>
@@ -120,61 +111,53 @@ button {
 <body>
 
 <div class="controls">
-  <h2>Card Editor</h2>
+  <h3>Edit Details</h3>
 
-  <label>Full Name</label>
-  <input type="text" id="nameInput" placeholder="Arjun Ravi">
+  <input type="text" id="nameInput" placeholder="Full Name">
+  <input type="text" id="roleInput" placeholder="Role / Title">
+  <input type="text" id="phoneInput" placeholder="Phone">
+  <input type="text" id="emailInput" placeholder="Email">
+  <input type="text" id="qrInput" placeholder="QR Destination URL">
 
-  <label>Role / Title</label>
-  <input type="text" id="roleInput" placeholder="Founder">
-
-  <label>Phone</label>
-  <input type="text" id="phoneInput" placeholder="+91 98765 43210">
-
-  <label>Email</label>
-  <input type="text" id="emailInput" placeholder="arjun@footprintforge.com">
-
-  <label>QR Destination URL</label>
-  <input type="text" id="qrInput" placeholder="https://yourgithubpage.github.io">
-
-  <label>Upload Logo</label>
+  <label style="font-size:12px;opacity:.6;">Upload Logo</label>
   <input type="file" id="logoUpload" accept="image/*">
 
   <button onclick="downloadCard('frontCard')">Download Front</button>
   <button onclick="downloadCard('backCard')">Download Back</button>
 </div>
 
-<div class="card-container">
+<!-- FRONT -->
+<div class="card center" id="frontCard">
 
-  <!-- FRONT -->
-  <div class="card" id="frontCard">
-    <div>
-      <img id="logoPreview" class="logo" />
-      <div class="brand">FOOTPRINT FORGE</div>
-      <div class="tagline">Forge Your Digital Identity</div>
-    </div>
-
-    <div id="qrcode"></div>
-
-    <div class="tagline" style="text-align:center;">
-      SCAN TO CONNECT
-    </div>
+  <div>
+    <img id="logoPreview" class="logo" />
   </div>
 
-  <!-- BACK -->
-  <div class="card" id="backCard">
-    <div>
-      <div class="name" id="previewName">Arjun Ravi</div>
-      <div class="role" id="previewRole">Founder</div>
-    </div>
+  <div class="copper brand-name">
+    FOOTPRINT FORGE
+  </div>
 
+  <div class="copper tagline">
+    Forge Your Digital Identity
+  </div>
+
+</div>
+
+<!-- BACK -->
+<div class="card" id="backCard">
+
+  <div id="qrcode"></div>
+
+  <div class="center copper" style="font-size:12px;">
+    SCAN TO CONNECT
+  </div>
+
+  <div>
+    <div class="name" id="previewName">Your Name</div>
+    <div class="role" id="previewRole">Your Role</div>
     <div class="details">
-      <div id="previewPhone">+91 98765 43210</div>
-      <div id="previewEmail">arjun@footprintforge.com</div>
-    </div>
-
-    <div class="tagline">
-      Digital identity infrastructure for modern professionals.
+      <div id="previewPhone"></div>
+      <div id="previewEmail"></div>
     </div>
   </div>
 
@@ -187,8 +170,8 @@ function generateQR(url) {
 
   new QRCode(document.getElementById("qrcode"), {
     text: url,
-    width: 120,
-    height: 120,
+    width: 160,
+    height: 160,
     colorDark: "#ffffff",
     colorLight: "#111111",
     correctLevel: QRCode.CorrectLevel.H
