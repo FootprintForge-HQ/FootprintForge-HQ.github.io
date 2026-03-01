@@ -1,221 +1,287 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Footprint Forge Card Studio</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footprint Forge - Final Print Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #050505; color: #fff; }
+        .canvas-container {
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,1), 0 0 40px rgba(197, 131, 65, 0.05);
+            border: 1px solid #222;
+            width: 100%;
+            max-width: 555px; 
+            aspect-ratio: 1110 / 696; /* 94x59mm at 300 DPI */
+            margin: 0 auto;
+            background: #0a0a0a;
+            border-radius: 2px;
+        }
+        canvas { width: 100%; height: 100%; display: block; }
+        
+        /* Visual Overlays for Web Preview ONLY (These do not download) */
+        .bleed-guide { position: absolute; inset: 0; border: 4px solid rgba(255, 0, 0, 0.2); pointer-events: none; }
+        .trim-guide { position: absolute; inset: 4.5% 3.2%; border: 1px dashed rgba(255, 255, 255, 0.4); pointer-events: none; }
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-<style>
-body {
-  font-family: 'Inter', sans-serif;
-  background: #0e0e10;
-  color: white;
-  padding: 40px;
-  display: flex;
-  gap: 60px;
-  flex-wrap: wrap;
-}
-
-/* Controls */
-.controls {
-  width: 320px;
-}
-
-.controls input {
-  width: 100%;
-  margin-bottom: 14px;
-  padding: 10px;
-  background: #1a1a1f;
-  border: 1px solid #2a2a2f;
-  color: white;
-  border-radius: 6px;
-}
-
-button {
-  padding: 10px;
-  background: #c27e42;
-  border: none;
-  color: white;
-  cursor: pointer;
-  border-radius: 6px;
-  margin-top: 6px;
-  width: 100%;
-}
-
-/* Card */
-.card {
-  width: 430px;
-  height: 271px;
-  background: #111111;
-  border-radius: 20px;
-  padding: 30px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.copper {
-  color: #c27e42;
-}
-
-.brand-name {
-  font-size: 18px;
-  letter-spacing: 6px;
-  font-weight: 500;
-}
-
-.tagline {
-  font-size: 12px;
-  opacity: 0.85;
-}
-
-.logo {
-  max-width: 120px;
-  margin-bottom: 20px;
-}
-
-.center {
-  text-align: center;
-}
-
-#qrcode {
-  width: 160px;
-  height: 160px;
-  margin: 0 auto;
-}
-
-.name {
-  font-weight: 600;
-  font-size: 15px;
-}
-
-.role {
-  font-size: 12px;
-  opacity: 0.6;
-}
-
-.details {
-  font-size: 11px;
-  line-height: 1.6;
-  opacity: 0.85;
-}
-</style>
+        .copper-text { color: #C58341; }
+        .copper-bg { background-color: #C58341; }
+        input[type="text"] {
+            background: #111; border: 1px solid #333; color: #fff;
+            padding: 0.75rem; border-radius: 4px; width: 100%;
+            font-family: 'Montserrat', sans-serif; font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus { outline: none; border-color: #C58341; }
+        label { display: block; font-size: 0.75rem; color: #888; margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500;}
+    </style>
 </head>
+<body class="min-h-screen p-8 pb-20">
 
-<body>
+    <div class="max-w-6xl mx-auto">
+        <div class="mb-10 text-center">
+            <h1 class="text-3xl font-bold tracking-[0.1em] copper-text mb-4 uppercase">Final Print Edition</h1>
+            <p class="text-zinc-400 text-sm max-w-2xl mx-auto leading-relaxed mb-6">
+                Upload your logo below to map it to the high-resolution canvas. The QR code automatically points to your dynamic GitHub link.
+            </p>
+            
+            <div class="flex flex-wrap justify-center gap-6 text-xs text-zinc-500 font-medium tracking-wide">
+                <span class="flex items-center gap-2"><div class="w-6 h-0 border-t border-dashed border-white opacity-50"></div> Hover over cards to see Cut-Lines</span>
+            </div>
+        </div>
 
-<div class="controls">
-  <h3>Edit Details</h3>
+        <div class="max-w-4xl mx-auto bg-[#0f0f0f] border border-[#222] p-6 rounded-lg text-left grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-12">
+            <!-- Logo Upload Feature -->
+            <div class="lg:col-span-5 border-b border-[#222] pb-6 mb-2">
+                <label>1. Upload Your Logo (1000439965.webp)</label>
+                <input type="file" id="logoUpload" accept="image/*" class="text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#C58341] file:text-black hover:file:bg-white cursor-pointer transition-colors">
+            </div>
 
-  <input type="text" id="nameInput" placeholder="Full Name">
-  <input type="text" id="roleInput" placeholder="Role / Title">
-  <input type="text" id="phoneInput" placeholder="Phone">
-  <input type="text" id="emailInput" placeholder="Email">
-  <input type="text" id="qrInput" placeholder="QR Destination URL">
+            <div class="lg:col-span-1">
+                <label>2. Your Name</label>
+                <input type="text" id="inputName" value="JOHN DOE" oninput="drawBack()" placeholder="Enter your name">
+            </div>
+            <div class="lg:col-span-1">
+                <label>Your Role</label>
+                <input type="text" id="inputRole" value="FOUNDER" oninput="drawBack()" placeholder="Enter your role">
+            </div>
+            <div class="lg:col-span-2">
+                <label>Email Address</label>
+                <input type="text" id="inputEmail" value="footprintforge@gmail.com" oninput="drawBack()">
+            </div>
+            <div class="lg:col-span-1">
+                <label>Phone Number</label>
+                <input type="text" id="inputPhone" value="+91 98843 66634" oninput="drawBack()">
+            </div>
+        </div>
 
-  <label style="font-size:12px;opacity:.6;">Upload Logo</label>
-  <input type="file" id="logoUpload" accept="image/*">
+        <div class="grid md:grid-cols-2 gap-12">
+            
+            <!-- Front Card -->
+            <div class="flex flex-col items-center">
+                <div class="flex justify-between w-full max-w-[555px] items-end mb-4">
+                    <h2 class="text-lg tracking-[0.2em] text-zinc-300 font-bold">FRONT</h2>
+                    <span class="text-xs text-zinc-600 font-medium">1110 x 696 px</span>
+                </div>
+                <div class="canvas-container group relative">
+                    <canvas id="canvasFront" width="1110" height="696"></canvas>
+                    <div class="bleed-guide opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="trim-guide opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+                <button onclick="downloadCanvas('canvasFront', 'FootprintForge_Front.png')" 
+                        class="mt-6 copper-bg text-black font-bold tracking-widest uppercase px-6 py-4 rounded hover:bg-white transition-colors text-sm w-full max-w-[555px]">
+                    Download Front PNG
+                </button>
+            </div>
 
-  <button onclick="downloadCard('frontCard')">Download Front</button>
-  <button onclick="downloadCard('backCard')">Download Back</button>
-</div>
+            <!-- Back Card -->
+            <div class="flex flex-col items-center">
+                <div class="flex justify-between w-full max-w-[555px] items-end mb-4">
+                    <h2 class="text-lg tracking-[0.2em] text-zinc-300 font-bold">BACK</h2>
+                    <span class="text-xs text-zinc-600 font-medium">1110 x 696 px</span>
+                </div>
+                <div class="canvas-container group relative">
+                    <canvas id="canvasBack" width="1110" height="696"></canvas>
+                    <div class="bleed-guide opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="trim-guide opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+                <button onclick="downloadCanvas('canvasBack', 'FootprintForge_Back.png')" 
+                        class="mt-6 copper-bg text-black font-bold tracking-widest uppercase px-6 py-4 rounded hover:bg-white transition-colors text-sm w-full max-w-[555px]">
+                    Download Back PNG
+                </button>
+            </div>
 
-<!-- FRONT -->
-<div class="card center" id="frontCard">
-
-  <div>
-    <img id="logoPreview" class="logo" />
-  </div>
-
-  <div class="copper brand-name">
-    FOOTPRINT FORGE
-  </div>
-
-  <div class="copper tagline">
-    Forge Your Digital Identity
-  </div>
-
-</div>
-
-<!-- BACK -->
-<div class="card" id="backCard">
-
-  <div id="qrcode"></div>
-
-  <div class="center copper" style="font-size:12px;">
-    SCAN TO CONNECT
-  </div>
-
-  <div>
-    <div class="name" id="previewName">Your Name</div>
-    <div class="role" id="previewRole">Your Role</div>
-    <div class="details">
-      <div id="previewPhone"></div>
-      <div id="previewEmail"></div>
+        </div>
     </div>
-  </div>
 
-</div>
+    <script>
+        const W = 1110; 
+        const H = 696;
+        const COPPER = '#C58341'; 
+        const BG_COLOR = '#0A0A0A'; 
+        
+        let globalLogo = null;
+        let globalQr = null;
+        
+        // Handle User Logo Upload
+        document.getElementById('logoUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    globalLogo = new Image();
+                    globalLogo.onload = drawFront;
+                    globalLogo.src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
 
-<script>
-function generateQR(url) {
-  document.getElementById("qrcode").innerHTML = "";
-  if (!url) return;
+        document.fonts.ready.then(() => {
+            initDraw();
+        });
 
-  new QRCode(document.getElementById("qrcode"), {
-    text: url,
-    width: 160,
-    height: 160,
-    colorDark: "#ffffff",
-    colorLight: "#111111",
-    correctLevel: QRCode.CorrectLevel.H
-  });
-}
+        async function initDraw() {
+            // Generate QR Code with the EXACT dynamic GitHub link requested
+            const qr = new QRious({
+                value: 'https://footprintforge-hq.github.io/link',
+                background: '#ffffff', 
+                foreground: '#000000',
+                size: 260,
+                level: 'H' 
+            });
+            globalQr = new Image();
+            globalQr.src = qr.toDataURL('image/png');
+            globalQr.onload = drawBack;
 
-document.getElementById("qrInput").addEventListener("input", function() {
-  generateQR(this.value);
-});
+            // Attempt to load default logo if available
+            globalLogo = new Image();
+            globalLogo.onload = drawFront;
+            globalLogo.onerror = drawFront; 
+            globalLogo.src = '1000439965.webp'; 
+            
+            drawFront();
+            drawBack();
+        }
 
-document.getElementById("nameInput").addEventListener("input", function() {
-  document.getElementById("previewName").textContent = this.value;
-});
+        function drawFront() {
+            const canvas = document.getElementById('canvasFront');
+            const ctx = canvas.getContext('2d');
 
-document.getElementById("roleInput").addEventListener("input", function() {
-  document.getElementById("previewRole").textContent = this.value;
-});
+            ctx.fillStyle = BG_COLOR;
+            ctx.fillRect(0, 0, W, H);
 
-document.getElementById("phoneInput").addEventListener("input", function() {
-  document.getElementById("previewPhone").textContent = this.value;
-});
+            // Draw Logo or Fallback Outline
+            if (globalLogo && globalLogo.complete && globalLogo.naturalWidth !== 0) {
+                const logoSize = 380;
+                const logoX = (W - logoSize) / 2;
+                const logoY = (H - logoSize) / 2 - 40; 
+                ctx.drawImage(globalLogo, logoX, logoY, logoSize, logoSize);
+            } else {
+                ctx.strokeStyle = "rgba(197, 131, 65, 0.3)";
+                ctx.setLineDash([10, 10]);
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(W/2, H/2 - 40, 150, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.setLineDash([]); 
+                
+                ctx.fillStyle = "rgba(197, 131, 65, 0.5)";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.font = "300 20px Montserrat";
+                ctx.fillText("UPLOAD LOGO", W/2, H/2 - 40);
+            }
 
-document.getElementById("emailInput").addEventListener("input", function() {
-  document.getElementById("previewEmail").textContent = this.value;
-});
+            // Brand Name
+            ctx.fillStyle = COPPER;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "top";
+            ctx.font = "500 44px Montserrat"; 
+            ctx.letterSpacing = "24px"; 
+            ctx.fillText("FOOTPRINT FORGE", W/2 + 12, H/2 + 190);
+        }
 
-document.getElementById("logoUpload").addEventListener("change", function(event) {
-  const reader = new FileReader();
-  reader.onload = function() {
-    document.getElementById("logoPreview").src = reader.result;
-  };
-  reader.readAsDataURL(event.target.files[0]);
-});
+        function drawBack() {
+            const canvas = document.getElementById('canvasBack');
+            const ctx = canvas.getContext('2d');
 
-function downloadCard(cardId) {
-  const card = document.getElementById(cardId);
-  html2canvas(card, { scale: 3 }).then(canvas => {
-    const link = document.createElement("a");
-    link.download = cardId + ".png";
-    link.href = canvas.toDataURL();
-    link.click();
-  });
-}
-</script>
+            const name = document.getElementById('inputName').value.toUpperCase();
+            const role = document.getElementById('inputRole').value.toUpperCase();
+            const email = document.getElementById('inputEmail').value.toLowerCase();
+            const phone = document.getElementById('inputPhone').value;
 
+            ctx.fillStyle = BG_COLOR;
+            ctx.fillRect(0, 0, W, H);
+
+            const textLeft = 100; 
+
+            // --- LEFT COLUMN ---
+            ctx.fillStyle = "#ffffff";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "top";
+            ctx.font = "700 52px Montserrat"; 
+            ctx.letterSpacing = "4px";
+            ctx.fillText(name, textLeft, 115);
+            
+            ctx.fillStyle = COPPER;
+            ctx.font = "600 28px Montserrat"; 
+            ctx.letterSpacing = "6px";
+            ctx.fillText(role, textLeft, 180);
+
+            ctx.fillStyle = "rgba(197, 131, 65, 0.4)";
+            ctx.fillRect(textLeft, 255, 60, 3); 
+
+            ctx.fillStyle = "#E0E0E0"; 
+            ctx.font = "500 26px Montserrat"; 
+            ctx.letterSpacing = "2px";
+            ctx.fillText(email, textLeft, 290);
+            ctx.fillText(phone, textLeft, 335);
+
+            ctx.fillStyle = "#888888";
+            ctx.font = "500 22px Montserrat"; 
+            ctx.letterSpacing = "5px";
+            ctx.fillText("YOUR REPUTATION", textLeft, 470);
+            ctx.fillText("DESERVES INFRASTRUCTURE.", textLeft, 505);
+
+            // --- RIGHT COLUMN ---
+            if (globalQr && globalQr.complete) {
+                const qrSize = 280;
+                const padding = 20;
+                const blockSize = qrSize + (padding * 2);
+                
+                const blockX = W - textLeft - blockSize; 
+                const blockY = (H - blockSize) / 2; 
+                
+                ctx.fillStyle = "#ffffff";
+                ctx.beginPath();
+                ctx.roundRect(blockX, blockY, blockSize, blockSize, 12);
+                ctx.fill();
+                
+                ctx.drawImage(globalQr, blockX + padding, blockY + padding, qrSize, qrSize);
+
+                ctx.fillStyle = COPPER;
+                ctx.textAlign = "center";
+                ctx.font = "600 18px Montserrat";
+                ctx.letterSpacing = "3px";
+                ctx.fillText("SCAN TO CONNECT", blockX + (blockSize/2), blockY + blockSize + 25);
+            }
+        }
+
+        function downloadCanvas(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const dataUrl = canvas.toDataURL('image/png', 1.0);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = dataUrl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
 </body>
 </html>
+
+
