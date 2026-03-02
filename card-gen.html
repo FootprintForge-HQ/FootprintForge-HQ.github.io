@@ -3,116 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Footprint Forge - Final Print Edition</title>
+    <title>Footprint Forge - Foil & Spot UV Separator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Montserrat', sans-serif; background-color: #050505; color: #fff; }
-        .canvas-container {
+        .canvas-wrapper {
             position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,1), 0 0 40px rgba(197, 131, 65, 0.05);
-            border: 1px solid #222;
             width: 100%;
             max-width: 555px; 
-            aspect-ratio: 1110 / 696; /* 94x59mm at 300 DPI */
+            aspect-ratio: 1110 / 696; /* 94x59mm at 300 DPI (Indian Standard + Bleed) */
             margin: 0 auto;
-            background: #0a0a0a;
-            border-radius: 2px;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            border: 1px solid #333;
         }
         canvas { width: 100%; height: 100%; display: block; }
         
-        /* Visual Overlays for Web Preview ONLY (These do not download) */
-        .bleed-guide { position: absolute; inset: 0; border: 4px solid rgba(255, 0, 0, 0.2); pointer-events: none; }
-        .trim-guide { position: absolute; inset: 4.5% 3.2%; border: 1px dashed rgba(255, 255, 255, 0.4); pointer-events: none; }
-
         .copper-text { color: #C58341; }
-        .copper-bg { background-color: #C58341; }
+        .bg-copper { background-color: #C58341; }
+        
         input[type="text"] {
             background: #111; border: 1px solid #333; color: #fff;
             padding: 0.75rem; border-radius: 4px; width: 100%;
             font-family: 'Montserrat', sans-serif; font-size: 0.875rem;
-            transition: border-color 0.2s;
         }
         input[type="text"]:focus { outline: none; border-color: #C58341; }
         label { display: block; font-size: 0.75rem; color: #888; margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500;}
+        
+        /* Toggle Switch */
+        .view-mode-btn {
+            padding: 0.5rem 1rem; border: 1px solid #333; background: #111; color: #888;
+            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .view-mode-btn.active { background: #C58341; color: #000; border-color: #C58341; }
+        .view-mode-btn:first-child { border-radius: 4px 0 0 4px; }
+        .view-mode-btn:last-child { border-radius: 0 4px 4px 0; }
     </style>
 </head>
 <body class="min-h-screen p-8 pb-20">
 
     <div class="max-w-6xl mx-auto">
         <div class="mb-10 text-center">
-            <h1 class="text-3xl font-bold tracking-[0.1em] copper-text mb-4 uppercase">Final Print Edition</h1>
+            <h1 class="text-3xl font-bold tracking-[0.1em] copper-text mb-2 uppercase">Foil / Spot UV Pre-Press</h1>
             <p class="text-zinc-400 text-sm max-w-2xl mx-auto leading-relaxed mb-6">
-                Upload your logo below to map it to the high-resolution canvas. The QR code automatically points to your dynamic GitHub link.
+                Printers require separate "Mask" files for Spot UV and Foil stamping. Use the toggles below to see how the card separates into standard ink (CMYK) and the shiny foil layer (Mask).
             </p>
-            
-            <div class="flex flex-wrap justify-center gap-6 text-xs text-zinc-500 font-medium tracking-wide">
-                <span class="flex items-center gap-2"><div class="w-6 h-0 border-t border-dashed border-white opacity-50"></div> Hover over cards to see Cut-Lines</span>
-            </div>
         </div>
 
         <div class="max-w-4xl mx-auto bg-[#0f0f0f] border border-[#222] p-6 rounded-lg text-left grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-12">
-            <!-- Logo Upload Feature -->
             <div class="lg:col-span-5 border-b border-[#222] pb-6 mb-2">
-                <label>1. Upload Your Logo (1000439965.webp)</label>
+                <label>1. Upload Logo (We will automatically tint it for the mask)</label>
                 <input type="file" id="logoUpload" accept="image/*" class="text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#C58341] file:text-black hover:file:bg-white cursor-pointer transition-colors">
             </div>
 
             <div class="lg:col-span-1">
-                <label>2. Your Name</label>
-                <input type="text" id="inputName" value="JOHN DOE" oninput="drawBack()" placeholder="Enter your name">
+                <label>Name</label>
+                <input type="text" id="inputName" value="JOHN DOE" oninput="renderAll()">
             </div>
             <div class="lg:col-span-1">
-                <label>Your Role</label>
-                <input type="text" id="inputRole" value="FOUNDER" oninput="drawBack()" placeholder="Enter your role">
+                <label>Role</label>
+                <input type="text" id="inputRole" value="FOUNDER" oninput="renderAll()">
             </div>
             <div class="lg:col-span-2">
                 <label>Email Address</label>
-                <input type="text" id="inputEmail" value="footprintforge@gmail.com" oninput="drawBack()">
+                <input type="text" id="inputEmail" value="footprintforge@gmail.com" oninput="renderAll()">
             </div>
             <div class="lg:col-span-1">
                 <label>Phone Number</label>
-                <input type="text" id="inputPhone" value="+91 98843 66634" oninput="drawBack()">
+                <input type="text" id="inputPhone" value="+91 98843 66634" oninput="renderAll()">
+            </div>
+        </div>
+
+        <!-- Render Controls -->
+        <div class="flex justify-center mb-8">
+            <div class="flex rounded shadow">
+                <button class="view-mode-btn active" onclick="setMode('composite', this)">1. Final Preview</button>
+                <button class="view-mode-btn" onclick="setMode('cmyk', this)">2. CMYK Ink Layer</button>
+                <button class="view-mode-btn" onclick="setMode('mask', this)">3. Foil/UV Mask Layer</button>
             </div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-12">
-            
-            <!-- Front Card -->
+            <!-- Front Canvas -->
             <div class="flex flex-col items-center">
                 <div class="flex justify-between w-full max-w-[555px] items-end mb-4">
                     <h2 class="text-lg tracking-[0.2em] text-zinc-300 font-bold">FRONT</h2>
-                    <span class="text-xs text-zinc-600 font-medium">1110 x 696 px</span>
                 </div>
-                <div class="canvas-container group relative">
+                <div class="canvas-wrapper">
                     <canvas id="canvasFront" width="1110" height="696"></canvas>
-                    <div class="bleed-guide opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="trim-guide opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
-                <button onclick="downloadCanvas('canvasFront', 'FootprintForge_Front.png')" 
-                        class="mt-6 copper-bg text-black font-bold tracking-widest uppercase px-6 py-4 rounded hover:bg-white transition-colors text-sm w-full max-w-[555px]">
-                    Download Front PNG
-                </button>
+                <div class="flex gap-2 w-full max-w-[555px] mt-4">
+                    <button onclick="downloadCanvas('canvasFront', 'cmyk', 'FootprintForge_Front_CMYK.png')" class="flex-1 bg-zinc-800 text-white font-bold text-xs tracking-widest uppercase py-3 rounded hover:bg-zinc-700">Download CMYK</button>
+                    <button onclick="downloadCanvas('canvasFront', 'mask', 'FootprintForge_Front_FoilMask.png')" class="flex-1 bg-white text-black font-bold text-xs tracking-widest uppercase py-3 rounded hover:bg-zinc-200">Download MASK</button>
+                </div>
             </div>
 
-            <!-- Back Card -->
+            <!-- Back Canvas -->
             <div class="flex flex-col items-center">
                 <div class="flex justify-between w-full max-w-[555px] items-end mb-4">
                     <h2 class="text-lg tracking-[0.2em] text-zinc-300 font-bold">BACK</h2>
-                    <span class="text-xs text-zinc-600 font-medium">1110 x 696 px</span>
                 </div>
-                <div class="canvas-container group relative">
+                <div class="canvas-wrapper">
                     <canvas id="canvasBack" width="1110" height="696"></canvas>
-                    <div class="bleed-guide opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="trim-guide opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
-                <button onclick="downloadCanvas('canvasBack', 'FootprintForge_Back.png')" 
-                        class="mt-6 copper-bg text-black font-bold tracking-widest uppercase px-6 py-4 rounded hover:bg-white transition-colors text-sm w-full max-w-[555px]">
-                    Download Back PNG
-                </button>
+                <div class="flex gap-2 w-full max-w-[555px] mt-4">
+                    <button onclick="downloadCanvas('canvasBack', 'cmyk', 'FootprintForge_Back_CMYK.png')" class="flex-1 bg-zinc-800 text-white font-bold text-xs tracking-widest uppercase py-3 rounded hover:bg-zinc-700">Download CMYK</button>
+                    <button onclick="downloadCanvas('canvasBack', 'mask', 'FootprintForge_Back_FoilMask.png')" class="flex-1 bg-white text-black font-bold text-xs tracking-widest uppercase py-3 rounded hover:bg-zinc-200">Download MASK</button>
+                </div>
             </div>
-
         </div>
     </div>
 
@@ -120,168 +122,188 @@
         const W = 1110; 
         const H = 696;
         const COPPER = '#C58341'; 
-        const BG_COLOR = '#0A0A0A'; 
+        const RICH_BLACK = '#0A0A0A'; 
         
+        let currentMode = 'composite'; // 'composite', 'cmyk', or 'mask'
         let globalLogo = null;
         let globalQr = null;
-        
-        // Handle User Logo Upload
+
         document.getElementById('logoUpload').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     globalLogo = new Image();
-                    globalLogo.onload = drawFront;
+                    globalLogo.onload = renderAll;
                     globalLogo.src = event.target.result;
                 }
                 reader.readAsDataURL(file);
             }
         });
 
-        document.fonts.ready.then(() => {
-            initDraw();
-        });
+        document.fonts.ready.then(initDraw);
 
         async function initDraw() {
-            // Generate QR Code with the EXACT dynamic GitHub link requested
             const qr = new QRious({
                 value: 'https://footprintforge-hq.github.io/link',
                 background: '#ffffff', 
                 foreground: '#000000',
-                size: 260,
-                level: 'H' 
+                size: 260, level: 'H' 
             });
             globalQr = new Image();
             globalQr.src = qr.toDataURL('image/png');
-            globalQr.onload = drawBack;
+            globalQr.onload = renderAll;
 
-            // Attempt to load default logo if available
             globalLogo = new Image();
-            globalLogo.onload = drawFront;
-            globalLogo.onerror = drawFront; 
+            globalLogo.onload = renderAll;
+            globalLogo.onerror = renderAll; 
             globalLogo.src = '1000439965.webp'; 
-            
-            drawFront();
-            drawBack();
         }
 
-        function drawFront() {
-            const canvas = document.getElementById('canvasFront');
-            const ctx = canvas.getContext('2d');
+        function setMode(mode, btnElement) {
+            currentMode = mode;
+            document.querySelectorAll('.view-mode-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderAll();
+        }
 
-            ctx.fillStyle = BG_COLOR;
+        function renderAll() {
+            drawFront(currentMode, document.getElementById('canvasFront'));
+            drawBack(currentMode, document.getElementById('canvasBack'));
+        }
+
+        // Helper: Tints an image for the mask (Pure Black) or composite (Copper)
+        function getTintedLogo(img, size, color) {
+            const c = document.createElement('canvas');
+            c.width = size; c.height = size;
+            const cx = c.getContext('2d');
+            cx.drawImage(img, 0, 0, size, size);
+            cx.globalCompositeOperation = 'source-in';
+            cx.fillStyle = color;
+            cx.fillRect(0, 0, size, size);
+            return c;
+        }
+
+        function drawFront(mode, canvas) {
+            const ctx = canvas.getContext('2d');
+            
+            // 1. Background Logic
+            if (mode === 'mask') {
+                ctx.fillStyle = '#FFFFFF'; // Mask background MUST be pure white
+            } else {
+                ctx.fillStyle = RICH_BLACK; // CMYK & Composite background
+            }
             ctx.fillRect(0, 0, W, H);
 
-            // Draw Logo or Fallback Outline
-            if (globalLogo && globalLogo.complete && globalLogo.naturalWidth !== 0) {
-                const logoSize = 380;
-                const logoX = (W - logoSize) / 2;
-                const logoY = (H - logoSize) / 2 - 40; 
-                ctx.drawImage(globalLogo, logoX, logoY, logoSize, logoSize);
-            } else {
-                ctx.strokeStyle = "rgba(197, 131, 65, 0.3)";
-                ctx.setLineDash([10, 10]);
-                ctx.lineWidth = 4;
-                ctx.beginPath();
-                ctx.arc(W/2, H/2 - 40, 150, 0, Math.PI * 2);
-                ctx.stroke();
-                ctx.setLineDash([]); 
-                
-                ctx.fillStyle = "rgba(197, 131, 65, 0.5)";
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                ctx.font = "300 20px Montserrat";
-                ctx.fillText("UPLOAD LOGO", W/2, H/2 - 40);
-            }
+            // 2. Logo Logic
+            const logoSize = 380;
+            const logoX = (W - logoSize) / 2;
+            const logoY = (H - logoSize) / 2 - 40; 
 
-            // Brand Name
-            ctx.fillStyle = COPPER;
-            ctx.textAlign = "center";
-            ctx.textBaseline = "top";
-            ctx.font = "500 44px Montserrat"; 
-            ctx.letterSpacing = "24px"; 
-            ctx.fillText("FOOTPRINT FORGE", W/2 + 12, H/2 + 190);
+            if (mode === 'composite' || mode === 'mask') {
+                if (globalLogo && globalLogo.complete && globalLogo.naturalWidth !== 0) {
+                    const tintColor = mode === 'mask' ? '#000000' : COPPER;
+                    ctx.drawImage(getTintedLogo(globalLogo, logoSize, tintColor), logoX, logoY);
+                } else {
+                    ctx.strokeStyle = mode === 'mask' ? '#000000' : COPPER;
+                    ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(W/2, H/2 - 40, 150, 0, Math.PI * 2); ctx.stroke();
+                }
+            } // If CMYK mode, the logo is intentionally left blank (knocked out) so foil stamps directly on black paper.
+
+            // 3. Text Logic
+            if (mode === 'composite' || mode === 'mask') {
+                ctx.fillStyle = mode === 'mask' ? '#000000' : COPPER;
+                ctx.textAlign = "center"; ctx.textBaseline = "top";
+                ctx.font = "500 44px Montserrat"; ctx.letterSpacing = "24px"; 
+                ctx.fillText("FOOTPRINT FORGE", W/2 + 12, H/2 + 190);
+            }
         }
 
-        function drawBack() {
-            const canvas = document.getElementById('canvasBack');
+        function drawBack(mode, canvas) {
             const ctx = canvas.getContext('2d');
-
             const name = document.getElementById('inputName').value.toUpperCase();
             const role = document.getElementById('inputRole').value.toUpperCase();
             const email = document.getElementById('inputEmail').value.toLowerCase();
             const phone = document.getElementById('inputPhone').value;
 
-            ctx.fillStyle = BG_COLOR;
+            // 1. Background
+            ctx.fillStyle = mode === 'mask' ? '#FFFFFF' : RICH_BLACK;
             ctx.fillRect(0, 0, W, H);
 
             const textLeft = 100; 
 
-            // --- LEFT COLUMN ---
-            ctx.fillStyle = "#ffffff";
-            ctx.textAlign = "left";
-            ctx.textBaseline = "top";
-            ctx.font = "700 52px Montserrat"; 
-            ctx.letterSpacing = "4px";
-            ctx.fillText(name, textLeft, 115);
-            
-            ctx.fillStyle = COPPER;
-            ctx.font = "600 28px Montserrat"; 
-            ctx.letterSpacing = "6px";
-            ctx.fillText(role, textLeft, 180);
-
-            ctx.fillStyle = "rgba(197, 131, 65, 0.4)";
-            ctx.fillRect(textLeft, 255, 60, 3); 
-
-            ctx.fillStyle = "#E0E0E0"; 
-            ctx.font = "500 26px Montserrat"; 
-            ctx.letterSpacing = "2px";
-            ctx.fillText(email, textLeft, 290);
-            ctx.fillText(phone, textLeft, 335);
-
-            ctx.fillStyle = "#888888";
-            ctx.font = "500 22px Montserrat"; 
-            ctx.letterSpacing = "5px";
-            ctx.fillText("YOUR REPUTATION", textLeft, 470);
-            ctx.fillText("DESERVES INFRASTRUCTURE.", textLeft, 505);
-
-            // --- RIGHT COLUMN ---
-            if (globalQr && globalQr.complete) {
-                const qrSize = 280;
-                const padding = 20;
-                const blockSize = qrSize + (padding * 2);
-                
-                const blockX = W - textLeft - blockSize; 
-                const blockY = (H - blockSize) / 2; 
-                
+            // --- CMYK ELEMENTS (White text, QR Code) ---
+            // These render in 'composite' and 'cmyk' modes, but hide in 'mask' mode
+            if (mode === 'composite' || mode === 'cmyk') {
+                // Name
                 ctx.fillStyle = "#ffffff";
-                ctx.beginPath();
-                ctx.roundRect(blockX, blockY, blockSize, blockSize, 12);
-                ctx.fill();
-                
-                ctx.drawImage(globalQr, blockX + padding, blockY + padding, qrSize, qrSize);
+                ctx.textAlign = "left"; ctx.textBaseline = "top";
+                ctx.font = "700 52px Montserrat"; ctx.letterSpacing = "4px";
+                ctx.fillText(name, textLeft, 115);
 
-                ctx.fillStyle = COPPER;
-                ctx.textAlign = "center";
-                ctx.font = "600 18px Montserrat";
-                ctx.letterSpacing = "3px";
-                ctx.fillText("SCAN TO CONNECT", blockX + (blockSize/2), blockY + blockSize + 25);
+                // Contact
+                ctx.fillStyle = "#E0E0E0"; 
+                ctx.font = "500 26px Montserrat"; ctx.letterSpacing = "2px";
+                ctx.fillText(email, textLeft, 290);
+                ctx.fillText(phone, textLeft, 335);
+
+                // QR Code
+                if (globalQr && globalQr.complete) {
+                    const qrSize = 280; const padding = 20; const blockSize = qrSize + (padding * 2);
+                    const blockX = W - textLeft - blockSize; const blockY = (H - blockSize) / 2; 
+                    
+                    ctx.fillStyle = "#ffffff";
+                    ctx.beginPath(); ctx.roundRect(blockX, blockY, blockSize, blockSize, 12); ctx.fill();
+                    ctx.drawImage(globalQr, blockX + padding, blockY + padding, qrSize, qrSize);
+                }
+            }
+
+            // --- FOIL / SPOT UV ELEMENTS (Role, Tagline, CTA) ---
+            // These render copper in 'composite', black in 'mask', and hide in 'cmyk'
+            if (mode === 'composite' || mode === 'mask') {
+                const foilColor = mode === 'mask' ? '#000000' : COPPER;
+                
+                // Role
+                ctx.fillStyle = foilColor;
+                ctx.textAlign = "left"; ctx.textBaseline = "top";
+                ctx.font = "600 28px Montserrat"; ctx.letterSpacing = "6px";
+                ctx.fillText(role, textLeft, 180);
+
+                // Divider line
+                ctx.fillStyle = foilColor;
+                ctx.fillRect(textLeft, 255, 60, 4); 
+
+                // Tagline
+                ctx.fillStyle = foilColor;
+                ctx.font = "500 22px Montserrat"; ctx.letterSpacing = "5px";
+                ctx.fillText("YOUR REPUTATION", textLeft, 470);
+                ctx.fillText("DESERVES INFRASTRUCTURE.", textLeft, 505);
+
+                // CTA under QR
+                if (globalQr && globalQr.complete) {
+                    const qrSize = 280; const padding = 20; const blockSize = qrSize + (padding * 2);
+                    const blockX = W - textLeft - blockSize; const blockY = (H - blockSize) / 2; 
+                    
+                    ctx.textAlign = "center";
+                    ctx.font = "600 18px Montserrat"; ctx.letterSpacing = "3px";
+                    ctx.fillText("SCAN TO CONNECT", blockX + (blockSize/2), blockY + blockSize + 25);
+                }
             }
         }
 
-        function downloadCanvas(canvasId, filename) {
-            const canvas = document.getElementById(canvasId);
-            const dataUrl = canvas.toDataURL('image/png', 1.0);
+        // Dedicated download to bypass the current view mode and force correct output
+        function downloadCanvas(canvasId, targetMode, filename) {
+            const offCanvas = document.createElement('canvas');
+            offCanvas.width = W; offCanvas.height = H;
+            
+            if (canvasId === 'canvasFront') drawFront(targetMode, offCanvas);
+            else drawBack(targetMode, offCanvas);
+
+            const dataUrl = offCanvas.toDataURL('image/png', 1.0);
             const link = document.createElement('a');
-            link.download = filename;
-            link.href = dataUrl;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            link.download = filename; link.href = dataUrl;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
     </script>
 </body>
 </html>
-
-
