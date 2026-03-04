@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Footprint Forge | Identity Infrastructure</title>
   
   <!-- Tailwind CSS -->
@@ -10,6 +10,9 @@
   
   <!-- FontAwesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- React & ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -21,7 +24,10 @@
   <style>
     body {
       margin: 0;
-      background-color: #0a0f1c; /* Prevents white flash before Tailwind loads */
+      background-color: #05080f; /* Deeper, richer dark background */
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
     
     /* Custom Scrollbar for Mockup to keep it clean */
@@ -41,11 +47,29 @@
     }
     
     @keyframes fadeInMockup {
-      from { opacity: 0; transform: scale(0.98); }
-      to { opacity: 1; transform: scale(1); }
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
     }
     .animate-mockup-in {
-      animation: fadeInMockup 0.2s ease-out forwards;
+      animation: fadeInMockup 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Elegant Text Gradient */
+    .text-gradient-gold {
+      background: linear-gradient(135deg, #e6b981 0%, #c27e42 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Subtle float animation for hero card */
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(-3deg); }
+      50% { transform: translateY(-10px) rotate(-2deg); }
+      100% { transform: translateY(0px) rotate(-3deg); }
+    }
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
     }
   </style>
 </head>
@@ -65,7 +89,7 @@
       // Shrink navbar on scroll
       useEffect(() => {
         const handleScroll = () => {
-          setIsScrolled(window.scrollY > 50);
+          setIsScrolled(window.scrollY > 20);
         };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
@@ -73,288 +97,249 @@
 
       // Lock body scroll when mockup modal is open
       useEffect(() => {
-        if (activeMockup) {
+        if (activeMockup || isMobileMenuOpen) {
           document.body.style.overflow = 'hidden';
         } else {
           document.body.style.overflow = 'unset';
         }
         return () => { document.body.style.overflow = 'unset'; };
-      }, [activeMockup]);
+      }, [activeMockup, isMobileMenuOpen]);
 
       const scrollToSection = (id) => {
         setIsMobileMenuOpen(false);
         const element = document.getElementById(id);
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       };
 
       const renderMockupContent = () => {
-        // Shared Header Component Function
-        const renderHeader = (initials, name, roleLabel, location) => (
-          <div className="pt-12 px-6">
-            <div className="w-14 h-14 bg-[#132A4F] text-[#EAEAEA] flex items-center justify-center text-xl font-bold mb-6 border border-[#1F3558] rounded-sm">
-              {initials}
-            </div>
-            <h1 className={`font-bold text-[#EAEAEA] tracking-tight ${activeMockup === 'strategist' ? 'text-4xl' : 'text-[28px] leading-tight'}`}>
-              {name}
-            </h1>
-            <div className="mt-2 text-[#9CA3AF] text-[15px]">{roleLabel}</div>
-            <p className="text-[#9CA3AF] text-xs mt-1 tracking-wide">{location}</p>
-            <div className="w-full h-[2px] bg-[#B87433] mt-5 mb-6"></div>
-            <div className="flex gap-3">
-              <button className="flex-1 bg-[#B87433] hover:bg-[#9a6029] transition-colors text-[#EAEAEA] text-sm font-bold py-2.5 rounded-[6px]">Connect</button>
-              <button className="flex-1 border border-[#B87433] hover:bg-[#B87433]/10 transition-colors text-[#B87433] text-sm font-bold py-2.5 rounded-[6px]">LinkedIn</button>
-            </div>
-          </div>
-        );
-
+        
+        // --- 1. THE COMMERCIAL BANKER PORTFOLIO ---
         if (activeMockup === 'banker') {
           return (
-            <div className="flex flex-col bg-[#0B1F3A] min-h-full font-sans animate-mockup-in">
-              {renderHeader("AC", "Alexander Chen", "Director, Commercial Banking", "Chennai, Tamil Nadu")}
+            <div className="flex flex-col bg-[#081225] min-h-full font-sans animate-mockup-in text-slate-200 pb-12">
+              {/* Mini Nav */}
+              <div className="sticky top-0 z-50 bg-[#081225]/90 backdrop-blur-md px-5 py-4 border-b border-white/5 flex justify-between items-center">
+                <span className="font-bold tracking-widest text-xs uppercase text-white flex items-center gap-2">
+                  <div className="w-2 h-2 bg-[#B87433] rounded-sm"></div> A. Chen
+                </span>
+                <i className="fa-solid fa-bars text-slate-400"></i>
+              </div>
               
-              <div className="px-6 flex flex-col gap-[80px] pt-4 pb-16">
-                {/* Section 1 — Authority Snapshot */}
-                <div className="grid grid-cols-2 gap-y-10 gap-x-4">
-                  <div>
-                    <div className="text-3xl font-bold text-[#B87433]">₹120Cr+</div>
-                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">Loan Portfolio</div>
+              {/* Hero */}
+              <div className="px-5 pt-10 pb-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#B87433]/10 rounded-full blur-2xl -z-10"></div>
+                <div className="w-14 h-14 bg-gradient-to-br from-[#132A4F] to-[#081225] border border-[#1F3558] rounded-xl flex items-center justify-center text-xl font-bold mb-6 text-[#EAEAEA] shadow-lg">AC</div>
+                <h1 className="text-3xl font-extrabold text-white leading-tight mb-3">Structuring Capital for Growth.</h1>
+                <p className="text-slate-400 text-sm leading-relaxed mb-6 font-light">Director of Commercial Banking specializing in mid-market syndication and working capital solutions across South India.</p>
+                <div className="flex gap-3">
+                  <button className="flex-1 bg-[#B87433] text-white font-semibold py-3 rounded-lg text-sm shadow-[0_0_15px_rgba(194,126,66,0.2)]">Book Meeting</button>
+                  <button className="w-12 border border-white/10 hover:bg-white/5 flex items-center justify-center rounded-lg text-white"><i className="fa-brands fa-linkedin-in"></i></button>
+                </div>
+              </div>
+
+              <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-2"></div>
+
+              {/* Metrics */}
+              <div className="px-5 py-6">
+                <h3 className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold mb-4">Portfolio Metrics</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white/5 border border-white/5 p-4 rounded-xl">
+                    <div className="text-2xl font-bold text-[#B87433]">₹120Cr+</div>
+                    <div className="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-medium">Active Book</div>
                   </div>
-                  <div>
-                    <div className="text-3xl font-bold text-[#B87433]">14</div>
-                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">Active Deals</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-[#B87433]">0.2%</div>
-                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">NPA Ratio</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-[#B87433]">12</div>
-                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">Years Exp</div>
+                  <div className="bg-white/5 border border-white/5 p-4 rounded-xl">
+                    <div className="text-2xl font-bold text-[#B87433]">0.2%</div>
+                    <div className="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-medium">NPA Ratio</div>
                   </div>
                 </div>
+              </div>
 
-                {/* Section 2 — Core Competencies */}
-                <div className="border-l-[3px] border-[#B87433] pl-5 flex flex-col gap-4">
-                  <div className="text-[#EAEAEA] font-medium tracking-wide">Working Capital Structuring</div>
-                  <div className="text-[#EAEAEA] font-medium tracking-wide">Credit Risk Evaluation</div>
-                  <div className="text-[#EAEAEA] font-medium tracking-wide">SME Financing</div>
-                  <div className="text-[#EAEAEA] font-medium tracking-wide">Cash Flow Advisory</div>
-                </div>
-
-                {/* Section 3 — Experience Timeline */}
-                <div className="border-l border-[#1F3558] pl-6 relative space-y-12 ml-2">
-                  <div className="relative">
-                    <div className="absolute -left-[29px] top-1.5 w-[9px] h-[9px] rounded-full bg-[#1F3558]"></div>
-                    <h3 className="text-[#EAEAEA] font-bold text-lg">Standard Chartered</h3>
-                    <p className="text-[#9CA3AF] text-sm mt-1">Director, Commercial Banking | 2019–Present</p>
-                    <ul className="mt-4 text-[#9CA3AF] text-[13px] leading-relaxed space-y-2 list-disc pl-4 marker:text-[#1F3558]">
-                      <li>Managed ₹50Cr+ syndication for manufacturing client.</li>
-                      <li>Restructured SME credit lines improving yield by 12%.</li>
-                    </ul>
+              {/* Deal Tombstones */}
+              <div className="px-5 py-6">
+                <h3 className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold mb-4 flex justify-between items-center">
+                  Recent Tombstones <span>View All &rarr;</span>
+                </h3>
+                <div className="space-y-4">
+                  <div className="border-l-2 border-[#B87433] pl-4 py-1">
+                    <h4 className="text-white font-bold text-sm">₹50Cr Term Syndication</h4>
+                    <p className="text-xs text-slate-400 mt-1">Lead arranger for Tier-1 Manufacturing Firm.</p>
                   </div>
-                  <div className="relative">
-                    <div className="absolute -left-[29px] top-1.5 w-[9px] h-[9px] rounded-full bg-[#1F3558]"></div>
-                    <h3 className="text-[#EAEAEA] font-bold text-lg">HDFC Bank</h3>
-                    <p className="text-[#9CA3AF] text-sm mt-1">Relationship Manager | 2015–2019</p>
-                    <ul className="mt-4 text-[#9CA3AF] text-[13px] leading-relaxed space-y-2 list-disc pl-4 marker:text-[#1F3558]">
-                      <li>Scaled mid-market portfolio across Tamil Nadu.</li>
-                      <li>Awarded top performer in working capital facilities.</li>
-                    </ul>
+                  <div className="border-l-2 border-[#1F3558] pl-4 py-1">
+                    <h4 className="text-white font-bold text-sm">₹25Cr Working Capital</h4>
+                    <p className="text-xs text-slate-400 mt-1">Structured trade finance facility for Exporter.</p>
                   </div>
-                </div>
-
-                {/* Section 4 — Contact */}
-                <div>
-                  <button className="w-full bg-[#B87433] hover:bg-[#9a6029] transition-colors text-[#EAEAEA] font-bold py-3.5 rounded-[6px] text-sm tracking-wide">
-                    Discuss Structured Lending
-                  </button>
-                  <p className="text-center text-[#9CA3AF] text-xs mt-4 tracking-wide">alexander.c@institutional.com</p>
                 </div>
               </div>
             </div>
           );
         }
-
+        
+        // --- 2. THE INVESTMENT ANALYST PORTFOLIO ---
         if (activeMockup === 'analyst') {
           return (
-            <div className="flex flex-col bg-[#0B1F3A] min-h-full font-sans animate-mockup-in">
-              {renderHeader("SJ", "Sarah Jenkins", <span>Investment Analyst | <span className="text-[#B87433] font-medium">Sector Focus: Industrials</span></span>, "Mumbai, Maharashtra")}
+            <div className="flex flex-col bg-[#030712] min-h-full font-sans animate-mockup-in text-slate-200 pb-12">
+              {/* Mini Nav */}
+              <div className="sticky top-0 z-50 bg-[#030712]/90 backdrop-blur-md px-5 py-4 flex justify-between items-center border-b border-white/5">
+                <span className="font-mono font-bold tracking-tighter text-sm text-white">SJ_RESEARCH</span>
+                <i className="fa-solid fa-ellipsis-vertical text-slate-400"></i>
+              </div>
               
-              <div className="px-6 flex flex-col gap-[80px] pt-4 pb-16">
-                {/* Section 2 — Analytical Metrics */}
-                <div className="grid grid-cols-2 gap-y-10 gap-x-4">
-                  <div>
-                    <div className="text-3xl font-bold text-[#B87433]">25+</div>
-                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">Models Built</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-[#B87433]">12</div>
-                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">Published Notes</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-[#B87433]">₹300Cr</div>
-                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">Deal Value</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-[#B87433] mt-1">Level II</div>
-                    <div className="text-xs text-[#9CA3AF] mt-2 uppercase tracking-widest font-medium">CFA Candidate</div>
-                  </div>
+              {/* Hero */}
+              <div className="px-5 pt-10 pb-6 border-b border-white/5">
+                <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-green-500/10 border border-green-500/20 rounded text-[10px] text-green-400 font-mono mb-4">
+                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> ACTIVELY PUBLISHING
                 </div>
+                <h1 className="text-3xl font-bold text-white leading-tight mb-3">Uncovering Alpha in Industrials.</h1>
+                <p className="text-slate-400 text-sm leading-relaxed mb-6 font-light">Investment Analyst focusing on capital goods, automation, and infrastructure in emerging markets.</p>
+                <button className="w-full bg-white text-black font-semibold py-3 rounded-md text-sm">Request Financial Models</button>
+              </div>
 
-                {/* Section 3 — Featured Research */}
-                <div className="space-y-6">
-                  <div className="bg-[#132A4F] border border-[#1F3558] p-6 rounded-[4px]">
-                    <h3 className="text-[#EAEAEA] font-bold text-base leading-snug">Q3 Industrial Automation Outlook</h3>
-                    <p className="text-[#9CA3AF] text-[13px] leading-relaxed mt-3">Comprehensive analysis of supply chain interventions and capex cycles in South India's manufacturing belt.</p>
-                    <div className="text-[#B87433] text-sm font-bold mt-5 tracking-wide flex items-center gap-2 cursor-pointer">
-                      Read Summary <i className="fa-solid fa-arrow-right text-xs"></i>
-                    </div>
-                  </div>
-                  <div className="bg-[#132A4F] border border-[#1F3558] p-6 rounded-[4px]">
-                    <h3 className="text-[#EAEAEA] font-bold text-base leading-snug">Emerging Tech Infrastructure</h3>
-                    <p className="text-[#9CA3AF] text-[13px] leading-relaxed mt-3">Evaluating valuation multiples for mid-cap data center operators post-2024 policy shifts.</p>
-                    <div className="text-[#B87433] text-sm font-bold mt-5 tracking-wide flex items-center gap-2 cursor-pointer">
-                      Read Summary <i className="fa-solid fa-arrow-right text-xs"></i>
-                    </div>
-                  </div>
+              {/* Coverage Universe */}
+              <div className="px-5 py-8 border-b border-white/5">
+                <h3 className="text-[10px] font-mono uppercase tracking-[0.1em] text-slate-500 mb-4">Coverage Universe</h3>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1.5 border border-white/10 text-xs font-mono text-slate-300 rounded bg-white/[0.02]">NSE:LT</span>
+                  <span className="px-3 py-1.5 border border-white/10 text-xs font-mono text-slate-300 rounded bg-white/[0.02]">NSE:ABB</span>
+                  <span className="px-3 py-1.5 border border-white/10 text-xs font-mono text-slate-300 rounded bg-white/[0.02]">NSE:SIEMENS</span>
+                  <span className="px-3 py-1.5 border border-white/10 text-xs font-mono text-slate-300 rounded bg-white/[0.02]">NSE:CUMMINSIND</span>
                 </div>
+              </div>
 
-                {/* Section 4 — Contact CTA */}
-                <div>
-                  <button className="w-full bg-[#B87433] hover:bg-[#9a6029] transition-colors text-[#EAEAEA] font-bold py-3.5 rounded-[6px] text-sm tracking-wide">
-                    Discuss an Investment Mandate
-                  </button>
-                  <p className="text-center text-[#9CA3AF] text-xs mt-4 tracking-wide">s.jenkins@institutional.com</p>
+              {/* Research Notes */}
+              <div className="px-5 py-8">
+                <h3 className="text-[10px] font-mono uppercase tracking-[0.1em] text-slate-500 mb-4">Latest Theses</h3>
+                <div className="space-y-4">
+                  <div className="bg-white/[0.03] border border-white/10 p-4 rounded-lg hover:bg-white/[0.05] transition-colors cursor-pointer group">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="text-white font-semibold text-sm group-hover:text-green-400 transition-colors">Q3 Automation Capex Cycle</h4>
+                      <i className="fa-regular fa-file-pdf text-slate-500"></i>
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed mb-3">Deep dive into order inflow trends masking margin pressures in mid-cap suppliers.</p>
+                    <span className="text-[10px] text-slate-500 font-mono">Published: Oct 12 • 14 min read</span>
+                  </div>
+                  <div className="bg-white/[0.03] border border-white/10 p-4 rounded-lg hover:bg-white/[0.05] transition-colors cursor-pointer group">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="text-white font-semibold text-sm group-hover:text-green-400 transition-colors">Supply Chain Relocation Note</h4>
+                      <i className="fa-regular fa-file-pdf text-slate-500"></i>
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed mb-3">Estimating bottom-line impact of South India manufacturing shifts.</p>
+                    <span className="text-[10px] text-slate-500 font-mono">Published: Sep 28 • 8 min read</span>
+                  </div>
                 </div>
               </div>
             </div>
           );
         }
 
+        // --- 3. THE TECH CONSULTANT PORTFOLIO ---
         if (activeMockup === 'consultant') {
           return (
-            <div className="flex flex-col bg-[#0B1F3A] min-h-full font-sans animate-mockup-in">
-              {renderHeader("MT", "Marcus Thorne", "Enterprise Systems Consultant", "Bengaluru, Karnataka")}
+            <div className="flex flex-col bg-[#0f172a] min-h-full font-sans animate-mockup-in text-slate-200 pb-12">
+              {/* Mini Nav */}
+              <div className="sticky top-0 z-50 bg-[#0f172a]/90 backdrop-blur-md px-5 py-4 border-b border-slate-800 flex justify-between items-center">
+                <span className="font-bold tracking-wide text-sm text-white flex items-center gap-2">
+                  <i className="fa-solid fa-terminal text-[#38bdf8]"></i> M.Thorne
+                </span>
+                <i className="fa-brands fa-github text-slate-400 text-lg"></i>
+              </div>
               
-              <div className="px-6 flex flex-col gap-[80px] pt-4 pb-16">
-                {/* Section 1 — Systems Expertise */}
-                <div>
-                   <div className="text-[#EAEAEA] font-bold tracking-widest uppercase text-sm mb-3">Core Stack</div>
-                   <div className="text-[#B87433] text-lg font-medium tracking-wide">SAP | ERP | Automation</div>
-                   <div className="w-12 h-[2px] bg-[#B87433] mt-5"></div>
+              {/* Hero */}
+              <div className="px-5 pt-10 pb-8">
+                <h1 className="text-3xl font-bold text-white leading-tight mb-3">Architecting Enterprise Scale.</h1>
+                <p className="text-slate-400 text-sm leading-relaxed mb-6 font-light">Systems Consultant transforming legacy operations into agile, automated architectures.</p>
+                <div className="flex gap-3">
+                  <button className="flex-1 bg-[#38bdf8] text-[#0f172a] font-bold py-3 rounded-lg text-sm shadow-[0_0_15px_rgba(56,189,248,0.2)]">View Case Studies</button>
+                  <button className="flex-1 border border-slate-700 bg-slate-800 hover:bg-slate-700 font-semibold py-3 rounded-lg text-sm text-white">Contact</button>
                 </div>
+              </div>
 
-                {/* Section 2 — Measurable Impact */}
+              {/* Stack */}
+              <div className="px-5 py-6 bg-slate-900/50 border-y border-slate-800">
+                <h3 className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold mb-4">Core Stack & Certifications</h3>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1 border border-slate-700 bg-slate-800 text-xs text-slate-300 rounded-full flex items-center gap-1"><i className="fa-brands fa-aws text-[#ff9900]"></i> AWS</span>
+                  <span className="px-3 py-1 border border-slate-700 bg-slate-800 text-xs text-slate-300 rounded-full flex items-center gap-1"><i className="fa-solid fa-database text-blue-400"></i> SAP ERP</span>
+                  <span className="px-3 py-1 border border-slate-700 bg-slate-800 text-xs text-slate-300 rounded-full flex items-center gap-1"><i className="fa-brands fa-python text-yellow-400"></i> Python</span>
+                  <span className="px-3 py-1 border border-[#38bdf8]/30 bg-[#38bdf8]/10 text-xs text-[#38bdf8] rounded-full font-medium">Six Sigma Black Belt</span>
+                </div>
+              </div>
+
+              {/* Case Studies */}
+              <div className="px-5 py-8">
+                <h3 className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold mb-4">Deployments</h3>
                 <div className="space-y-6">
-                  <div className="bg-[#132A4F] border-l-[4px] border-[#B87433] p-6">
-                    <div className="flex flex-col gap-2 border-b border-[#1F3558] pb-4 mb-4">
-                      <div className="text-[#9CA3AF] text-[13px]"><strong className="text-[#EAEAEA] font-medium">Problem:</strong> Legacy reporting lags.</div>
-                      <div className="text-[#9CA3AF] text-[13px]"><strong className="text-[#EAEAEA] font-medium">Intervention:</strong> Cloud ERP migration.</div>
-                    </div>
-                    <div className="text-[#B87433] font-bold text-sm leading-snug">
-                      Reduced reporting cycle from 14 days → 3 days.
-                    </div>
-                  </div>
-                  
-                  <div className="bg-[#132A4F] border-l-[4px] border-[#B87433] p-6">
-                    <div className="flex flex-col gap-2 border-b border-[#1F3558] pb-4 mb-4">
-                      <div className="text-[#9CA3AF] text-[13px]"><strong className="text-[#EAEAEA] font-medium">Problem:</strong> High procurement leakage.</div>
-                      <div className="text-[#9CA3AF] text-[13px]"><strong className="text-[#EAEAEA] font-medium">Intervention:</strong> Automated vendor matching.</div>
-                    </div>
-                    <div className="text-[#B87433] font-bold text-sm leading-snug">
-                      Recovered ₹18Cr in annual operational leakage.
+                  <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:bottom-0 before:w-0.5 before:bg-slate-800">
+                    <div className="absolute left-[-3px] top-2 w-2 h-2 rounded-full bg-[#38bdf8]"></div>
+                    <h4 className="text-white font-bold text-sm mb-1">Cloud ERP Migration</h4>
+                    <p className="text-xs text-slate-400 mb-2 font-light">Migrated 40+ legacy on-prem databases to unified cloud ERP for a logistics major.</p>
+                    <div className="inline-block bg-green-500/10 text-green-400 text-[10px] font-bold px-2 py-1 rounded">
+                      Impact: Reporting cycle reduced 14d &rarr; 3d
                     </div>
                   </div>
-                </div>
-
-                {/* Section 3 — Certifications */}
-                <div>
-                  <h3 className="text-[#EAEAEA] font-bold text-sm uppercase tracking-widest mb-6 border-b border-[#1F3558] pb-3">Certifications</h3>
-                  <div className="flex flex-wrap gap-3">
-                    <div className="border border-[#B87433] text-[#EAEAEA] px-4 py-2 rounded-[4px] text-xs font-bold tracking-wide">SAP Certified</div>
-                    <div className="border border-[#B87433] text-[#EAEAEA] px-4 py-2 rounded-[4px] text-xs font-bold tracking-wide">Lean Six Sigma</div>
-                    <div className="border border-[#B87433] text-[#EAEAEA] px-4 py-2 rounded-[4px] text-xs font-bold tracking-wide">AWS Practitioner</div>
+                  <div className="relative pl-6 before:absolute before:left-0 before:top-2 before:bottom-0 before:w-0.5 before:bg-slate-800">
+                    <div className="absolute left-[-3px] top-2 w-2 h-2 rounded-full bg-slate-600"></div>
+                    <h4 className="text-white font-bold text-sm mb-1">Procurement Automation</h4>
+                    <p className="text-xs text-slate-400 mb-2 font-light">Built automated vendor-matching logic reducing manual intervention.</p>
+                    <div className="inline-block bg-green-500/10 text-green-400 text-[10px] font-bold px-2 py-1 rounded">
+                      Impact: ₹18Cr leakage recovered
+                    </div>
                   </div>
-                </div>
-
-                {/* Section 4 — CTA */}
-                <div>
-                  <button className="w-full bg-[#B87433] hover:bg-[#9a6029] transition-colors text-[#EAEAEA] font-bold py-3.5 rounded-[6px] text-sm tracking-wide">
-                    Initiate Enterprise Consultation
-                  </button>
-                  <p className="text-center text-[#9CA3AF] text-xs mt-4 tracking-wide">marcus.t@institutional.com</p>
                 </div>
               </div>
             </div>
           );
         }
 
+        // --- 4. THE CORP STRATEGIST PORTFOLIO ---
         if (activeMockup === 'strategist') {
           return (
-            <div className="flex flex-col bg-[#0B1F3A] min-h-full font-sans animate-mockup-in">
-              {renderHeader("PS", "Priya Sharma", "Corporate Strategy & Expansion Advisory", "Chennai, Tamil Nadu")}
+            <div className="flex flex-col bg-[#1c1917] min-h-full font-sans animate-mockup-in text-[#d6d3d1] pb-12">
+              {/* Mini Nav */}
+              <div className="sticky top-0 z-50 bg-[#1c1917]/95 backdrop-blur-md px-6 py-5 border-b border-[#292524] flex justify-between items-center">
+                <span className="font-serif font-bold italic tracking-wide text-lg text-[#e6b981]">Priya Sharma.</span>
+                <span className="text-[10px] uppercase tracking-widest text-stone-400 cursor-pointer hover:text-white">Menu</span>
+              </div>
               
-              <div className="px-6 flex flex-col gap-[96px] pt-4 pb-16">
-                {/* Section 2 — Strategic Impact Metrics */}
-                <div className="space-y-12">
-                  <div>
-                    <div className="text-5xl font-bold text-[#B87433] tracking-tighter">4</div>
-                    <div className="text-[11px] text-[#9CA3AF] mt-3 uppercase tracking-[0.2em] font-bold">Market Entries Led</div>
-                  </div>
-                  <div>
-                    <div className="text-5xl font-bold text-[#B87433] tracking-tighter">3x</div>
-                    <div className="text-[11px] text-[#9CA3AF] mt-3 uppercase tracking-[0.2em] font-bold">Revenue Growth</div>
-                  </div>
-                  <div>
-                    <div className="text-5xl font-bold text-[#B87433] tracking-tighter">2</div>
-                    <div className="text-[11px] text-[#9CA3AF] mt-3 uppercase tracking-[0.2em] font-bold">IPO-Ready Roadmaps</div>
-                  </div>
+              {/* Hero */}
+              <div className="px-6 pt-12 pb-10">
+                <h1 className="text-3xl font-serif text-[#fafaf9] leading-tight mb-4 tracking-tight">Navigating Corporate Expansion.</h1>
+                <p className="text-stone-400 text-sm leading-relaxed mb-8 font-light">Strategy advisory for enterprise market entry, structural pivots, and M&A integration.</p>
+                <div className="w-12 h-px bg-[#e6b981] mb-8"></div>
+                <button className="bg-[#292524] hover:bg-[#44403c] transition-colors text-white font-medium px-6 py-3 text-xs tracking-widest uppercase rounded-sm border border-[#44403c]">Engage Advisory</button>
+              </div>
+
+              {/* Stats Bar */}
+              <div className="grid grid-cols-3 border-y border-[#292524] divide-x divide-[#292524]">
+                <div className="p-4 text-center">
+                  <div className="text-2xl font-serif text-[#e6b981]">4</div>
+                  <div className="text-[9px] uppercase tracking-widest text-stone-500 mt-1">Market Entries</div>
                 </div>
-
-                {/* Section 3 — Strategic Projects */}
-                <div className="flex flex-col">
-                  <h3 className="text-[#EAEAEA] font-bold text-sm uppercase tracking-widest mb-6">Key Engagements</h3>
-                  
-                  <div className="border-t border-[#1F3558] py-8">
-                    <h4 className="text-[#EAEAEA] text-lg font-bold mb-4">South India Retail Expansion</h4>
-                    <p className="text-[#9CA3AF] text-[13px] leading-relaxed mb-2"><strong className="text-[#EAEAEA] font-medium">Context:</strong> Stagnant regional growth.</p>
-                    <p className="text-[#9CA3AF] text-[13px] leading-relaxed mb-5"><strong className="text-[#EAEAEA] font-medium">Strategic Lever:</strong> Supply chain localization.</p>
-                    <div className="border-l-[3px] border-[#B87433] pl-4 py-1">
-                      <p className="text-[#B87433] font-bold text-sm">Achieved 28% YoY revenue growth.</p>
-                    </div>
-                  </div>
-
-                  <div className="border-t border-b border-[#1F3558] py-8">
-                    <h4 className="text-[#EAEAEA] text-lg font-bold mb-4">B2B SaaS Pivot</h4>
-                    <p className="text-[#9CA3AF] text-[13px] leading-relaxed mb-2"><strong className="text-[#EAEAEA] font-medium">Context:</strong> High churn in legacy models.</p>
-                    <p className="text-[#9CA3AF] text-[13px] leading-relaxed mb-5"><strong className="text-[#EAEAEA] font-medium">Strategic Lever:</strong> Tiered enterprise pricing restructure.</p>
-                    <div className="border-l-[3px] border-[#B87433] pl-4 py-1">
-                      <p className="text-[#B87433] font-bold text-sm">Secured Series B valuation uplift.</p>
-                    </div>
-                  </div>
+                <div className="p-4 text-center">
+                  <div className="text-2xl font-serif text-[#e6b981]">3x</div>
+                  <div className="text-[9px] uppercase tracking-widest text-stone-500 mt-1">Rev Growth</div>
                 </div>
-
-                {/* Section 4 — Thought Leadership */}
-                <div>
-                  <h3 className="text-[#EAEAEA] font-bold text-sm uppercase tracking-widest mb-2 border-b border-[#1F3558] pb-4">Thought Leadership</h3>
-                  <div className="border-b border-[#1F3558] py-5 flex justify-between items-center cursor-pointer group">
-                    <span className="text-[#EAEAEA] font-bold text-[15px] group-hover:text-[#B87433] transition-colors">The Post-Digitization Boardroom</span>
-                    <i className="fa-solid fa-plus text-[#B87433] text-sm"></i>
-                  </div>
-                  <div className="border-b border-[#1F3558] py-5 flex justify-between items-center cursor-pointer group">
-                    <span className="text-[#EAEAEA] font-bold text-[15px] group-hover:text-[#B87433] transition-colors">M&A Integration Strategies 2025</span>
-                    <i className="fa-solid fa-plus text-[#B87433] text-sm"></i>
-                  </div>
+                <div className="p-4 text-center">
+                  <div className="text-2xl font-serif text-[#e6b981]">2</div>
+                  <div className="text-[9px] uppercase tracking-widest text-stone-500 mt-1">IPO Ready</div>
                 </div>
+              </div>
 
-                {/* Section 5 — CTA */}
-                <div>
-                  <button className="w-full bg-[#B87433] hover:bg-[#9a6029] transition-colors text-[#EAEAEA] font-bold py-3.5 rounded-[6px] text-sm tracking-wide">
-                    Engage for Strategic Advisory
-                  </button>
-                  <p className="text-center text-[#9CA3AF] text-xs mt-4 tracking-wide">priya.s@institutional.com</p>
+              {/* Thought Leadership */}
+              <div className="px-6 py-10">
+                <h3 className="text-xs uppercase tracking-[0.2em] text-stone-500 font-bold mb-6 border-b border-[#292524] pb-2">Board Notes & Essays</h3>
+                <div className="space-y-6">
+                  <div className="group cursor-pointer">
+                    <span className="text-[10px] text-[#e6b981] font-mono mb-1 block">Essay — Vol. 12</span>
+                    <h4 className="text-[#fafaf9] font-serif text-lg leading-snug group-hover:underline decoration-[#e6b981] decoration-1 underline-offset-4">The Post-Digitization Boardroom</h4>
+                    <p className="text-xs text-stone-400 mt-2 font-light">Why legacy governance models fail in the face of rapid AI integration.</p>
+                  </div>
+                  <div className="group cursor-pointer">
+                    <span className="text-[10px] text-[#e6b981] font-mono mb-1 block">Case — Vol. 11</span>
+                    <h4 className="text-[#fafaf9] font-serif text-lg leading-snug group-hover:underline decoration-[#e6b981] decoration-1 underline-offset-4">M&A Integration Strategies 2025</h4>
+                    <p className="text-xs text-stone-400 mt-2 font-light">A framework for merging cultures and tech stacks without destroying valuation.</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -365,19 +350,21 @@
       };
 
       return (
-        <div className="min-h-screen bg-[#0a0f1c] text-slate-200 font-sans selection:bg-[#c27e42]/30">
+        <div className="min-h-screen bg-[#05080f] text-slate-200 font-sans selection:bg-[#c27e42]/30">
           
           {/* 1. NAVIGATION BAR */}
           <nav 
-            className={`fixed top-0 w-full z-50 transition-all duration-300 border-b border-white/5 backdrop-blur-md ${
-              isScrolled ? 'py-3 bg-[#0a0f1c]/90' : 'py-6 bg-transparent'
+            className={`fixed top-0 w-full z-50 transition-all duration-300 border-b ${
+              isScrolled 
+                ? 'py-3 bg-[#05080f]/80 backdrop-blur-xl border-white/10 shadow-lg' 
+                : 'py-4 md:py-6 bg-transparent border-transparent'
             }`}
           >
             <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
               {/* Logo */}
-              <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo(0,0)}>
-                <img src="FootprintForge_CircularSeal.jpg" alt="Footprint Forge" className="w-8 h-8 rounded-full shadow-[0_0_10px_rgba(194,126,66,0.3)]" />
-                <span className="text-xl font-bold tracking-tight text-white">Footprint Forge</span>
+              <div className="flex items-center gap-3 cursor-pointer group" onClick={() => window.scrollTo(0,0)}>
+                <img src="1000441850.png" alt="Footprint Forge" className="w-8 h-8 rounded-full shadow-[0_0_10px_rgba(194,126,66,0.3)] group-hover:shadow-[0_0_15px_rgba(194,126,66,0.6)] transition-shadow" />
+                <span className="text-lg md:text-xl font-bold tracking-tight text-white">Footprint Forge</span>
               </div>
 
               {/* Desktop Nav */}
@@ -385,95 +372,101 @@
                 <button onClick={() => scrollToSection('hall-of-fame')} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Hall of Fame</button>
                 <button onClick={() => scrollToSection('process')} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Process</button>
                 <button onClick={() => scrollToSection('pricing')} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Pricing</button>
-                <button onClick={() => window.open(FORM_URL, '_blank')} className="bg-[#c27e42] hover:bg-[#a66731] text-white text-sm font-medium px-6 py-2.5 rounded-sm flex items-center gap-2 transition-all">
-                  Build My Portfolio <i className="fa-solid fa-arrow-right text-sm ml-1"></i>
+                <button onClick={() => scrollToSection('about')} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">About</button>
+                <button onClick={() => window.open(FORM_URL, '_blank')} className="bg-[#c27e42] hover:bg-[#a66731] text-white text-sm font-semibold px-6 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(194,126,66,0.3)] hover:shadow-[0_0_25px_rgba(194,126,66,0.5)]">
+                  Build Portfolio <i className="fa-solid fa-arrow-right text-sm ml-1"></i>
                 </button>
               </div>
 
-              {/* Mobile Menu Toggle & CTA */}
+              {/* Mobile Menu Toggle */}
               <div className="flex items-center gap-4 md:hidden">
-                <button onClick={() => window.open(FORM_URL, '_blank')} className="bg-[#c27e42] text-white text-xs font-medium px-4 py-2 rounded-sm">
+                <button onClick={() => window.open(FORM_URL, '_blank')} className="bg-[#c27e42] text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-md">
                   Build
                 </button>
-                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-slate-300">
-                  {isMobileMenuOpen ? <i className="fa-solid fa-xmark text-xl"></i> : <i className="fa-solid fa-bars text-xl"></i>}
+                <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-slate-300 p-1">
+                  {isMobileMenuOpen ? <i className="fa-solid fa-xmark text-2xl"></i> : <i className="fa-solid fa-bars text-xl"></i>}
                 </button>
               </div>
             </div>
 
-            {/* Mobile Dropdown */}
-            {isMobileMenuOpen && (
-              <div className="absolute top-full left-0 w-full bg-[#0a0f1c] border-b border-white/10 p-6 flex flex-col gap-6 md:hidden shadow-2xl">
-                <button onClick={() => scrollToSection('hall-of-fame')} className="text-left text-lg font-medium text-slate-300">Hall of Fame</button>
-                <button onClick={() => scrollToSection('process')} className="text-left text-lg font-medium text-slate-300">Process</button>
-                <button onClick={() => scrollToSection('pricing')} className="text-left text-lg font-medium text-slate-300">Pricing</button>
-                <button onClick={() => window.open(FORM_URL, '_blank')} className="bg-[#c27e42] text-white text-lg font-medium px-6 py-4 rounded-sm flex justify-center items-center gap-2 mt-4">
+            {/* Mobile Dropdown (Sleek Glassmorphism) */}
+            <div className={`fixed inset-0 top-[60px] bg-[#05080f]/95 backdrop-blur-2xl transition-all duration-300 ease-in-out z-40 md:hidden flex flex-col px-6 pt-8 pb-12 ${isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'}`}>
+              <div className="flex flex-col gap-6 text-center">
+                <button onClick={() => scrollToSection('hall-of-fame')} className="text-xl font-medium text-slate-300 hover:text-white border-b border-white/5 pb-4">Hall of Fame</button>
+                <button onClick={() => scrollToSection('process')} className="text-xl font-medium text-slate-300 hover:text-white border-b border-white/5 pb-4">Process</button>
+                <button onClick={() => scrollToSection('pricing')} className="text-xl font-medium text-slate-300 hover:text-white border-b border-white/5 pb-4">Pricing</button>
+                <button onClick={() => scrollToSection('about')} className="text-xl font-medium text-slate-300 hover:text-white border-b border-white/5 pb-4">About</button>
+                <button onClick={() => window.open(FORM_URL, '_blank')} className="bg-[#c27e42] text-white text-lg font-semibold px-6 py-4 rounded-xl flex justify-center items-center gap-2 mt-4 shadow-[0_0_20px_rgba(194,126,66,0.3)]">
                   Build My Portfolio <i className="fa-solid fa-arrow-right text-base ml-1"></i>
                 </button>
               </div>
-            )}
+            </div>
           </nav>
 
           {/* 2. HERO SECTION */}
-          <header className="relative pt-40 pb-24 md:pt-52 md:pb-32 overflow-hidden">
-            {/* Subtle background glow */}
-            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-[#c27e42]/10 blur-[120px] rounded-full pointer-events-none"></div>
+          <header className="relative pt-32 pb-16 md:pt-48 md:pb-32 overflow-hidden">
+            {/* Elegant background glow */}
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-full max-w-[800px] h-[400px] md:h-[600px] bg-[#c27e42]/10 blur-[100px] md:blur-[150px] rounded-full pointer-events-none"></div>
 
-            <div className="max-w-7xl mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-16 lg:gap-8 items-center relative z-10">
+            <div className="max-w-7xl mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-12 lg:gap-8 items-center relative z-10">
               
               {/* Hero Copy */}
-              <div className="flex flex-col gap-8 max-w-2xl">
-                <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white leading-[1.1]">
-                  Your Reputation <br className="hidden md:block"/> Deserves <span className="text-[#c27e42]">Infrastructure.</span>
+              <div className="flex flex-col gap-6 md:gap-8 max-w-2xl text-center lg:text-left mx-auto lg:mx-0 mt-8 lg:mt-0">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#c27e42]/30 bg-[#c27e42]/10 w-fit mx-auto lg:mx-0 text-xs font-semibold text-[#c27e42] tracking-wide">
+                  <span className="w-2 h-2 rounded-full bg-[#c27e42] animate-pulse"></span>
+                  ELEVATE YOUR IDENTITY
+                </div>
+                <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
+                  Your Reputation <br className="hidden md:block"/> Deserves <span className="text-gradient-gold">Infrastructure.</span>
                 </h1>
-                <p className="text-lg md:text-xl text-slate-400 leading-relaxed max-w-xl">
+                <p className="text-base md:text-lg text-slate-400 leading-relaxed max-w-xl mx-auto lg:mx-0 font-light">
                   Premium QR-encoded PVC cards connected to bespoke, hand-coded digital portfolios — engineered for professionals in banking, finance, and tech.
                 </p>
                 
-                <div className="flex flex-col sm:flex-row gap-4 sm:items-center mt-4">
-                  <button onClick={() => window.open(FORM_URL, '_blank')} className="bg-[#c27e42] hover:bg-[#a66731] text-white text-base font-semibold px-8 py-4 rounded-sm flex items-center justify-center gap-2 transition-all w-full sm:w-auto group">
-                    Build My Portfolio 
-                    <i className="fa-solid fa-arrow-right text-base group-hover:translate-x-1 transition-transform"></i>
+                <div className="flex flex-col sm:flex-row gap-4 sm:items-center mt-2 justify-center lg:justify-start">
+                  <button onClick={() => window.open(FORM_URL, '_blank')} className="bg-[#c27e42] hover:bg-[#a66731] text-white text-base font-semibold px-8 py-4 rounded-xl flex items-center justify-center gap-2 transition-all w-full sm:w-auto group shadow-[0_0_20px_rgba(194,126,66,0.3)]">
+                    Build Portfolio 
+                    <i className="fa-solid fa-arrow-right text-sm group-hover:translate-x-1 transition-transform"></i>
                   </button>
-                  <button onClick={() => scrollToSection('hall-of-fame')} className="text-slate-400 hover:text-white text-base font-medium px-8 py-4 flex items-center justify-center gap-2 transition-colors w-full sm:w-auto">
-                    View the Hall of Fame →
+                  <button onClick={() => scrollToSection('hall-of-fame')} className="text-slate-300 hover:text-white text-base font-medium px-8 py-4 flex items-center justify-center gap-2 transition-colors w-full sm:w-auto bg-white/5 hover:bg-white/10 rounded-xl border border-white/5">
+                    View Hall of Fame
                   </button>
                 </div>
               </div>
 
               {/* Hero Visual Mockup */}
-              <div className="relative h-[500px] w-full flex justify-center items-center perspective-1000">
+              <div className="relative h-[350px] md:h-[500px] w-full flex justify-center items-center perspective-1000 mt-8 md:mt-0">
                 {/* Mobile Mockup (Background) */}
-                <div className="absolute right-10 md:right-20 w-64 h-[450px] bg-[#0f1526] border border-white/10 rounded-3xl shadow-2xl p-4 transform rotate-6 translate-y-8 opacity-80 z-0 hidden sm:block">
-                  <div className="w-full h-full border border-white/5 rounded-2xl p-4 overflow-hidden relative flex flex-col gap-4">
-                    <div className="w-12 h-12 bg-slate-800 rounded-full mb-2"></div>
-                    <div className="w-3/4 h-4 bg-slate-800 rounded-sm"></div>
-                    <div className="w-1/2 h-3 bg-slate-800/50 rounded-sm"></div>
+                <div className="absolute right-4 md:right-16 w-56 md:w-64 h-[400px] md:h-[450px] bg-[#0a0f1c] border border-white/10 rounded-[2rem] shadow-2xl p-4 transform rotate-6 translate-y-8 opacity-80 z-0 hidden sm:block">
+                  <div className="w-full h-full border border-white/5 rounded-xl p-4 overflow-hidden relative flex flex-col gap-4 bg-gradient-to-b from-white/5 to-transparent">
+                    <div className="w-12 h-12 bg-white/10 rounded-full mb-2"></div>
+                    <div className="w-3/4 h-4 bg-white/10 rounded-md"></div>
+                    <div className="w-1/2 h-3 bg-white/5 rounded-md"></div>
                     <div className="mt-8 space-y-3">
-                      <div className="w-full h-16 bg-[#c27e42]/20 border border-[#c27e42]/20 rounded-md"></div>
-                      <div className="w-full h-16 bg-slate-800/30 rounded-md"></div>
+                      <div className="w-full h-16 bg-[#c27e42]/20 border border-[#c27e42]/20 rounded-lg"></div>
+                      <div className="w-full h-16 bg-white/5 rounded-lg"></div>
                     </div>
                   </div>
                 </div>
 
                 {/* Matte Black Card (Foreground) */}
-                <div className="relative w-80 h-48 bg-zinc-950 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] border border-zinc-800 flex flex-col justify-between p-6 transform -rotate-3 z-10 hover:rotate-0 transition-transform duration-500">
+                <div className="relative w-72 md:w-80 h-44 md:h-48 bg-[#111] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] border border-white/10 flex flex-col justify-between p-6 transform -rotate-3 z-10 animate-float backdrop-blur-sm">
                   {/* Metallic Edge Illusion */}
-                  <div className="absolute inset-0 rounded-xl border border-white/5 pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-2xl border border-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
                   
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 bg-[#c27e42] rounded-sm shadow-[0_0_10px_rgba(194,126,66,0.5)]"></div>
-                      <span className="text-xs font-bold tracking-widest text-zinc-400 uppercase">Footprint</span>
+                      <div className="w-3 md:w-4 h-3 md:h-4 bg-gradient-to-br from-[#e6b981] to-[#c27e42] rounded-sm shadow-[0_0_15px_rgba(194,126,66,0.6)]"></div>
+                      <span className="text-[10px] md:text-xs font-bold tracking-[0.2em] text-zinc-400 uppercase">Footprint</span>
                     </div>
-                    <div className="bg-white p-1 rounded-sm flex items-center justify-center">
-                      <i className="fa-solid fa-qrcode text-3xl text-black"></i>
+                    <div className="bg-white p-1.5 md:p-2 rounded-lg flex items-center justify-center shadow-lg">
+                      <i className="fa-solid fa-qrcode text-2xl md:text-3xl text-black"></i>
                     </div>
                   </div>
                   
                   <div className="space-y-1">
-                    <h3 className="text-xl font-medium tracking-wide text-white">Alexander Chen</h3>
-                    <p className="text-xs text-zinc-500 uppercase tracking-widest">Director, Commercial Banking</p>
+                    <h3 className="text-lg md:text-xl font-semibold tracking-wide text-white">Alexander Chen</h3>
+                    <p className="text-[10px] md:text-xs text-zinc-500 uppercase tracking-widest font-medium">Director, Commercial Banking</p>
                   </div>
                 </div>
               </div>
@@ -482,154 +475,153 @@
           </header>
 
           {/* 3. HALL OF FAME */}
-          <section id="hall-of-fame" className="py-24 bg-[#070b14] border-y border-white/5 relative z-10">
+          <section id="hall-of-fame" className="py-20 md:py-32 bg-[#03050a] border-y border-white/5 relative z-10">
             <div className="max-w-7xl mx-auto px-6 md:px-12">
               
-              <div className="mb-16">
-                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">The Hall of Fame</h2>
-                <p className="text-lg text-slate-400 max-w-2xl">Built for professionals who treat their reputation as capital. Click to preview identity structures.</p>
+              <div className="mb-12 md:mb-20 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
+                <div className="max-w-2xl">
+                  <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">The Hall of Fame</h2>
+                  <p className="text-base md:text-lg text-slate-400 font-light">Built for professionals who treat their reputation as capital. Tap to preview structures.</p>
+                </div>
+                <div className="hidden md:block w-16 h-1 bg-gradient-to-r from-[#c27e42] to-transparent rounded-full"></div>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Persona 1 */}
-                <div onClick={() => setActiveMockup('banker')} className="group bg-[#0a0f1c] border border-white/5 hover:border-[#c27e42]/30 p-8 rounded-lg cursor-pointer transition-all duration-300 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#c27e42]/5 rounded-bl-full -z-10 group-hover:bg-[#c27e42]/10 transition-colors"></div>
-                  <i className="fa-solid fa-briefcase text-3xl text-[#c27e42] mb-6"></i>
-                  <h3 className="text-xl font-bold text-white mb-2">The Commercial Banker</h3>
-                  <ul className="text-sm text-slate-400 space-y-2 mb-8">
-                    <li>• Clean corporate layout</li>
-                    <li>• Credit portfolio highlights</li>
-                    <li>• Deal summaries</li>
-                    <li>• Risk specialization</li>
+                <div onClick={() => setActiveMockup('banker')} className="group bg-white/[0.02] border border-white/10 hover:border-[#c27e42]/50 p-8 rounded-2xl cursor-pointer transition-all duration-500 relative overflow-hidden hover:bg-white/[0.04]">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#c27e42]/10 rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500 blur-2xl"></div>
+                  <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-white/10 group-hover:border-[#c27e42]/30 transition-colors">
+                    <i className="fa-solid fa-briefcase text-xl text-[#c27e42]"></i>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">The Commercial Banker</h3>
+                  <ul className="text-sm text-slate-400 space-y-2 mb-8 font-light">
+                    <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#c27e42] rounded-full"></div> Clean corporate layout</li>
+                    <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#c27e42] rounded-full"></div> Credit portfolio highlights</li>
+                    <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#c27e42] rounded-full"></div> Deal summaries</li>
                   </ul>
-                  <div className="text-[#c27e42] text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                  <div className="text-[#c27e42] text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
                     Preview Structure <i className="fa-solid fa-arrow-right text-sm"></i>
                   </div>
                 </div>
 
                 {/* Persona 2 */}
-                <div onClick={() => setActiveMockup('analyst')} className="group bg-[#0a0f1c] border border-white/5 hover:border-[#c27e42]/30 p-8 rounded-lg cursor-pointer transition-all duration-300 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#c27e42]/5 rounded-bl-full -z-10 group-hover:bg-[#c27e42]/10 transition-colors"></div>
-                  <i className="fa-solid fa-chart-line text-3xl text-[#c27e42] mb-6"></i>
-                  <h3 className="text-xl font-bold text-white mb-2">The Investment Analyst</h3>
-                  <ul className="text-sm text-slate-400 space-y-2 mb-8">
-                    <li>• Transaction experience</li>
-                    <li>• Financial modeling</li>
-                    <li>• Sector focus</li>
-                    <li>• Thesis links</li>
+                <div onClick={() => setActiveMockup('analyst')} className="group bg-white/[0.02] border border-white/10 hover:border-[#c27e42]/50 p-8 rounded-2xl cursor-pointer transition-all duration-500 relative overflow-hidden hover:bg-white/[0.04]">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#c27e42]/10 rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500 blur-2xl"></div>
+                  <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-white/10 group-hover:border-[#c27e42]/30 transition-colors">
+                    <i className="fa-solid fa-chart-line text-xl text-[#c27e42]"></i>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">The Investment Analyst</h3>
+                  <ul className="text-sm text-slate-400 space-y-2 mb-8 font-light">
+                    <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#c27e42] rounded-full"></div> Transaction experience</li>
+                    <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#c27e42] rounded-full"></div> Financial modeling</li>
+                    <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#c27e42] rounded-full"></div> Sector focus</li>
                   </ul>
-                  <div className="text-[#c27e42] text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                  <div className="text-[#c27e42] text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
                     Preview Structure <i className="fa-solid fa-arrow-right text-sm"></i>
                   </div>
                 </div>
 
                 {/* Persona 3 */}
-                <div onClick={() => setActiveMockup('consultant')} className="group bg-[#0a0f1c] border border-white/5 hover:border-[#c27e42]/30 p-8 rounded-lg cursor-pointer transition-all duration-300 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#c27e42]/5 rounded-bl-full -z-10 group-hover:bg-[#c27e42]/10 transition-colors"></div>
-                  <i className="fa-solid fa-microchip text-3xl text-[#c27e42] mb-6"></i>
-                  <h3 className="text-xl font-bold text-white mb-2">The Tech Consultant</h3>
-                  <ul className="text-sm text-slate-400 space-y-2 mb-8">
-                    <li>• Systems implemented</li>
-                    <li>• Impact metrics</li>
-                    <li>• Certifications</li>
-                    <li>• GitHub integration</li>
+                <div onClick={() => setActiveMockup('consultant')} className="group bg-white/[0.02] border border-white/10 hover:border-[#c27e42]/50 p-8 rounded-2xl cursor-pointer transition-all duration-500 relative overflow-hidden hover:bg-white/[0.04]">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#c27e42]/10 rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500 blur-2xl"></div>
+                  <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-white/10 group-hover:border-[#c27e42]/30 transition-colors">
+                    <i className="fa-solid fa-microchip text-xl text-[#c27e42]"></i>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">The Tech Consultant</h3>
+                  <ul className="text-sm text-slate-400 space-y-2 mb-8 font-light">
+                    <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#c27e42] rounded-full"></div> Systems implemented</li>
+                    <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#c27e42] rounded-full"></div> Impact metrics</li>
+                    <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#c27e42] rounded-full"></div> Certifications</li>
                   </ul>
-                  <div className="text-[#c27e42] text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                  <div className="text-[#c27e42] text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
                     Preview Structure <i className="fa-solid fa-arrow-right text-sm"></i>
                   </div>
                 </div>
 
                 {/* Persona 4 */}
-                <div onClick={() => setActiveMockup('strategist')} className="group bg-[#0a0f1c] border border-white/5 hover:border-[#c27e42]/30 p-8 rounded-lg cursor-pointer transition-all duration-300 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#c27e42]/5 rounded-bl-full -z-10 group-hover:bg-[#c27e42]/10 transition-colors"></div>
-                  <i className="fa-solid fa-building text-3xl text-[#c27e42] mb-6"></i>
-                  <h3 className="text-xl font-bold text-white mb-2">The Corp Strategist</h3>
-                  <ul className="text-sm text-slate-400 space-y-2 mb-8">
-                    <li>• Strategy projects</li>
-                    <li>• Market expansions</li>
-                    <li>• ROI metrics</li>
-                    <li>• Board positioning</li>
+                <div onClick={() => setActiveMockup('strategist')} className="group bg-white/[0.02] border border-white/10 hover:border-[#c27e42]/50 p-8 rounded-2xl cursor-pointer transition-all duration-500 relative overflow-hidden hover:bg-white/[0.04]">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#c27e42]/10 rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500 blur-2xl"></div>
+                  <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center mb-6 border border-white/10 group-hover:border-[#c27e42]/30 transition-colors">
+                    <i className="fa-solid fa-building text-xl text-[#c27e42]"></i>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">The Corp Strategist</h3>
+                  <ul className="text-sm text-slate-400 space-y-2 mb-8 font-light">
+                    <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#c27e42] rounded-full"></div> Strategy projects</li>
+                    <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#c27e42] rounded-full"></div> Market expansions</li>
+                    <li className="flex items-center gap-2"><div className="w-1 h-1 bg-[#c27e42] rounded-full"></div> ROI metrics</li>
                   </ul>
-                  <div className="text-[#c27e42] text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                  <div className="text-[#c27e42] text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
                     Preview Structure <i className="fa-solid fa-arrow-right text-sm"></i>
                   </div>
                 </div>
               </div>
-
-              <div className="mt-16 text-center">
-                <button onClick={() => window.open(FORM_URL, '_blank')} className="bg-white hover:bg-slate-200 text-black text-sm font-bold uppercase tracking-wider px-8 py-4 rounded-sm transition-colors">
-                  Claim Your Identity
-                </button>
-              </div>
-
             </div>
           </section>
 
           {/* 4. FEATURES SECTION */}
-          <section className="py-24 bg-[#0a0f1c]">
+          <section className="py-20 md:py-32 bg-[#05080f]">
             <div className="max-w-7xl mx-auto px-6 md:px-12">
               
-              <div className="mb-20 text-center max-w-3xl mx-auto">
-                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6">Engineered for Professionals. <br/><span className="text-slate-500">Not Influencers.</span></h2>
-                <div className="w-24 h-1 bg-[#c27e42] mx-auto"></div>
+              <div className="mb-16 md:mb-24 text-center max-w-3xl mx-auto">
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6 leading-tight">Engineered for Professionals. <br/><span className="text-slate-500">Not Influencers.</span></h2>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-12 lg:gap-20">
+              <div className="grid md:grid-cols-2 gap-10 md:gap-16 lg:gap-24">
                 {/* Pillar 1 */}
-                <div className="flex gap-6">
+                <div className="flex flex-col sm:flex-row gap-6 items-start">
                   <div className="shrink-0">
-                    <div className="w-12 h-12 bg-[#c27e42]/10 border border-[#c27e42]/20 rounded-md flex items-center justify-center">
+                    <div className="w-14 h-14 bg-gradient-to-br from-[#c27e42]/20 to-transparent border border-[#c27e42]/30 rounded-2xl flex items-center justify-center shadow-lg shadow-[#c27e42]/5">
                       <i className="fa-solid fa-code text-xl text-[#c27e42]"></i>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-3">1. Hand-Coded. Not Drag-and-Drop.</h3>
-                    <p className="text-slate-400 leading-relaxed">
+                    <h3 className="text-xl font-bold text-white mb-3">Hand-Coded. Not Drag-and-Drop.</h3>
+                    <p className="text-slate-400 leading-relaxed font-light text-sm md:text-base">
                       Each portfolio is built from scratch. No templates. No branding dilution. No platform watermark. You get a bespoke digital asset.
                     </p>
                   </div>
                 </div>
 
                 {/* Pillar 2 */}
-                <div className="flex gap-6">
+                <div className="flex flex-col sm:flex-row gap-6 items-start">
                   <div className="shrink-0">
-                    <div className="w-12 h-12 bg-[#c27e42]/10 border border-[#c27e42]/20 rounded-md flex items-center justify-center">
+                    <div className="w-14 h-14 bg-gradient-to-br from-[#c27e42]/20 to-transparent border border-[#c27e42]/30 rounded-2xl flex items-center justify-center shadow-lg shadow-[#c27e42]/5">
                       <i className="fa-solid fa-credit-card text-xl text-[#c27e42]"></i>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-3">2. Premium PVC with Permanent QR</h3>
-                    <p className="text-slate-400 leading-relaxed">
+                    <h3 className="text-xl font-bold text-white mb-3">Premium PVC with Permanent QR</h3>
+                    <p className="text-slate-400 leading-relaxed font-light text-sm md:text-base">
                       Durable. Minimal. Executive-grade. Not a paper card. Not unreliable NFC gimmicks. A permanent, authoritative digital gateway.
                     </p>
                   </div>
                 </div>
 
                 {/* Pillar 3 */}
-                <div className="flex gap-6">
+                <div className="flex flex-col sm:flex-row gap-6 items-start">
                   <div className="shrink-0">
-                    <div className="w-12 h-12 bg-[#c27e42]/10 border border-[#c27e42]/20 rounded-md flex items-center justify-center">
+                    <div className="w-14 h-14 bg-gradient-to-br from-[#c27e42]/20 to-transparent border border-[#c27e42]/30 rounded-2xl flex items-center justify-center shadow-lg shadow-[#c27e42]/5">
                       <i className="fa-solid fa-mobile-screen text-xl text-[#c27e42]"></i>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-3">3. Mobile-First Performance</h3>
-                    <p className="text-slate-400 leading-relaxed">
+                    <h3 className="text-xl font-bold text-white mb-3">Mobile-First Performance</h3>
+                    <p className="text-slate-400 leading-relaxed font-light text-sm md:text-base">
                       Optimized for instant QR scans. Loads exceptionally fast on cellular networks. Built specifically for real-world, high-stakes interactions.
                     </p>
                   </div>
                 </div>
 
                 {/* Pillar 4 */}
-                <div className="flex gap-6">
+                <div className="flex flex-col sm:flex-row gap-6 items-start">
                   <div className="shrink-0">
-                    <div className="w-12 h-12 bg-[#c27e42]/10 border border-[#c27e42]/20 rounded-md flex items-center justify-center">
+                    <div className="w-14 h-14 bg-gradient-to-br from-[#c27e42]/20 to-transparent border border-[#c27e42]/30 rounded-2xl flex items-center justify-center shadow-lg shadow-[#c27e42]/5">
                       <i className="fa-solid fa-shield-halved text-xl text-[#c27e42]"></i>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-3">4. Reputation Control</h3>
-                    <p className="text-slate-400 leading-relaxed">
+                    <h3 className="text-xl font-bold text-white mb-3">Reputation Control</h3>
+                    <p className="text-slate-400 leading-relaxed font-light text-sm md:text-base">
                       Centralize experience, metrics, publications, and contact info. Update your digital hub anytime—your physical card stays constant.
                     </p>
                   </div>
@@ -640,205 +632,181 @@
           </section>
 
           {/* 5. PROCESS SECTION */}
-          <section id="process" className="py-24 bg-[#070b14] border-t border-white/5 relative overflow-hidden">
-            {/* Decorative line */}
-            <div className="hidden lg:block absolute left-1/2 top-48 bottom-48 w-px bg-white/10 -translate-x-1/2 z-0"></div>
+          <section id="process" className="py-20 md:py-32 bg-[#03050a] border-t border-white/5 relative overflow-hidden">
+            <div className="hidden lg:block absolute left-1/2 top-48 bottom-48 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent -translate-x-1/2 z-0"></div>
 
             <div className="max-w-4xl mx-auto px-6 md:px-12 relative z-10">
-              <div className="text-center mb-20">
-                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">Three Steps. Zero Friction.</h2>
-                <p className="text-slate-400 uppercase tracking-widest text-sm font-bold">No Subscriptions. No Lock-in.</p>
+              <div className="text-center mb-16 md:mb-24">
+                <p className="text-[#c27e42] uppercase tracking-widest text-xs font-bold mb-3">Seamless Onboarding</p>
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">Three Steps. Zero Friction.</h2>
               </div>
 
-              <div className="space-y-16">
+              <div className="space-y-12 md:space-y-20 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:hidden before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-white/10 before:to-transparent">
+                
                 {/* Step 1 */}
-                <div className="relative flex flex-col md:flex-row gap-8 items-start md:items-center">
-                  <div className="md:w-1/2 md:text-right">
-                    <h3 className="text-2xl font-bold text-white mb-2">Step 1: Apply</h3>
-                    <p className="text-slate-400">Submit your professional details through our structured, secure intake form.</p>
+                <div className="relative flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center">
+                  <div className="md:w-1/2 md:text-right md:pr-12 pl-12 md:pl-0">
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">1. Apply</h3>
+                    <p className="text-slate-400 font-light text-sm md:text-base">Submit your professional details through our structured, secure intake form.</p>
                   </div>
-                  <div className="absolute left-0 md:left-1/2 top-0 md:top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-[#0a0f1c] border-2 border-[#c27e42] rounded-full flex items-center justify-center text-[#c27e42] font-bold text-xl z-10 hidden md:flex">
+                  <div className="absolute left-0 top-0 md:static md:left-auto md:top-auto md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 w-10 h-10 md:w-14 md:h-14 bg-[#05080f] border border-white/20 rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl z-10 shadow-lg">
                     1
                   </div>
-                  <div className="w-12 h-12 bg-[#0a0f1c] border-2 border-[#c27e42] rounded-full flex items-center justify-center text-[#c27e42] font-bold text-xl md:hidden shrink-0">
-                    1
-                  </div>
-                  <div className="md:w-1/2">
-                    {/* Empty on desktop for layout, content on mobile */}
-                  </div>
+                  <div className="md:w-1/2 hidden md:block"></div>
                 </div>
 
                 {/* Step 2 */}
-                <div className="relative flex flex-col md:flex-row-reverse gap-8 items-start md:items-center">
-                  <div className="md:w-1/2 md:text-left">
-                    <h3 className="text-2xl font-bold text-white mb-2">Step 2: We Engineer</h3>
-                    <p className="text-slate-400">We design and hand-code your portfolio to precisely align with your domain and positioning.</p>
+                <div className="relative flex flex-col md:flex-row-reverse gap-6 md:gap-8 items-start md:items-center">
+                  <div className="md:w-1/2 md:text-left md:pl-12 pl-12 md:pl-0">
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">2. We Engineer</h3>
+                    <p className="text-slate-400 font-light text-sm md:text-base">We design and hand-code your portfolio to precisely align with your domain and positioning.</p>
                   </div>
-                  <div className="absolute left-0 md:left-1/2 top-0 md:top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-[#c27e42] rounded-full flex items-center justify-center text-white font-bold text-xl z-10 hidden md:flex shadow-[0_0_20px_rgba(194,126,66,0.4)]">
+                  <div className="absolute left-0 top-0 md:static md:left-auto md:top-auto md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-[#e6b981] to-[#c27e42] rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl z-10 shadow-[0_0_30px_rgba(194,126,66,0.4)]">
                     2
                   </div>
-                  <div className="w-12 h-12 bg-[#c27e42] rounded-full flex items-center justify-center text-white font-bold text-xl md:hidden shrink-0">
-                    2
-                  </div>
-                  <div className="md:w-1/2"></div>
+                  <div className="md:w-1/2 hidden md:block"></div>
                 </div>
 
                 {/* Step 3 */}
-                <div className="relative flex flex-col md:flex-row gap-8 items-start md:items-center">
-                  <div className="md:w-1/2 md:text-right">
-                    <h3 className="text-2xl font-bold text-white mb-2">Step 3: Go Live</h3>
-                    <p className="text-slate-400">Receive your premium matte PVC card. Start sharing your curated identity instantly.</p>
+                <div className="relative flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center">
+                  <div className="md:w-1/2 md:text-right md:pr-12 pl-12 md:pl-0">
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">3. Go Live</h3>
+                    <p className="text-slate-400 font-light text-sm md:text-base">Receive your premium matte PVC card. Start sharing your curated identity instantly.</p>
                   </div>
-                  <div className="absolute left-0 md:left-1/2 top-0 md:top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-[#0a0f1c] border-2 border-slate-700 rounded-full flex items-center justify-center text-slate-400 font-bold text-xl z-10 hidden md:flex">
+                  <div className="absolute left-0 top-0 md:static md:left-auto md:top-auto md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 w-10 h-10 md:w-14 md:h-14 bg-[#05080f] border border-white/20 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg md:text-xl z-10">
                     3
                   </div>
-                  <div className="w-12 h-12 bg-[#0a0f1c] border-2 border-slate-700 rounded-full flex items-center justify-center text-slate-400 font-bold text-xl md:hidden shrink-0">
-                    3
-                  </div>
-                  <div className="md:w-1/2"></div>
+                  <div className="md:w-1/2 hidden md:block"></div>
                 </div>
-              </div>
-
-              <div className="mt-20 text-center">
-                <p className="text-xl text-white font-medium">You own your identity.</p>
               </div>
             </div>
           </section>
 
-          {/* 6. PRICING SECTION */}
-          <section id="pricing" className="py-24 bg-[#0a0f1c] border-t border-white/5">
-            <div className="max-w-7xl mx-auto px-6 md:px-12">
+          {/* 6. REDESIGNED PRICING SECTION */}
+          <section id="pricing" className="py-20 md:py-32 bg-[#05080f] border-t border-white/5 relative">
+            {/* Background Glows for Pricing */}
+            <div className="absolute top-1/2 left-0 w-64 h-64 bg-[#c27e42]/5 blur-[120px] rounded-full pointer-events-none"></div>
+            <div className="absolute top-1/2 right-0 w-64 h-64 bg-blue-500/5 blur-[120px] rounded-full pointer-events-none"></div>
+
+            <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
               
-              <div className="mb-16 text-center">
-                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">Select Your Infrastructure</h2>
-                <p className="text-lg text-slate-400">Transparent engineering pricing. You only pay for the assets you own.</p>
+              <div className="mb-16 md:mb-24 text-center max-w-3xl mx-auto">
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6">Transparent Infrastructure</h2>
+                <p className="text-base md:text-lg text-slate-300 font-light">Build it once. Own it forever. <br className="hidden md:block"/> Zero recurring monthly fees with lifetime hosting powered by <span className="text-white font-semibold">GitHub</span>.</p>
               </div>
 
-              <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
+              <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
                 
-                {/* Tier 1 */}
-                <div className="bg-[#0f1526] border border-white/5 p-8 rounded-lg flex flex-col h-full">
-                  <h3 className="text-2xl font-bold text-white mb-2">The Executive</h3>
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-extrabold text-white">₹1,499</span>
-                      <span className="text-slate-400 font-medium">one-time</span>
-                    </div>
-                    <p className="text-xs text-slate-500 mt-1 font-medium tracking-wide">Zero recurring fees</p>
+                {/* Tier 1: The Executive */}
+                <div className="bg-white/[0.02] border border-white/10 p-8 md:p-10 rounded-3xl flex flex-col h-full hover:bg-white/[0.04] transition-colors relative">
+                  <div className="mb-8">
+                    <h3 className="text-xl font-bold text-white mb-2">The Executive</h3>
+                    <p className="text-sm text-slate-400 font-light h-10">For early-career and growth-stage professionals.</p>
                   </div>
-                  <p className="text-sm text-slate-400 mb-8 h-10">For early-career and growth-stage professionals.</p>
+                  <div className="mb-8 border-b border-white/10 pb-8">
+                    <div className="flex items-end gap-3">
+                      <span className="line-through text-slate-500 text-2xl font-semibold">₹1,499</span>
+                      <span className="text-4xl md:text-5xl font-extrabold text-white">₹999</span>
+                    </div>
+                    <div className="inline-flex items-center gap-1.5 mt-3 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md">
+                      <i className="fa-solid fa-bolt text-[#c27e42] text-[10px]"></i>
+                      <span className="text-xs text-slate-300 font-medium tracking-wide">One-Time Flat Fee</span>
+                    </div>
+                  </div>
                   
-                  <ul className="space-y-4 mb-8 flex-1">
-                    <li className="flex items-start gap-3 text-slate-300">
-                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
-                      <span>Standard single-page portfolio</span>
+                  <ul className="space-y-6 mb-10 flex-1">
+                    <li className="flex items-start gap-3">
+                      <i className="fa-solid fa-sitemap text-sm text-slate-500 mt-1 shrink-0"></i>
+                      <p className="text-slate-300 text-sm font-light"><strong className="text-white font-medium">The Architecture:</strong><br/>Single-page digital portfolio.</p>
                     </li>
-                    <li className="flex items-start gap-3 text-slate-300">
-                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
-                      <span>Premium QR PVC card</span>
+                    <li className="flex items-start gap-3">
+                      <i className="fa-solid fa-credit-card text-sm text-slate-500 mt-1 shrink-0"></i>
+                      <p className="text-slate-300 text-sm font-light"><strong className="text-white font-medium">The Hardware:</strong><br/>1 Premium Matte PVC QR Card.</p>
                     </li>
-                    <li className="flex items-start gap-3 text-slate-300">
-                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
-                      <span>Pay-As-You-Go updates (₹499/ea)</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-slate-300">
-                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
-                      <span>1-year premium hosting</span>
+                    <li className="flex items-start gap-3">
+                      <i className="fa-solid fa-server text-sm text-slate-500 mt-1 shrink-0"></i>
+                      <p className="text-slate-300 text-sm font-light"><strong className="text-white font-medium">The Infrastructure:</strong><br/>Lifetime zero-cost hosting via GitHub Pages.</p>
                     </li>
                   </ul>
                   
-                  <button onClick={() => window.open(FORM_URL, '_blank')} className="w-full bg-[#1a233a] hover:bg-[#222d4a] text-white text-sm font-bold uppercase tracking-wider py-4 rounded-sm transition-colors">
-                    Secure My Card
+                  <button onClick={() => window.open(FORM_URL, '_blank')} className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white text-sm font-semibold py-4 rounded-xl transition-all">
+                    Select Plan
                   </button>
                 </div>
 
-                {/* Tier 2 (Recommended) */}
-                <div className="bg-[#0a0f1c] border-2 border-[#c27e42] p-8 rounded-lg flex flex-col h-full relative transform lg:-translate-y-4 shadow-[0_0_30px_rgba(194,126,66,0.15)]">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#c27e42] text-white text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-sm">
+                {/* Tier 2 (Recommended): The Authority */}
+                <div className="bg-gradient-to-b from-[#1a130c] to-[#05080f] border-2 border-[#c27e42] p-8 md:p-10 rounded-3xl flex flex-col h-full relative transform lg:-translate-y-4 shadow-[0_0_40px_rgba(194,126,66,0.15)] overflow-hidden">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#e6b981] to-[#c27e42] text-white text-[10px] font-bold uppercase tracking-[0.2em] px-6 py-1.5 rounded-b-xl shadow-md">
                     Recommended
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2 mt-2">The Authority</h3>
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-extrabold text-white">₹2,499</span>
-                      <span className="text-slate-400 font-medium">one-time</span>
-                    </div>
-                    <p className="text-xs text-slate-500 mt-1 font-medium tracking-wide">Zero recurring fees</p>
+                  <div className="mb-8 mt-4">
+                    <h3 className="text-xl font-bold text-white mb-2">The Authority</h3>
+                    <p className="text-sm text-slate-400 font-light h-10">For senior bankers, analysts, and consultants.</p>
                   </div>
-                  <p className="text-sm text-slate-400 mb-8 h-10">For senior bankers, analysts, and consultants.</p>
+                  <div className="mb-8 border-b border-white/10 pb-8">
+                    <div className="flex items-end gap-3">
+                      <span className="line-through text-[#c27e42]/60 text-2xl font-semibold">₹2,499</span>
+                      <span className="text-4xl md:text-5xl font-extrabold text-white">₹1,499</span>
+                    </div>
+                    <div className="inline-flex items-center gap-1.5 mt-3 bg-[#c27e42]/10 border border-[#c27e42]/20 px-2.5 py-1 rounded-md">
+                      <i className="fa-solid fa-bolt text-[#c27e42] text-[10px]"></i>
+                      <span className="text-xs text-[#c27e42] font-medium tracking-wide">One-Time Flat Fee</span>
+                    </div>
+                  </div>
                   
-                  <ul className="space-y-4 mb-8 flex-1">
-                    <li className="flex items-start gap-3 text-white">
-                      <i className="fa-solid fa-check text-base text-[#c27e42] shrink-0 mt-1"></i>
-                      <span>Advanced structured portfolio</span>
+                  <ul className="space-y-6 mb-10 flex-1">
+                    <li className="flex items-start gap-3">
+                      <i className="fa-solid fa-sitemap text-sm text-[#c27e42] mt-1 shrink-0"></i>
+                      <p className="text-slate-200 text-sm font-light"><strong className="text-white font-medium">The Architecture:</strong><br/>Advanced structured portfolio (includes Impact Metrics & Case Studies).</p>
                     </li>
-                    <li className="flex items-start gap-3 text-white">
-                      <i className="fa-solid fa-check text-base text-[#c27e42] shrink-0 mt-1"></i>
-                      <span>Impact metrics & case sections</span>
+                    <li className="flex items-start gap-3">
+                      <i className="fa-solid fa-credit-card text-sm text-[#c27e42] mt-1 shrink-0"></i>
+                      <p className="text-slate-200 text-sm font-light"><strong className="text-white font-medium">The Hardware:</strong><br/>1 Premium Matte PVC QR Card.</p>
                     </li>
-                    <li className="flex items-start gap-3 text-white">
-                      <i className="fa-solid fa-check text-base text-[#c27e42] shrink-0 mt-1"></i>
-                      <span>SEO optimization for personal brand</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-white">
-                      <i className="fa-solid fa-check text-base text-[#c27e42] shrink-0 mt-1"></i>
-                      <span>Premium QR PVC card</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-white">
-                      <i className="fa-solid fa-check text-base text-[#c27e42] shrink-0 mt-1"></i>
-                      <span>2 free update tickets/yr (then ₹499/ea)</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-white">
-                      <i className="fa-solid fa-check text-base text-[#c27e42] shrink-0 mt-1"></i>
-                      <span>Priority delivery</span>
+                    <li className="flex items-start gap-3">
+                      <i className="fa-solid fa-server text-sm text-[#c27e42] mt-1 shrink-0"></i>
+                      <p className="text-slate-200 text-sm font-light"><strong className="text-white font-medium">The Infrastructure:</strong><br/>Lifetime zero-cost hosting via GitHub Pages + Priority weekend deployment.</p>
                     </li>
                   </ul>
                   
-                  <button onClick={() => window.open(FORM_URL, '_blank')} className="w-full bg-[#c27e42] hover:bg-[#a66731] text-white text-sm font-bold uppercase tracking-wider py-4 rounded-sm transition-colors shadow-lg shadow-[#c27e42]/20">
+                  <button onClick={() => window.open(FORM_URL, '_blank')} className="w-full bg-gradient-to-r from-[#e6b981] to-[#c27e42] hover:opacity-90 text-[#05080f] text-sm font-bold py-4 rounded-xl transition-opacity shadow-[0_0_20px_rgba(194,126,66,0.3)]">
                     Build My Authority
                   </button>
                 </div>
 
-                {/* Tier 3 */}
-                <div className="bg-[#0f1526] border border-white/5 p-8 rounded-lg flex flex-col h-full">
-                  <h3 className="text-2xl font-bold text-white mb-2">The Institution</h3>
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-extrabold text-white">₹4,999</span>
-                      <span className="text-slate-400 font-medium">one-time</span>
-                    </div>
-                    <p className="text-xs text-slate-500 mt-1 font-medium tracking-wide">Zero recurring fees</p>
+                {/* Tier 3: The Institution */}
+                <div className="bg-white/[0.02] border border-white/10 p-8 md:p-10 rounded-3xl flex flex-col h-full hover:bg-white/[0.04] transition-colors relative">
+                  <div className="mb-8">
+                    <h3 className="text-xl font-bold text-white mb-2">The Institution</h3>
+                    <p className="text-sm text-slate-400 font-light h-10">For partners, founders, and CXOs.</p>
                   </div>
-                  <p className="text-sm text-slate-400 mb-8 h-10">For partners, founders, and CXOs.</p>
+                  <div className="mb-8 border-b border-white/10 pb-8">
+                    <div className="flex items-end gap-3">
+                      <span className="line-through text-slate-500 text-2xl font-semibold">₹5,999</span>
+                      <span className="text-4xl md:text-5xl font-extrabold text-white">₹3,499</span>
+                    </div>
+                    <div className="inline-flex items-center gap-1.5 mt-3 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md">
+                      <i className="fa-solid fa-bolt text-[#c27e42] text-[10px]"></i>
+                      <span className="text-xs text-slate-300 font-medium tracking-wide">One-Time Flat Fee</span>
+                    </div>
+                  </div>
                   
-                  <ul className="space-y-4 mb-8 flex-1">
-                    <li className="flex items-start gap-3 text-slate-300">
-                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
-                      <span>Multi-section executive portfolio</span>
+                  <ul className="space-y-6 mb-10 flex-1">
+                    <li className="flex items-start gap-3">
+                      <i className="fa-solid fa-sitemap text-sm text-slate-500 mt-1 shrink-0"></i>
+                      <p className="text-slate-300 text-sm font-light"><strong className="text-white font-medium">The Architecture:</strong><br/>Multi-section executive portfolio (includes Thought Leadership module).</p>
                     </li>
-                    <li className="flex items-start gap-3 text-slate-300">
-                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
-                      <span>Thought leadership module</span>
+                    <li className="flex items-start gap-3">
+                      <i className="fa-solid fa-credit-card text-sm text-slate-500 mt-1 shrink-0"></i>
+                      <p className="text-slate-300 text-sm font-light"><strong className="text-white font-medium">The Hardware:</strong><br/>1 Premium Matte PVC QR Card.</p>
                     </li>
-                    <li className="flex items-start gap-3 text-slate-300">
-                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
-                      <span>Press & publications integration</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-slate-300">
-                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
-                      <span>Custom domain configuration</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-slate-300">
-                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
-                      <span>Premium QR PVC card</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-slate-300">
-                      <i className="fa-solid fa-check text-base text-slate-500 shrink-0 mt-1"></i>
-                      <span>4 free update tickets/yr (then ₹499/ea)</span>
+                    <li className="flex items-start gap-3">
+                      <i className="fa-solid fa-server text-sm text-slate-500 mt-1 shrink-0"></i>
+                      <p className="text-slate-300 text-sm font-light"><strong className="text-white font-medium">The Infrastructure:</strong><br/>Custom domain mapping (client provides .com/.in) + Lifetime zero-cost hosting via GitHub Pages.</p>
                     </li>
                   </ul>
                   
-                  <button onClick={() => window.open(FORM_URL, '_blank')} className="w-full bg-[#1a233a] hover:bg-[#222d4a] text-white text-sm font-bold uppercase tracking-wider py-4 rounded-sm transition-colors">
+                  <button onClick={() => window.open(FORM_URL, '_blank')} className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white text-sm font-semibold py-4 rounded-xl transition-all">
                     Apply for Build
                   </button>
                 </div>
@@ -846,67 +814,105 @@
               </div>
 
               {/* SLA Banner */}
-              <div className="mt-24 max-w-4xl mx-auto bg-[#c27e42]/10 border border-[#c27e42]/20 rounded-lg p-8 md:p-10 text-center relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 h-full bg-[#c27e42]"></div>
-                <h3 className="text-xl font-bold text-white mb-4 uppercase tracking-widest text-sm">Service Level Agreement (SLA)</h3>
-                <p className="text-slate-400 leading-relaxed text-lg">
-                  Footprint Forge operates on a strict <span className="text-white font-medium">Weekend Deployment schedule</span>. To keep our infrastructure costs zero and pass those savings to you, all portfolio updates submitted during the week are coded, tested, and pushed live by Sunday evening.
-                </p>
+              <div className="mt-20 max-w-4xl mx-auto bg-gradient-to-r from-[#c27e42]/10 to-transparent border border-[#c27e42]/20 rounded-2xl p-6 md:p-10 flex flex-col md:flex-row gap-6 md:items-center relative overflow-hidden backdrop-blur-sm">
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#e6b981] to-[#c27e42]"></div>
+                <div className="shrink-0 bg-white/5 p-4 rounded-xl border border-white/10">
+                  <i className="fa-solid fa-clock-rotate-left text-2xl text-[#c27e42]"></i>
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white mb-2 uppercase tracking-widest">Service Level Agreement</h3>
+                  <p className="text-slate-400 font-light text-sm md:text-base leading-relaxed">
+                    Footprint Forge operates on a strict <strong className="text-white font-medium">Weekend Deployment schedule</strong>. To keep our infrastructure costs zero, all portfolio updates submitted during the week are coded, tested, and pushed live by Sunday evening.
+                  </p>
+                </div>
               </div>
 
             </div>
           </section>
 
-          {/* 7. FOOTER CTA */}
-          <footer className="py-32 bg-[#04070d] border-t border-white/5 relative overflow-hidden">
-            {/* Abstract Background element */}
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#c27e42]/5 blur-[100px] rounded-full pointer-events-none"></div>
+          {/* 6.5 ABOUT US SECTION */}
+          <section id="about" className="py-20 md:py-32 bg-[#03050a] border-t border-white/5 relative overflow-hidden">
+            <div className="max-w-4xl mx-auto px-6 md:px-12 relative z-10 text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#c27e42]/30 bg-[#c27e42]/10 mb-6 text-xs font-bold text-[#c27e42] tracking-widest uppercase">
+                The Origin of the Forge
+              </div>
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-10">Forged in the friction of <br className="hidden md:block"/><span className="text-gradient-gold">modern corporate finance.</span></h2>
+              
+              <div className="space-y-6 text-base md:text-lg text-slate-400 font-light leading-relaxed max-w-3xl mx-auto">
+                <p>
+                  Footprint Forge was born from the friction of modern corporate finance. Operating in a high-stakes offshore commercial banking environment, the exchange of paper contact details felt completely disconnected from the digital reality of global business.
+                </p>
+                <p>
+                  We realized that professionals don't just need a digital business card; they need <strong className="text-white font-medium">permanent digital infrastructure</strong>. We engineer bespoke, hand-coded architectures for founders, bankers, and consultants who treat their reputation as capital.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* 7. FOOTER CTA & LINKS */}
+          <footer className="py-24 md:py-32 bg-[#020408] border-t border-white/5 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-[#c27e42]/5 blur-[100px] rounded-full pointer-events-none"></div>
 
             <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-              <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-6">
+              <h2 className="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6">
                 Your Name Is an Asset. <br className="hidden md:block"/>
-                <span className="text-[#c27e42]">Build It Accordingly.</span>
+                <span className="text-gradient-gold">Build It Accordingly.</span>
               </h2>
-              <p className="text-xl text-slate-400 mb-12 max-w-2xl mx-auto">
+              <p className="text-base md:text-xl text-slate-400 mb-10 md:mb-12 max-w-2xl mx-auto font-light">
                 Limited build capacity each month to ensure uncompromising engineering quality.
               </p>
               
-              <button onClick={() => window.open(FORM_URL, '_blank')} className="bg-[#c27e42] hover:bg-[#a66731] text-white text-lg font-bold px-10 py-5 rounded-sm flex items-center justify-center gap-3 transition-all mx-auto group shadow-[0_0_30px_rgba(194,126,66,0.3)]">
+              <button onClick={() => window.open(FORM_URL, '_blank')} className="w-full sm:w-auto bg-[#c27e42] hover:bg-[#a66731] text-white text-base md:text-lg font-bold px-10 py-5 rounded-xl flex items-center justify-center gap-3 transition-all mx-auto group shadow-[0_0_30px_rgba(194,126,66,0.3)] hover:shadow-[0_0_40px_rgba(194,126,66,0.4)]">
                 Start My Build 
-                <i className="fa-solid fa-arrow-right text-xl group-hover:translate-x-1 transition-transform"></i>
+                <i className="fa-solid fa-arrow-right text-lg group-hover:translate-x-1 transition-transform"></i>
               </button>
 
-              <div className="mt-20 pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-                <div className="flex items-center gap-3">
-                  <img src="FootprintForge_CircularSeal.jpg" alt="Footprint Forge" className="w-8 h-8 rounded-full shadow-[0_0_10px_rgba(194,126,66,0.3)]" />
-                  <span className="font-bold tracking-tight text-white">Footprint Forge</span>
+              <div className="mt-24 pt-12 border-t border-white/10 text-left">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+                  {/* Brand */}
+                  <div>
+                    <div className="flex items-center gap-3 mb-4">
+                      <img src="1000441850.png" alt="Footprint Forge" className="w-8 h-8 rounded-full shadow-[0_0_10px_rgba(194,126,66,0.3)]" />
+                      <span className="font-bold tracking-widest text-white text-lg uppercase">FOOTPRINT FORGE</span>
+                    </div>
+                    <p className="text-slate-400 font-light text-sm">Premium Digital Identity Infrastructure.</p>
+                  </div>
+                  
+                  {/* Legal */}
+                  <div className="md:text-right flex flex-col justify-center">
+                    <h4 className="text-white font-semibold text-sm mb-3 tracking-widest uppercase">Legal & Compliance</h4>
+                    <p className="text-slate-400 font-light text-sm">Registered MSME | Udyam Registration: UDYAM-TN-02-0455866</p>
+                  </div>
                 </div>
-                <p className="text-sm text-slate-500 font-medium tracking-wide">
-                  Built in Chennai. Engineered for global standards.
-                </p>
+                
+                {/* Copyright */}
+                <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500 font-light">
+                  <p>© 2026 Footprint Forge. All Rights Reserved.</p>
+                  <p>Designed in Chennai. Hosted on GitHub Global Infrastructure.</p>
+                </div>
               </div>
             </div>
           </footer>
 
           {/* 8. MOBILE MOCKUP MODAL */}
           {activeMockup && (
-            <div className="fixed inset-0 z-[100] bg-[#0a0f1c]/90 backdrop-blur-md flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-[100] bg-[#05080f]/90 backdrop-blur-xl flex items-center justify-center p-4">
               
               <button 
                 onClick={() => setActiveMockup(null)}
-                className="absolute top-6 right-6 md:top-10 md:right-10 text-slate-400 hover:text-[#EAEAEA] transition-colors bg-zinc-900/50 rounded-full p-2"
+                className="absolute top-4 right-4 md:top-10 md:right-10 text-slate-400 hover:text-white transition-colors bg-white/5 border border-white/10 hover:bg-white/10 rounded-full w-12 h-12 flex items-center justify-center z-[110]"
               >
-                <i className="fa-solid fa-xmark text-3xl"></i>
+                <i className="fa-solid fa-xmark text-2xl"></i>
               </button>
               
               {/* Mobile Device Frame */}
-              <div className="relative w-full max-w-[360px] h-[800px] max-h-[85vh] bg-[#0B1F3A] border-[8px] border-zinc-950 rounded-[3rem] shadow-[0_0_50px_rgba(11,31,58,0.5)] overflow-hidden">
+              <div className="relative w-full max-w-[340px] md:max-w-[360px] h-[750px] max-h-[90vh] bg-[#0B1F3A] border-[6px] md:border-[8px] border-[#111] rounded-[2.5rem] md:rounded-[3rem] shadow-[0_0_50px_rgba(194,126,66,0.15)] overflow-hidden">
                 {/* Hardware Notch */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-zinc-950 rounded-b-2xl z-20"></div>
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 md:w-32 h-6 bg-[#111] rounded-b-2xl z-20"></div>
                 
                 {/* Scrollable Screen Content */}
                 <div 
-                  className="absolute inset-0 overflow-y-auto mockup-scroll" 
+                  className="absolute inset-0 overflow-y-auto mockup-scroll bg-[#0B1F3A]" 
                   style={{ scrollBehavior: 'smooth' }}
                 >
                   {renderMockupContent()}
