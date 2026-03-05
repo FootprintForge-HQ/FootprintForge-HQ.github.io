@@ -361,9 +361,12 @@
             }`}
           >
             <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
-              {/* Logo */}
+              {/* Logo (With Fallback Fingerprint Icon) */}
               <div className="flex items-center gap-3 cursor-pointer group" onClick={() => window.scrollTo(0,0)}>
-                <img src="1000441850.png" alt="Footprint Forge" className="w-8 h-8 rounded-full shadow-[0_0_10px_rgba(194,126,66,0.3)] group-hover:shadow-[0_0_15px_rgba(194,126,66,0.6)] transition-shadow" />
+                <div className="relative w-8 h-8 rounded-full border border-[#c27e42]/50 flex items-center justify-center bg-[#05080f] overflow-hidden shadow-[0_0_10px_rgba(194,126,66,0.3)] group-hover:shadow-[0_0_15px_rgba(194,126,66,0.6)] transition-shadow">
+                  <img src="1000441850.png" alt="FF" className="w-full h-full object-cover z-10 relative" onError={(e) => e.target.style.display = 'none'} />
+                  <i className="fa-solid fa-fingerprint text-[#c27e42] text-sm absolute z-0"></i>
+                </div>
                 <span className="text-lg md:text-xl font-bold tracking-tight text-white">Footprint Forge</span>
               </div>
 
@@ -558,7 +561,7 @@
             </div>
           </section>
 
-          {/* 4. FEATURES SECTION */}
+          {/* 4. FEATURES SECTION (Optimized Typography) */}
           <section className="py-20 md:py-32 bg-[#05080f]">
             <div className="max-w-7xl mx-auto px-6 md:px-12">
               
@@ -576,7 +579,7 @@
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-white mb-3">Hand-Coded. Not Drag-and-Drop.</h3>
-                    <p className="text-slate-400 leading-relaxed font-light text-sm md:text-base">
+                    <p className="text-[15px] md:text-base text-slate-300 leading-loose">
                       Each portfolio is built from scratch. No templates. No branding dilution. No platform watermark. You get a bespoke digital asset.
                     </p>
                   </div>
@@ -591,7 +594,7 @@
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-white mb-3">Premium PVC with Permanent QR</h3>
-                    <p className="text-slate-400 leading-relaxed font-light text-sm md:text-base">
+                    <p className="text-[15px] md:text-base text-slate-300 leading-loose">
                       Durable. Minimal. Executive-grade. Not a paper card. Not unreliable NFC gimmicks. A permanent, authoritative digital gateway.
                     </p>
                   </div>
@@ -606,7 +609,7 @@
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-white mb-3">Mobile-First Performance</h3>
-                    <p className="text-slate-400 leading-relaxed font-light text-sm md:text-base">
+                    <p className="text-[15px] md:text-base text-slate-300 leading-loose">
                       Optimized for instant QR scans. Loads exceptionally fast on cellular networks. Built specifically for real-world, high-stakes interactions.
                     </p>
                   </div>
@@ -621,7 +624,7 @@
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-white mb-3">Reputation Control</h3>
-                    <p className="text-slate-400 leading-relaxed font-light text-sm md:text-base">
+                    <p className="text-[15px] md:text-base text-slate-300 leading-loose">
                       Centralize experience, metrics, publications, and contact info. Update your digital hub anytime—your physical card stays constant.
                     </p>
                   </div>
@@ -631,7 +634,7 @@
             </div>
           </section>
 
-          {/* 5. PROCESS SECTION */}
+          {/* 5. PROCESS SECTION (Optimized Mobile Spacing & Layout) */}
           <section id="process" className="py-20 md:py-32 bg-[#03050a] border-t border-white/5 relative overflow-hidden">
             <div className="hidden lg:block absolute left-1/2 top-48 bottom-48 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent -translate-x-1/2 z-0"></div>
 
@@ -641,40 +644,62 @@
                 <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">Three Steps. Zero Friction.</h2>
               </div>
 
-              <div className="space-y-12 md:space-y-20 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:hidden before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-white/10 before:to-transparent">
+              {/* Increased vertical space on mobile (space-y-24) to stop cramping */}
+              <div className="space-y-24 md:space-y-20 relative before:absolute before:inset-0 before:ml-6 before:-translate-x-px md:before:hidden before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-white/10 before:to-transparent">
                 
                 {/* Step 1 */}
-                <div className="relative flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center">
-                  <div className="md:w-1/2 md:text-right md:pr-12 pl-12 md:pl-0">
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">1. Apply</h3>
-                    <p className="text-slate-400 font-light text-sm md:text-base">Submit your professional details through our structured, secure intake form.</p>
-                  </div>
-                  <div className="absolute left-0 top-0 md:static md:left-auto md:top-auto md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 w-10 h-10 md:w-14 md:h-14 bg-[#05080f] border border-white/20 rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl z-10 shadow-lg">
+                <div className="relative flex flex-row md:flex-row gap-6 md:gap-8 items-start md:items-center">
+                  {/* Mobile Number Icon (Left Aligned) */}
+                  <div className="w-12 h-12 bg-[#05080f] border border-white/20 rounded-full flex items-center justify-center text-white font-bold text-lg md:hidden shrink-0 z-10 relative">
                     1
+                  </div>
+                  {/* Desktop Number Icon (Absolute Center) */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-[#05080f] border border-white/20 rounded-full hidden md:flex items-center justify-center text-white font-bold text-xl z-10 shadow-lg">
+                    1
+                  </div>
+                  
+                  {/* Text Block */}
+                  <div className="flex-1 md:w-1/2 md:flex-none md:text-right md:pr-12 pt-1 md:pt-0">
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2 md:mb-3">1. Apply</h3>
+                    <p className="text-slate-400 font-light text-[15px] md:text-base leading-relaxed">Submit your professional details through our structured, secure intake form.</p>
                   </div>
                   <div className="md:w-1/2 hidden md:block"></div>
                 </div>
 
                 {/* Step 2 */}
-                <div className="relative flex flex-col md:flex-row-reverse gap-6 md:gap-8 items-start md:items-center">
-                  <div className="md:w-1/2 md:text-left md:pl-12 pl-12 md:pl-0">
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">2. We Engineer</h3>
-                    <p className="text-slate-400 font-light text-sm md:text-base">We design and hand-code your portfolio to precisely align with your domain and positioning.</p>
-                  </div>
-                  <div className="absolute left-0 top-0 md:static md:left-auto md:top-auto md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-[#e6b981] to-[#c27e42] rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl z-10 shadow-[0_0_30px_rgba(194,126,66,0.4)]">
+                <div className="relative flex flex-row md:flex-row-reverse gap-6 md:gap-8 items-start md:items-center">
+                  {/* Mobile Number Icon */}
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#e6b981] to-[#c27e42] rounded-full flex items-center justify-center text-white font-bold text-lg md:hidden shrink-0 z-10 relative shadow-[0_0_20px_rgba(194,126,66,0.4)]">
                     2
+                  </div>
+                  {/* Desktop Number Icon */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-gradient-to-br from-[#e6b981] to-[#c27e42] rounded-full hidden md:flex items-center justify-center text-white font-bold text-xl z-10 shadow-[0_0_30px_rgba(194,126,66,0.4)]">
+                    2
+                  </div>
+                  
+                  {/* Text Block */}
+                  <div className="flex-1 md:w-1/2 md:flex-none md:text-left md:pl-12 pt-1 md:pt-0">
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2 md:mb-3">2. We Engineer</h3>
+                    <p className="text-slate-400 font-light text-[15px] md:text-base leading-relaxed">We design and hand-code your portfolio to precisely align with your domain and positioning.</p>
                   </div>
                   <div className="md:w-1/2 hidden md:block"></div>
                 </div>
 
                 {/* Step 3 */}
-                <div className="relative flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center">
-                  <div className="md:w-1/2 md:text-right md:pr-12 pl-12 md:pl-0">
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">3. Go Live</h3>
-                    <p className="text-slate-400 font-light text-sm md:text-base">Receive your premium matte PVC card. Start sharing your curated identity instantly.</p>
-                  </div>
-                  <div className="absolute left-0 top-0 md:static md:left-auto md:top-auto md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 w-10 h-10 md:w-14 md:h-14 bg-[#05080f] border border-white/20 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg md:text-xl z-10">
+                <div className="relative flex flex-row md:flex-row gap-6 md:gap-8 items-start md:items-center">
+                  {/* Mobile Number Icon */}
+                  <div className="w-12 h-12 bg-[#05080f] border border-white/20 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg md:hidden shrink-0 z-10 relative">
                     3
+                  </div>
+                  {/* Desktop Number Icon */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-[#05080f] border border-white/20 rounded-full hidden md:flex items-center justify-center text-slate-500 font-bold text-xl z-10">
+                    3
+                  </div>
+                  
+                  {/* Text Block */}
+                  <div className="flex-1 md:w-1/2 md:flex-none md:text-right md:pr-12 pt-1 md:pt-0">
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2 md:mb-3">3. Go Live</h3>
+                    <p className="text-slate-400 font-light text-[15px] md:text-base leading-relaxed">Receive your premium matte PVC card. Start sharing your curated identity instantly.</p>
                   </div>
                   <div className="md:w-1/2 hidden md:block"></div>
                 </div>
@@ -838,7 +863,7 @@
               </div>
               <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-10">Forged in the friction of <br className="hidden md:block"/><span className="text-gradient-gold">modern corporate finance.</span></h2>
               
-              <div className="space-y-6 text-base md:text-lg text-slate-400 font-light leading-relaxed max-w-3xl mx-auto">
+              <div className="space-y-6 text-[15px] md:text-lg text-slate-400 font-light leading-relaxed max-w-3xl mx-auto">
                 <p>
                   Footprint Forge was born from the friction of modern corporate finance. Operating in a high-stakes offshore commercial banking environment, the exchange of paper contact details felt completely disconnected from the digital reality of global business.
                 </p>
@@ -872,16 +897,19 @@
                   {/* Brand */}
                   <div>
                     <div className="flex items-center gap-3 mb-4">
-                      <img src="1000441850.png" alt="Footprint Forge" className="w-8 h-8 rounded-full shadow-[0_0_10px_rgba(194,126,66,0.3)]" />
+                      <div className="relative w-8 h-8 rounded-full border border-[#c27e42]/50 flex items-center justify-center bg-[#05080f] overflow-hidden shadow-[0_0_10px_rgba(194,126,66,0.3)]">
+                        <img src="1000441850.png" alt="FF" className="w-full h-full object-cover z-10 relative" onError={(e) => e.target.style.display = 'none'} />
+                        <i className="fa-solid fa-fingerprint text-[#c27e42] text-sm absolute z-0"></i>
+                      </div>
                       <span className="font-bold tracking-widest text-white text-lg uppercase">FOOTPRINT FORGE</span>
                     </div>
                     <p className="text-slate-400 font-light text-sm">Premium Digital Identity Infrastructure.</p>
                   </div>
                   
-                  {/* Legal */}
+                  {/* Legal (Optimized Contrast) */}
                   <div className="md:text-right flex flex-col justify-center">
                     <h4 className="text-white font-semibold text-sm mb-3 tracking-widest uppercase">Legal & Compliance</h4>
-                    <p className="text-slate-400 font-light text-sm">Registered MSME | Udyam Registration: UDYAM-TN-02-0455866</p>
+                    <p className="text-slate-300 font-medium text-[13px] md:text-sm">Registered MSME | Udyam Registration: UDYAM-TN-02-0455866</p>
                   </div>
                 </div>
                 
