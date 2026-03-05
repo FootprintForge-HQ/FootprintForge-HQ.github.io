@@ -75,6 +75,14 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
+    const PREDEFINED_PRODUCTS = [
+      { name: "The Executive Portfolio", rate: 1499, discount: 500 },
+      { name: "The Authority Portfolio", rate: 2499, discount: 1000 },
+      { name: "The Institution Portfolio", rate: 5999, discount: 2500 },
+      { name: "Extra Premium PVC QR Card", rate: 499, discount: 0 },
+      { name: "Premium PVC QR Card (Standard Issue)", rate: 0, discount: 0 }
+    ];
+
     function InvoiceGenerator() {
       // Default Invoice State
       const [invoiceDetails, setInvoiceDetails] = useState({
@@ -87,8 +95,8 @@
       });
 
       const [items, setItems] = useState([
-        { id: 1, desc: "The Authority Portfolio (Premium Build)", qty: 1, rate: 1499 },
-        { id: 2, desc: "Matte Black PVC QR Card (Standard Issue)", qty: 1, rate: 0 }
+        { id: 1, desc: "The Authority Portfolio", qty: 1, rate: 2499, discount: 1000 },
+        { id: 2, desc: "Premium PVC QR Card (Standard Issue)", qty: 1, rate: 0, discount: 0 }
       ]);
 
       const [logoUrl, setLogoUrl] = useState("1000441850.png");
@@ -113,7 +121,7 @@
 
       // Item Management
       const addItem = () => {
-        setItems([...items, { id: Date.now(), desc: "", qty: 1, rate: 0 }]);
+        setItems([...items, { id: Date.now(), desc: "Custom Line Item", qty: 1, rate: 0, discount: 0 }]);
       };
 
       const removeItem = (idToRemove) => {
@@ -127,7 +135,9 @@
       };
 
       // Calculations
-      const total = items.reduce((sum, item) => sum + (Number(item.qty) * Number(item.rate)), 0);
+      const subtotal = items.reduce((sum, item) => sum + (Number(item.qty) * Number(item.rate)), 0);
+      const totalDiscount = items.reduce((sum, item) => sum + (Number(item.qty) * Number(item.discount || 0)), 0);
+      const total = subtotal - totalDiscount;
 
       // Currency Formatter
       const formatCurrency = (num) => {
@@ -216,27 +226,68 @@
                   </button>
                 </div>
                 
-                <div className="space-y-3">
-                  {items.map((item, index) => (
-                    <div key={item.id} className="bg-gray-50 border border-gray-200 p-3 rounded-lg flex flex-col gap-2 relative group">
-                      {items.length > 1 && (
-                        <button onClick={() => removeItem(item.id)} className="absolute -top-2 -right-2 w-5 h-5 bg-red-100 hover:bg-red-500 hover:text-white text-red-500 rounded-full flex items-center justify-center text-[10px] transition-colors border border-red-200">
-                          <i className="fa-solid fa-xmark"></i>
-                        </button>
-                      )}
-                      <input type="text" placeholder="Item Description" value={item.desc} onChange={(e) => updateItem(item.id, 'desc', e.target.value)} className="w-full text-xs p-2 border border-gray-300 rounded outline-none" />
-                      <div className="flex gap-2">
-                        <div className="flex-1">
-                          <span className="text-[9px] text-gray-500 font-bold uppercase ml-1">Qty</span>
-                          <input type="number" min="1" value={item.qty} onChange={(e) => updateItem(item.id, 'qty', e.target.value)} className="w-full text-xs p-2 border border-gray-300 rounded outline-none font-mono" />
-                        </div>
-                        <div className="flex-1">
-                          <span className="text-[9px] text-gray-500 font-bold uppercase ml-1">Rate (₹)</span>
-                          <input type="number" min="0" value={item.rate} onChange={(e) => updateItem(item.id, 'rate', e.target.value)} className="w-full text-xs p-2 border border-gray-300 rounded outline-none font-mono" />
+                <div className="space-y-4">
+                  {items.map((item, index) => {
+                    const isPredefined = PREDEFINED_PRODUCTS.some(p => p.name === item.desc);
+                    
+                    return (
+                      <div key={item.id} className="bg-gray-50 border border-gray-200 p-3 rounded-lg flex flex-col gap-2 relative group">
+                        {items.length > 1 && (
+                          <button onClick={() => removeItem(item.id)} className="absolute -top-2 -right-2 w-5 h-5 bg-red-100 hover:bg-red-500 hover:text-white text-red-500 rounded-full flex items-center justify-center text-[10px] transition-colors border border-red-200 z-10">
+                            <i className="fa-solid fa-xmark"></i>
+                          </button>
+                        )}
+                        
+                        {/* Product Dropdown Selector */}
+                        <select 
+                          value={isPredefined ? item.desc : "Custom Line Item"}
+                          onChange={(e) => {
+                            const selectedName = e.target.value;
+                            if (selectedName === "Custom Line Item") {
+                              updateItem(item.id, 'desc', "");
+                            } else {
+                              const prod = PREDEFINED_PRODUCTS.find(p => p.name === selectedName);
+                              updateItem(item.id, 'desc', prod.name);
+                              updateItem(item.id, 'rate', prod.rate);
+                              updateItem(item.id, 'discount', prod.discount);
+                            }
+                          }}
+                          className="w-full text-xs p-2 border border-gray-300 rounded outline-none bg-white font-medium text-gray-800"
+                        >
+                          <option value="Custom Line Item">Custom Line Item</option>
+                          {PREDEFINED_PRODUCTS.map(p => (
+                            <option key={p.name} value={p.name}>{p.name}</option>
+                          ))}
+                        </select>
+
+                        {/* Show Custom Description Input ONLY if not a predefined product */}
+                        {!isPredefined && (
+                          <input 
+                            type="text" 
+                            placeholder="Custom Description" 
+                            value={item.desc} 
+                            onChange={(e) => updateItem(item.id, 'desc', e.target.value)} 
+                            className="w-full text-xs p-2 border border-gray-300 rounded outline-none" 
+                          />
+                        )}
+
+                        <div className="flex gap-2 mt-1">
+                          <div className="flex-1">
+                            <span className="text-[9px] text-gray-500 font-bold uppercase ml-1">Qty</span>
+                            <input type="number" min="1" value={item.qty} onChange={(e) => updateItem(item.id, 'qty', e.target.value)} className="w-full text-xs p-2 border border-gray-300 rounded outline-none font-mono" />
+                          </div>
+                          <div className="flex-1">
+                            <span className="text-[9px] text-gray-500 font-bold uppercase ml-1">Rate (₹)</span>
+                            <input type="number" min="0" value={item.rate} onChange={(e) => updateItem(item.id, 'rate', e.target.value)} className="w-full text-xs p-2 border border-gray-300 rounded outline-none font-mono" />
+                          </div>
+                          <div className="flex-1">
+                            <span className="text-[9px] text-copper font-bold uppercase ml-1">Discount (₹)</span>
+                            <input type="number" min="0" value={item.discount || 0} onChange={(e) => updateItem(item.id, 'discount', e.target.value)} className="w-full text-xs p-2 border border-copper bg-[#c27e42]/5 rounded outline-none font-mono text-copper" />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -336,10 +387,11 @@
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr>
-                        <th className="py-3 px-2 border-b-2 border-gray-800 text-[10px] uppercase tracking-widest text-gray-500 font-bold w-3/5">Description</th>
+                        <th className="py-3 px-2 border-b-2 border-gray-800 text-[10px] uppercase tracking-widest text-gray-500 font-bold w-5/12">Description</th>
                         <th className="py-3 px-2 border-b-2 border-gray-800 text-[10px] uppercase tracking-widest text-gray-500 font-bold text-center w-1/12">Qty</th>
-                        <th className="py-3 px-2 border-b-2 border-gray-800 text-[10px] uppercase tracking-widest text-gray-500 font-bold text-right w-1/6">Rate</th>
-                        <th className="py-3 px-2 border-b-2 border-gray-800 text-[10px] uppercase tracking-widest text-gray-500 font-bold text-right w-1/6">Amount</th>
+                        <th className="py-3 px-2 border-b-2 border-gray-800 text-[10px] uppercase tracking-widest text-gray-500 font-bold text-right w-2/12">Rate</th>
+                        <th className="py-3 px-2 border-b-2 border-gray-800 text-[10px] uppercase tracking-widest text-copper font-bold text-right w-2/12">Discount</th>
+                        <th className="py-3 px-2 border-b-2 border-gray-800 text-[10px] uppercase tracking-widest text-gray-500 font-bold text-right w-2/12">Amount</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -348,7 +400,8 @@
                           <td className="py-4 px-2 border-b border-gray-100 text-sm text-gray-800 font-medium">{item.desc || "Item Description"}</td>
                           <td className="py-4 px-2 border-b border-gray-100 text-sm text-gray-600 font-mono text-center">{item.qty}</td>
                           <td className="py-4 px-2 border-b border-gray-100 text-sm text-gray-600 font-mono text-right">{formatCurrency(item.rate)}</td>
-                          <td className="py-4 px-2 border-b border-gray-100 text-sm font-mono font-semibold text-gray-900 text-right">{formatCurrency(item.qty * item.rate)}</td>
+                          <td className="py-4 px-2 border-b border-gray-100 text-sm text-copper font-mono text-right">{item.discount > 0 ? `-${formatCurrency(item.discount)}` : '-'}</td>
+                          <td className="py-4 px-2 border-b border-gray-100 text-sm font-mono font-semibold text-gray-900 text-right">{formatCurrency((item.rate - (item.discount || 0)) * item.qty)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -357,7 +410,17 @@
 
                 {/* --- TOTALS --- */}
                 <div className="w-full flex justify-end mt-8 mb-12">
-                  <div className="w-1/2 md:w-2/5">
+                  <div className="w-1/2 md:w-[45%]">
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-xs text-gray-500 uppercase tracking-widest font-bold">Subtotal</span>
+                      <span className="font-mono text-sm text-gray-800">{formatCurrency(subtotal)}</span>
+                    </div>
+                    {totalDiscount > 0 && (
+                      <div className="flex justify-between py-2 border-b border-gray-100">
+                        <span className="text-xs text-copper uppercase tracking-widest font-bold">Total Savings</span>
+                        <span className="font-mono text-sm text-copper font-bold">-{formatCurrency(totalDiscount)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between py-4 border-t-2 border-b-2 border-gray-800 mt-1">
                       <span className="text-sm font-bold text-[#111] uppercase tracking-widest">Total Due</span>
                       <span className="font-mono text-xl font-bold copper-text">{formatCurrency(total)}</span>
