@@ -186,6 +186,12 @@
 
       const handleFormSubmit = async (e) => {
         e.preventDefault();
+        
+        // Safety check to alert you if the API key hasn't been added yet
+        if (!WEB3FORMS_ACCESS_KEY || WEB3FORMS_ACCESS_KEY === "YOUR_KEY_HERE") {
+          alert("Developer Note: You must replace 'YOUR_KEY_HERE' on line 98 with your actual Web3Forms access key for emails to send!");
+        }
+
         setFormStatus('submitting');
         
         const today = new Date().toISOString().split('T')[0];
@@ -217,7 +223,7 @@
         }
 
         // 2. Try sending instant Email Notification
-        if (WEB3FORMS_ACCESS_KEY && WEB3FORMS_ACCESS_KEY !== "5b76816a-770b-4896-a8a1-b153d407c0e7") {
+        if (WEB3FORMS_ACCESS_KEY && WEB3FORMS_ACCESS_KEY !== "YOUR_KEY_HERE") {
           try {
             const emailMessage = `
 New Lead Application Received!
@@ -248,21 +254,26 @@ Open your local Command Center CRM to process this lead and generate their invoi
                 }),
             });
             
-            if (response.ok) {
+            const json = await response.json();
+            
+            if (response.status === 200 && json.success) {
                emailSuccess = true;
             } else {
-               console.error("Web3Forms error:", await response.text());
+               console.error("Web3Forms error details:", json);
+               alert(`Email Failed to Send: ${json.message}`);
             }
           } catch (error) {
-            console.error("Email submission error:", error);
+            console.error("Email network error:", error);
+            alert("Email network error. Please check console logs.");
           }
-        } else {
-          console.warn("Web3Forms Key not set. Skipping email.");
         }
 
         // 3. Final Success/Fail Evaluation
         if (firebaseSuccess || emailSuccess) {
            setFormStatus('success');
+           if (!emailSuccess && WEB3FORMS_ACCESS_KEY !== "YOUR_KEY_HERE") {
+              alert("Data saved to CRM, but email notification failed. Please check console logs.");
+           }
         } else {
            alert("Connection error. Please try again or contact us via WhatsApp.");
            setFormStatus('idle');
@@ -1072,4 +1083,3 @@ Open your local Command Center CRM to process this lead and generate their invoi
   </script>
 </body>
 </html>
-
