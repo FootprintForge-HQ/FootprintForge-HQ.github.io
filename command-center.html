@@ -68,8 +68,8 @@
 
   <script type="text/babel" data-type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, doc, setDoc, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, doc, setDoc, updateDoc, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const { useState, useEffect, useRef } = React;
 
@@ -97,10 +97,19 @@
     ];
 
     function CommandCenter() {
+      // Auth State
       const [user, setUser] = useState(null);
+      const [isAuthChecking, setIsAuthChecking] = useState(true);
+      const [email, setEmail] = useState("");
+      const [password, setPassword] = useState("");
+      const [authError, setAuthError] = useState("");
+      const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+      // Data State
       const [savedInvoices, setSavedInvoices] = useState([]);
       const [isSaving, setIsSaving] = useState(false);
 
+      // UI State
       const [activeView, setActiveView] = useState('dashboard'); 
       const [activeTool, setActiveTool] = useState('invoice'); 
       const [activeTabMobile, setActiveTabMobile] = useState('edit');
@@ -133,18 +142,20 @@
         { id: 2, desc: "Premium PVC QR Card (Standard Issue)", qty: 1, rate: 0, discount: 0 }
       ]);
 
-      // Connect to the shared ff_agency_data collection
+      // Connect to Auth State
       useEffect(() => {
-        const initAuth = async () => {
-          try {
-            await signInAnonymously(auth); 
-          } catch(e) { console.error("Auth init error:", e); }
-        };
-        initAuth();
-        const unsubscribe = onAuthStateChanged(auth, setUser);
+        if (!auth) {
+          setIsAuthChecking(false);
+          return;
+        }
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+          setUser(currentUser);
+          setIsAuthChecking(false);
+        });
         return () => unsubscribe();
       }, []);
 
+      // Connect to Firestore (Only triggers if logged in)
       useEffect(() => {
         if (!user || !db) return;
         const invoicesRef = collection(db, 'ff_agency_data');
@@ -180,6 +191,25 @@
         }
       }, [savedInvoices, formData.invoiceNo]);
 
+      // --- AUTHENTICATION HANDLERS ---
+      const handleLogin = async (e) => {
+        e.preventDefault();
+        setIsAuthenticating(true);
+        setAuthError("");
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+        } catch (err) {
+          console.error(err);
+          setAuthError("Authentication failed. Check credentials or ensure user is registered in Firebase.");
+        }
+        setIsAuthenticating(false);
+      };
+
+      const handleLogout = async () => {
+        if(auth) await signOut(auth);
+      };
+
+      // --- GENERAL HANDLERS ---
       const updateData = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
       const handleNameChange = (e) => {
         const name = e.target.value;
@@ -306,6 +336,23 @@
           } catch(e) { console.error("Failed to toggle cancel state:", e); }
       };
 
+      const clearDatabase = async () => {
+          if(!user || !db) return;
+          if(!window.confirm("WARNING: Are you sure you want to permanently delete ALL data in the database? This cannot be undone.")) return;
+          if(window.prompt("Type 'DELETE' to confirm:") !== 'DELETE') return;
+
+          setIsSaving(true);
+          try {
+             const deletePromises = savedInvoices.map(inv => deleteDoc(doc(db, 'ff_agency_data', inv.id)));
+             await Promise.all(deletePromises);
+             alert("All test data cleared successfully!");
+          } catch(e) {
+             console.error("Failed to clear database:", e);
+             alert("Error clearing database. Check console logs.");
+          }
+          setIsSaving(false);
+      };
+
       const exportToExcel = () => {
         if (savedInvoices.length === 0) return alert("No data available to export");
         const headers = ["Invoice No", "Date", "Client Name", "Email", "Mobile", "Billing Type", "Amount (INR)", "Payment Status", "Delivery Status"];
@@ -339,6 +386,58 @@
         return () => window.removeEventListener('resize', handleResize);
       }, [activeView, activeTool, activeTabMobile]);
 
+
+      // --- RENDER CONDITIONALS ---
+      if (isAuthChecking) {
+          return (
+              <div className="min-h-screen bg-[#05080f] flex flex-col gap-4 items-center justify-center">
+                  <i className="fa-solid fa-circle-notch fa-spin text-[#c27e42] text-4xl"></i>
+                  <p className="text-white font-mono text-sm tracking-widest uppercase">Initializing Vault...</p>
+              </div>
+          );
+      }
+
+      if (!user) {
+          return (
+              <div className="min-h-screen bg-[#05080f] flex items-center justify-center p-6 font-sans">
+                  <div className="w-full max-w-md bg-[#111] border border-white/10 rounded-2xl p-8 md:p-10 shadow-[0_30px_60px_rgba(0,0,0,0.8)] relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#e6b981] to-[#c27e42]"></div>
+                      
+                      <div className="flex flex-col items-center mb-8">
+                          <div className="w-16 h-16 rounded-full border border-[#c27e42]/50 flex items-center justify-center bg-[#05080f] shadow-[0_0_20px_rgba(194,126,66,0.3)] mb-5">
+                              <i className="fa-solid fa-fingerprint text-[#c27e42] text-2xl"></i>
+                          </div>
+                          <h2 className="text-2xl font-bold tracking-[0.2em] text-white uppercase text-center mb-1">Footprint Forge</h2>
+                          <p className="text-[10px] text-[#c27e42] font-mono tracking-widest uppercase">Command Center Login</p>
+                      </div>
+
+                      <form onSubmit={handleLogin} className="space-y-5">
+                          {authError && (
+                              <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-xs p-3 rounded-lg text-center font-medium">
+                                  {authError}
+                              </div>
+                          )}
+                          <div>
+                              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Admin Email</label>
+                              <input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-[#05080f] border border-white/10 text-white text-sm p-3.5 rounded-lg outline-none focus:border-[#c27e42] transition-colors" placeholder="admin@footprintforge.com" />
+                          </div>
+                          <div>
+                              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Passkey</label>
+                              <input type="password" required value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-[#05080f] border border-white/10 text-white text-sm p-3.5 rounded-lg outline-none focus:border-[#c27e42] transition-colors" placeholder="••••••••" />
+                          </div>
+                          <button type="submit" disabled={isAuthenticating} className="w-full mt-4 bg-gradient-to-r from-[#e6b981] to-[#c27e42] hover:opacity-90 text-[#05080f] font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(194,126,66,0.2)] transition-all flex items-center justify-center gap-2 disabled:opacity-70">
+                              {isAuthenticating ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Verifying...</> : <><i className="fa-solid fa-lock-open"></i> Authenticate</>}
+                          </button>
+                      </form>
+                      <div className="mt-8 text-center">
+                          <p className="text-[9px] text-gray-600 font-mono">Restricted access. Unauthorised attempts are logged.</p>
+                      </div>
+                  </div>
+              </div>
+          );
+      }
+
+      // --- UI RENDERING COMPONENTS ---
       const renderSidebarContent = () => {
         if (activeView === 'dashboard') return null;
 
@@ -354,10 +453,16 @@
                    <p className="text-xs text-gray-500 font-mono">Agency Operations</p>
                  </div>
                </div>
-               <button onClick={() => { setActiveView('dashboard'); setFormData({...formData, id: ''}); }} className="text-[#c27e42] hover:bg-[#c27e42]/10 p-2 rounded-lg transition-colors flex flex-col items-center group">
-                  <i className="fa-solid fa-chart-line text-lg mb-1 group-hover:scale-110 transition-transform"></i>
-                  <span className="text-[8px] uppercase tracking-widest font-bold">Dashboard</span>
-               </button>
+               <div className="flex items-center gap-1">
+                 <button onClick={handleLogout} className="text-gray-400 hover:text-red-500 p-2 rounded-lg transition-colors flex flex-col items-center group" title="Lock System">
+                    <i className="fa-solid fa-lock text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                    <span className="text-[8px] uppercase tracking-widest font-bold">Lock</span>
+                 </button>
+                 <button onClick={() => { setActiveView('dashboard'); setFormData({...formData, id: ''}); }} className="text-[#c27e42] hover:bg-[#c27e42]/10 p-2 rounded-lg transition-colors flex flex-col items-center group" title="Return to Dashboard">
+                    <i className="fa-solid fa-chart-line text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                    <span className="text-[8px] uppercase tracking-widest font-bold">Dash</span>
+                 </button>
+               </div>
             </div>
 
             <div className="space-y-6 flex-1">
@@ -498,6 +603,12 @@
                   <p className="text-green-600 text-sm tracking-wide font-medium"><i className="fa-solid fa-cloud"></i> Unified Database Active</p>
                </div>
                <div className="flex gap-3">
+                 <button onClick={handleLogout} className="bg-white border border-gray-300 hover:bg-red-50 hover:border-red-300 hover:text-red-600 text-gray-500 px-5 py-3 rounded-xl font-bold tracking-wide transition-all shadow-sm text-sm flex gap-2 items-center" title="Lock System">
+                    <i className="fa-solid fa-lock"></i> Lock
+                 </button>
+                 <button onClick={clearDatabase} className="bg-red-50 border border-red-200 hover:bg-red-100 text-red-600 px-5 py-3 rounded-xl font-bold tracking-wide transition-all shadow-sm text-sm flex gap-2 items-center">
+                    <i className="fa-solid fa-trash-can"></i> Wipe Data
+                 </button>
                  <button onClick={exportToExcel} className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 px-5 py-3 rounded-xl font-bold tracking-wide transition-all shadow-sm text-sm flex gap-2 items-center">
                     <i className="fa-solid fa-file-excel text-green-600"></i> Export CSV
                  </button>
@@ -791,7 +902,7 @@
               </div>
               <div className="flex justify-between items-end pt-4 border-t border-gray-200">
                 <div><p className="font-serif italic text-[16px] text-[#111] mb-1">The Engineering Team</p><p className="text-[9px] text-gray-500 font-mono uppercase tracking-widest">Footprint Forge, Chennai</p></div>
-                <div className="flex items-center gap-2 opacity-30"><div className="w-[12mm] h-[12mm] rounded-full overflow-hidden grayscale mix-blend-multiply border border-gray-400"><img src={logoUrl} alt="Seal" className="w-full h-full object-cover" onerror={(e) => { e.target.style.display='none'; }} /></div><span className="text-[8px] uppercase tracking-widest font-mono text-[#c27e42] font-bold">QA Passed</span></div>
+                <div className="flex items-center gap-2 opacity-30"><div className="w-[12mm] h-[12mm] rounded-full overflow-hidden grayscale mix-blend-multiply border border-gray-400"><img src={logoUrl} alt="Seal" className="w-full h-full object-cover" onError={(e) => { e.target.style.display='none'; }} /></div><span className="text-[8px] uppercase tracking-widest font-mono text-[#c27e42] font-bold">QA Passed</span></div>
               </div>
             </div>
           </div>
@@ -839,6 +950,56 @@
           </div>
         );
       };
+
+      // --- RENDER CONDITIONALS ---
+      if (isAuthChecking) {
+          return (
+              <div className="min-h-screen bg-[#05080f] flex flex-col gap-4 items-center justify-center">
+                  <i className="fa-solid fa-circle-notch fa-spin text-[#c27e42] text-4xl"></i>
+                  <p className="text-white font-mono text-sm tracking-widest uppercase">Initializing Vault...</p>
+              </div>
+          );
+      }
+
+      if (!user) {
+          return (
+              <div className="min-h-screen bg-[#05080f] flex items-center justify-center p-6 font-sans">
+                  <div className="w-full max-w-md bg-[#111] border border-white/10 rounded-2xl p-8 md:p-10 shadow-[0_30px_60px_rgba(0,0,0,0.8)] relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#e6b981] to-[#c27e42]"></div>
+                      
+                      <div className="flex flex-col items-center mb-8">
+                          <div className="w-16 h-16 rounded-full border border-[#c27e42]/50 flex items-center justify-center bg-[#05080f] shadow-[0_0_20px_rgba(194,126,66,0.3)] mb-5">
+                              <i className="fa-solid fa-fingerprint text-[#c27e42] text-2xl"></i>
+                          </div>
+                          <h2 className="text-2xl font-bold tracking-[0.2em] text-white uppercase text-center mb-1">Footprint Forge</h2>
+                          <p className="text-[10px] text-[#c27e42] font-mono tracking-widest uppercase">Command Center Login</p>
+                      </div>
+
+                      <form onSubmit={handleLogin} className="space-y-5">
+                          {authError && (
+                              <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-xs p-3 rounded-lg text-center font-medium">
+                                  {authError}
+                              </div>
+                          )}
+                          <div>
+                              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Admin Email</label>
+                              <input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-[#05080f] border border-white/10 text-white text-sm p-3.5 rounded-lg outline-none focus:border-[#c27e42] transition-colors" placeholder="admin@footprintforge.com" />
+                          </div>
+                          <div>
+                              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Passkey</label>
+                              <input type="password" required value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-[#05080f] border border-white/10 text-white text-sm p-3.5 rounded-lg outline-none focus:border-[#c27e42] transition-colors" placeholder="••••••••" />
+                          </div>
+                          <button type="submit" disabled={isAuthenticating} className="w-full mt-4 bg-gradient-to-r from-[#e6b981] to-[#c27e42] hover:opacity-90 text-[#05080f] font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(194,126,66,0.2)] transition-all flex items-center justify-center gap-2 disabled:opacity-70">
+                              {isAuthenticating ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Verifying...</> : <><i className="fa-solid fa-lock-open"></i> Authenticate</>}
+                          </button>
+                      </form>
+                      <div className="mt-8 text-center">
+                          <p className="text-[9px] text-gray-600 font-mono">Restricted access. Unauthorised attempts are logged.</p>
+                      </div>
+                  </div>
+              </div>
+          );
+      }
 
       return (
         <div className="flex flex-col lg:flex-row w-full min-h-screen relative">
