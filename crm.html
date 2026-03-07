@@ -139,27 +139,8 @@
 <body>
   <div id="root" class="w-full min-h-screen"></div>
 
-  <script type="text/babel" data-type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, doc, setDoc, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+  <script type="text/babel">
     const { useState, useEffect, useRef } = React;
-
-    // Robust Firebase Init Setup
-    let app, auth, db;
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    
-    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-        try {
-            const firebaseConfig = JSON.parse(__firebase_config);
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-        } catch (e) {
-            console.error("Firebase config parsing failed:", e);
-        }
-    }
 
     const PREDEFINED_PRODUCTS = [
       { name: "The Executive Portfolio", rate: 1499, discount: 500 },
@@ -170,9 +151,28 @@
     ];
 
     function CommandCenter() {
-      // Global Auth & Database State
-      const [user, setUser] = useState(null);
-      const [savedInvoices, setSavedInvoices] = useState([]);
+      // ----------------------------------------------------------------------
+      // LOCAL STORAGE DATABASE INITIALIZATION
+      // ----------------------------------------------------------------------
+      const [savedInvoices, setSavedInvoices] = useState(() => {
+        try {
+          const item = window.localStorage.getItem('ff_crm_data');
+          return item ? JSON.parse(item) : [];
+        } catch (error) {
+          console.error("Failed to load data from localStorage", error);
+          return [];
+        }
+      });
+
+      const syncToLocalStorage = (newData) => {
+        setSavedInvoices(newData);
+        try {
+          window.localStorage.setItem('ff_crm_data', JSON.stringify(newData));
+        } catch (error) {
+          console.error("Failed to save to localStorage", error);
+        }
+      };
+
       const [isSaving, setIsSaving] = useState(false);
 
       // App UI State
@@ -209,38 +209,6 @@
         { id: 2, desc: "Premium PVC QR Card (Standard Issue)", qty: 1, rate: 0, discount: 0 }
       ]);
 
-      // ----------------------------------------------------------------------
-      // FIREBASE & AUTHENTICATION EFFECTS
-      // ----------------------------------------------------------------------
-      useEffect(() => {
-        if (!auth) return;
-        const initAuth = async () => {
-          try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-              await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-              await signInAnonymously(auth);
-            }
-          } catch(e) { console.error("Auth init error:", e); }
-        };
-        initAuth();
-        const unsubscribe = onAuthStateChanged(auth, setUser);
-        return () => unsubscribe();
-      }, []);
-
-      useEffect(() => {
-        if (!user || !db) return;
-        const invoicesRef = collection(db, 'artifacts', appId, 'users', user.uid, 'invoices');
-        
-        const unsubscribe = onSnapshot(invoicesRef, (snapshot) => {
-          const invData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          invData.sort((a, b) => b.timestamp - a.timestamp);
-          setSavedInvoices(invData);
-        }, (err) => {
-          console.error("Firestore sync error:", err);
-        });
-        return () => unsubscribe();
-      }, [user]);
 
       // Auto-Serialization Generator (FF-YYMM-XXX)
       useEffect(() => {
@@ -301,81 +269,86 @@
         return subtotal - totalDiscount;
       };
 
-      const handleSaveAndPrint = async () => {
-        if (user && db) {
-            setIsSaving(true);
-            const baseTotal = calculateBaseTotal();
-            let amountDue = baseTotal;
-            if (formData.billingMode === 'advance' || formData.billingMode === 'final') {
-                amountDue = baseTotal / 2;
-            }
-
-            const newInvoiceData = {
-               invoiceNo: formData.invoiceNo,
-               clientName: formData.clientName,
-               email: formData.email,
-               mobile: formData.mobile,
-               date: formData.date,
-               total: amountDue,
-               billingMode: formData.billingMode,
-               paymentStatus: 'Pending',
-               deliveryStatus: 'Processing',
-               timestamp: Date.now()
-            };
-            try {
-               await addDoc(collection(db, 'artifacts', appId, 'users', user.uid, 'invoices'), newInvoiceData);
-            } catch(e) {
-               console.error("Failed to save invoice:", e);
-            }
-            setIsSaving(false);
+      const handleSaveAndPrint = () => {
+        setIsSaving(true);
+        const baseTotal = calculateBaseTotal();
+        let amountDue = baseTotal;
+        if (formData.billingMode === 'advance' || formData.billingMode === 'final') {
+            amountDue = baseTotal / 2;
         }
-        window.print();
+
+        const newInvoiceData = {
+           id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+           invoiceNo: formData.invoiceNo,
+           clientName: formData.clientName,
+           email: formData.email,
+           mobile: formData.mobile,
+           date: formData.date,
+           total: amountDue,
+           billingMode: formData.billingMode,
+           paymentStatus: 'Pending',
+           deliveryStatus: 'Processing',
+           status: 'Pending', // for backwards compatibility
+           timestamp: Date.now()
+        };
+        
+        // Add to local storage and sort
+        const updatedData = [newInvoiceData, ...savedInvoices].sort((a, b) => b.timestamp - a.timestamp);
+        syncToLocalStorage(updatedData);
+
+        setIsSaving(false);
+        
+        // Timeout ensures React renders before print dialogue takes over
+        setTimeout(() => {
+          window.print();
+        }, 100);
       };
 
-      const togglePaymentStatus = async (inv) => {
+      const togglePaymentStatus = (inv) => {
           const pStatus = inv.paymentStatus || inv.status;
-          if(!user || !db || pStatus === 'Cancelled') return;
+          if(pStatus === 'Cancelled') return;
           const newStatus = pStatus === 'Pending' ? 'Paid' : 'Pending';
-          try {
-             const docRef = doc(collection(db, 'artifacts', appId, 'users', user.uid, 'invoices'), inv.id);
-             await updateDoc(docRef, { paymentStatus: newStatus, status: newStatus });
-          } catch(e) { console.error("Failed to update status:", e); }
+          
+          const updatedData = savedInvoices.map(item => 
+            item.id === inv.id ? { ...item, paymentStatus: newStatus, status: newStatus } : item
+          );
+          syncToLocalStorage(updatedData);
       };
 
-      const cycleDeliveryStatus = async (inv) => {
+      const cycleDeliveryStatus = (inv) => {
           const pStatus = inv.paymentStatus || inv.status;
-          if(!user || !db || pStatus === 'Cancelled') return;
+          if(pStatus === 'Cancelled') return;
           
           let newDelivery = 'Processing';
           if (inv.deliveryStatus === 'Processing') newDelivery = 'Shipped';
           else if (inv.deliveryStatus === 'Shipped') newDelivery = 'Delivered';
           else newDelivery = 'Processing';
 
-          try {
-             const docRef = doc(collection(db, 'artifacts', appId, 'users', user.uid, 'invoices'), inv.id);
-             await updateDoc(docRef, { deliveryStatus: newDelivery });
-          } catch(e) { console.error("Failed to update delivery:", e); }
+          const updatedData = savedInvoices.map(item => 
+            item.id === inv.id ? { ...item, deliveryStatus: newDelivery } : item
+          );
+          syncToLocalStorage(updatedData);
       };
 
-      const toggleCancelInvoice = async (inv) => {
-          if(!user || !db) return;
+      const toggleCancelInvoice = (inv) => {
           const pStatus = inv.paymentStatus || inv.status;
-          try {
-             const docRef = doc(collection(db, 'artifacts', appId, 'users', user.uid, 'invoices'), inv.id);
-             if (pStatus === 'Cancelled') {
-                 // Restore the invoice back to Pending/Processing
-                 await updateDoc(docRef, { paymentStatus: 'Pending', deliveryStatus: 'Processing', status: 'Pending' });
-             } else {
-                 // Cancel the invoice
-                 await updateDoc(docRef, { paymentStatus: 'Cancelled', deliveryStatus: 'Cancelled', status: 'Cancelled' });
-             }
-          } catch(e) { console.error("Failed to toggle cancel state:", e); }
+          const updatedData = savedInvoices.map(item => {
+            if (item.id === inv.id) {
+               if (pStatus === 'Cancelled') {
+                 return { ...item, paymentStatus: 'Pending', deliveryStatus: 'Processing', status: 'Pending' };
+               } else {
+                 return { ...item, paymentStatus: 'Cancelled', deliveryStatus: 'Cancelled', status: 'Cancelled' };
+               }
+            }
+            return item;
+          });
+          syncToLocalStorage(updatedData);
       };
 
       // EXPORT TO EXCEL (CSV)
       const exportToExcel = () => {
         if (savedInvoices.length === 0) {
-          console.warn("No data available to export");
+          alert("No data available to export");
           return;
         }
 
@@ -613,7 +586,6 @@
       };
 
       const renderDashboard = () => {
-        // Safe access to paymentStatus and fallback to older 'status' field if needed
         const activeInvoices = savedInvoices.filter(i => (i.paymentStatus || i.status) !== 'Cancelled');
         
         const totalRev = activeInvoices.filter(i => (i.paymentStatus || i.status) === 'Paid').reduce((sum, i) => sum + Number(i.total), 0);
@@ -626,7 +598,7 @@
             <div className="flex flex-col md:flex-row justify-between md:items-end mb-10 gap-4">
                <div>
                   <h2 className="text-3xl font-serif text-gray-900 mb-2">Financial Command</h2>
-                  <p className="text-gray-500 text-sm tracking-wide">Track your portfolio deployments, payments, and delivery statuses.</p>
+                  <p className="text-gray-500 text-sm tracking-wide">Track your portfolio deployments, payments, and delivery statuses. (Local Storage Active)</p>
                </div>
                <div className="flex gap-3">
                  <button onClick={exportToExcel} className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 px-5 py-3 rounded-xl font-bold tracking-wide transition-all shadow-sm text-sm flex gap-2 items-center">
@@ -681,7 +653,7 @@
                     </thead>
                     <tbody>
                       {savedInvoices.length === 0 ? (
-                        <tr><td colSpan="8" className="py-12 text-center text-gray-500 text-sm">No operations deployed to the cloud yet.</td></tr>
+                        <tr><td colSpan="8" className="py-12 text-center text-gray-500 text-sm">No operations deployed locally yet.</td></tr>
                       ) : (
                         savedInvoices.map((inv) => {
                           const pStatus = inv.paymentStatus || inv.status; // backwards compatibility
