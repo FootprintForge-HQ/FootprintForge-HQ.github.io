@@ -142,18 +142,23 @@
   <script type="text/babel" data-type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, doc, setDoc, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const { useState, useEffect, useRef } = React;
 
-    // Firebase Init Setup
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+    // Robust Firebase Init Setup
     let app, auth, db;
-    if (firebaseConfig) {
-        app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        db = getFirestore(app);
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    
+    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+        try {
+            const firebaseConfig = JSON.parse(__firebase_config);
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (e) {
+            console.error("Firebase config parsing failed:", e);
+        }
     }
 
     const PREDEFINED_PRODUCTS = [
@@ -168,6 +173,7 @@
       // Global Auth & Database State
       const [user, setUser] = useState(null);
       const [savedInvoices, setSavedInvoices] = useState([]);
+      const [isSaving, setIsSaving] = useState(false);
 
       // App UI State
       const [activeView, setActiveView] = useState('dashboard'); // 'dashboard' or 'generator'
@@ -194,7 +200,6 @@
         date: todayString,
         dueDate: todayString,
         billingMode: "standard", // 'standard', 'advance', 'final'
-        // UPDATED NOTES: Clear mention of 50% non-refundable advance
         notes: "Thank you for partnering with Footprint Forge. A 50% non-refundable advance deposit is required before engineering commences. Please process payment via NEFT/RTGS to HDFC Bank A/c: 50100XXXXXXXXX, IFSC: HDFC0001234."
       });
 
@@ -298,6 +303,7 @@
 
       const handleSaveAndPrint = async () => {
         if (user && db) {
+            setIsSaving(true);
             const baseTotal = calculateBaseTotal();
             let amountDue = baseTotal;
             if (formData.billingMode === 'advance' || formData.billingMode === 'final') {
@@ -313,31 +319,32 @@
                total: amountDue,
                billingMode: formData.billingMode,
                paymentStatus: 'Pending',
-               deliveryStatus: 'Processing', // Processing, Shipped, Delivered
+               deliveryStatus: 'Processing',
                timestamp: Date.now()
             };
             try {
-               const newDocRef = doc(collection(db, 'artifacts', appId, 'users', user.uid, 'invoices'));
-               await setDoc(newDocRef, newInvoiceData);
-               alert("Data saved to Dashboard! Proceeding to print...");
+               await addDoc(collection(db, 'artifacts', appId, 'users', user.uid, 'invoices'), newInvoiceData);
             } catch(e) {
                console.error("Failed to save invoice:", e);
             }
+            setIsSaving(false);
         }
         window.print();
       };
 
       const togglePaymentStatus = async (inv) => {
-          if(!user || !db || inv.paymentStatus === 'Cancelled') return;
-          const newStatus = inv.paymentStatus === 'Pending' ? 'Paid' : 'Pending';
+          const pStatus = inv.paymentStatus || inv.status;
+          if(!user || !db || pStatus === 'Cancelled') return;
+          const newStatus = pStatus === 'Pending' ? 'Paid' : 'Pending';
           try {
              const docRef = doc(collection(db, 'artifacts', appId, 'users', user.uid, 'invoices'), inv.id);
-             await updateDoc(docRef, { paymentStatus: newStatus });
+             await updateDoc(docRef, { paymentStatus: newStatus, status: newStatus });
           } catch(e) { console.error("Failed to update status:", e); }
       };
 
       const cycleDeliveryStatus = async (inv) => {
-          if(!user || !db || inv.paymentStatus === 'Cancelled') return;
+          const pStatus = inv.paymentStatus || inv.status;
+          if(!user || !db || pStatus === 'Cancelled') return;
           
           let newDelivery = 'Processing';
           if (inv.deliveryStatus === 'Processing') newDelivery = 'Shipped';
@@ -350,19 +357,25 @@
           } catch(e) { console.error("Failed to update delivery:", e); }
       };
 
-      const cancelInvoice = async (inv) => {
+      const toggleCancelInvoice = async (inv) => {
           if(!user || !db) return;
-          if(!window.confirm("Are you sure you want to cancel this order? This will remove it from revenue metrics.")) return;
+          const pStatus = inv.paymentStatus || inv.status;
           try {
              const docRef = doc(collection(db, 'artifacts', appId, 'users', user.uid, 'invoices'), inv.id);
-             await updateDoc(docRef, { paymentStatus: 'Cancelled', deliveryStatus: 'Cancelled' });
-          } catch(e) { console.error("Failed to cancel invoice:", e); }
+             if (pStatus === 'Cancelled') {
+                 // Restore the invoice back to Pending/Processing
+                 await updateDoc(docRef, { paymentStatus: 'Pending', deliveryStatus: 'Processing', status: 'Pending' });
+             } else {
+                 // Cancel the invoice
+                 await updateDoc(docRef, { paymentStatus: 'Cancelled', deliveryStatus: 'Cancelled', status: 'Cancelled' });
+             }
+          } catch(e) { console.error("Failed to toggle cancel state:", e); }
       };
 
       // EXPORT TO EXCEL (CSV)
       const exportToExcel = () => {
         if (savedInvoices.length === 0) {
-          alert("No data to export.");
+          console.warn("No data available to export");
           return;
         }
 
@@ -370,7 +383,6 @@
         
         const rows = savedInvoices.map(inv => {
           const bType = inv.billingMode === 'advance' ? '50% Advance' : inv.billingMode === 'final' ? '50% Final' : 'Standard';
-          // Sanitize fields to prevent CSV breaking (quotes around strings)
           return [
             inv.invoiceNo,
             inv.date,
@@ -379,7 +391,7 @@
             `"${inv.mobile || ''}"`,
             bType,
             inv.total,
-            inv.paymentStatus || inv.status, // Fallback for older data
+            inv.paymentStatus || inv.status, 
             inv.deliveryStatus || 'Processing'
           ];
         });
@@ -574,8 +586,8 @@
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Payment Notes</label>
-                    <textarea value={formData.notes} onChange={(e) => updateData('notes', e.target.value)} className="w-full text-xs p-2.5 border border-gray-300 rounded outline-none resize-none h-16 leading-relaxed"></textarea>
+                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Payment Terms & Notes</label>
+                    <textarea value={formData.notes} onChange={(e) => updateData('notes', e.target.value)} className="w-full text-xs p-2.5 border border-gray-300 rounded outline-none resize-none h-24 leading-relaxed"></textarea>
                   </div>
                 </div>
               )}
@@ -715,11 +727,13 @@
                               </td>
 
                               <td className="py-4 px-6 text-center no-print">
-                                  {!isCancelled && (
-                                      <button onClick={() => cancelInvoice(inv)} className="text-red-400 hover:text-red-600 transition-colors p-2" title="Cancel Order">
-                                          <i className="fa-solid fa-ban"></i>
-                                      </button>
-                                  )}
+                                  <button 
+                                    onClick={() => toggleCancelInvoice(inv)} 
+                                    className="p-2 transition-colors" 
+                                    title={isCancelled ? "Restore Order" : "Cancel Order"}
+                                  >
+                                      <i className={`fa-solid ${isCancelled ? 'fa-rotate-left text-gray-400 hover:text-gray-600' : 'fa-ban text-red-400 hover:text-red-600'}`}></i>
+                                  </button>
                               </td>
                             </tr>
                           );
@@ -1123,8 +1137,9 @@
                     Edit Details
                   </button>
                   {activeTool === 'invoice' ? (
-                    <button onClick={handleSaveAndPrint} className="flex-1 bg-[#c27e42] text-white py-3 rounded-lg font-bold tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-[#c27e42]/20 text-[10px]">
-                      <i className="fa-solid fa-cloud-arrow-up"></i> Save & Print
+                    <button onClick={handleSaveAndPrint} disabled={isSaving} className="flex-1 bg-[#c27e42] text-white py-3 rounded-lg font-bold tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-[#c27e42]/20 text-[10px] disabled:opacity-70">
+                      {isSaving ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-cloud-arrow-up"></i>}
+                      {isSaving ? "Saving..." : "Save & Print"}
                     </button>
                   ) : (
                     <button onClick={handlePrint} className="flex-1 bg-[#c27e42] text-white py-3 rounded-lg font-bold tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-[#c27e42]/20">
@@ -1140,9 +1155,12 @@
           {activeView !== 'dashboard' && (
             <div className="hidden lg:block no-print fixed bottom-8 right-8 z-50">
               {activeTool === 'invoice' ? (
-                 <button onClick={handleSaveAndPrint} className="bg-[#c27e42] hover:bg-[#a66731] text-white font-bold uppercase tracking-wider py-4 px-8 rounded-full shadow-2xl transition-all flex justify-center items-center gap-3 hover:scale-105 group">
+                 <button onClick={handleSaveAndPrint} disabled={isSaving} className="bg-[#c27e42] hover:bg-[#a66731] text-white font-bold uppercase tracking-wider py-4 px-8 rounded-full shadow-2xl transition-all flex justify-center items-center gap-3 hover:scale-105 group disabled:opacity-70 disabled:hover:scale-100">
                    <div className="flex flex-col items-center">
-                     <span className="flex items-center gap-2"><i className="fa-solid fa-cloud-arrow-up"></i> Save & Print</span>
+                     <span className="flex items-center gap-2">
+                       {isSaving ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-cloud-arrow-up"></i>} 
+                       {isSaving ? "SAVING..." : "SAVE & PRINT"}
+                     </span>
                      <span className="text-[9px] text-white/70 tracking-widest -mt-1">Syncs to Dashboard</span>
                    </div>
                  </button>
