@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Footprint Forge | Command Center</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      background-color: #f3f4f6;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      color: #111;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Shared Branding */
+    .font-serif { font-family: 'Playfair Display', serif; }
+    .copper-text { color: #c27e42; }
+    .bg-copper { background-color: #c27e42; }
+    .border-copper { border-color: #c27e42; }
+
+    /* Copper Foil Text Effect (Envelope) */
+    .foil-text {
+      background: linear-gradient(135deg, #e6b981 0%, #c27e42 50%, #8a5a2e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .foil-bg { background: linear-gradient(135deg, #e6b981 0%, #c27e42 50%, #8a5a2e 100%); }
+
+    /* A4 Paper Dimensions and Styling (Invoice & Letter) */
+    .a4-paper {
+      width: 210mm;
+      height: 297mm;
+      background-color: #ffffff;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0,0,0,0.05);
+      position: relative;
+      box-sizing: border-box;
+    }
+    .a4-letter {
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+    }
+    
+    /* Letter Specifics */
+    .window-address-block {
+      position: absolute;
+      top: 62mm;
+      left: 18mm;
+      width: 85mm;
+      height: 31mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .fold-guide {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      border-top: 1px dashed rgba(0,0,0,0.1);
+      z-index: 50;
+    }
+    .fold-1 { top: 99mm; }
+    .fold-2 { top: 198mm; }
+    .fold-tick {
+      position: absolute;
+      width: 3mm;
+      border-top: 0.5px solid rgba(0,0,0,0.3);
+    }
+    .tick-left { left: 0; }
+    .tick-right { right: 0; }
+    .card-mount {
+      position: absolute;
+      top: 142mm; 
+      left: 50%;
+      transform: translateX(-50%);
+      width: 82mm;
+      height: 50mm;
+      border: 1.5px dashed #c27e42;
+      border-radius: 4mm;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(194, 126, 66, 0.03);
+    }
+
+    /* Global Print Optimizations */
+    @media print {
+      body {
+        background-color: transparent !important;
+        margin: 0;
+      }
+      .no-print { display: none !important; }
+      
+      .a4-paper {
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .a4-letter { background-image: none !important; }
+      .fold-guide { border-color: transparent !important; }
+
+      /* ENVELOPE CMYK OPTIMIZATIONS */
+      .print-env-panel {
+        background-color: #1A1A1A !important; 
+        border-color: transparent !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .foil-text {
+        background: none !important;
+        -webkit-text-fill-color: #C27A3E !important;
+        color: #C27A3E !important; 
+      }
+      .foil-bg { background: #C27A3E !important; }
+      .env-white-text { color: #FFFFFF !important; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root" class="w-full min-h-screen"></div>
+
+  <script type="text/babel" data-type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const { useState, useEffect, useRef } = React;
+
+    // Firebase Init Setup
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+    let app, auth, db;
+    if (firebaseConfig) {
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+    }
+
+    const PREDEFINED_PRODUCTS = [
+      { name: "The Executive Portfolio", rate: 1499, discount: 500 },
+      { name: "The Authority Portfolio", rate: 2499, discount: 1000 },
+      { name: "The Institution Portfolio", rate: 5999, discount: 2500 },
+      { name: "Extra Premium PVC QR Card", rate: 499, discount: 0 },
+      { name: "Premium PVC QR Card (Standard Issue)", rate: 0, discount: 0 }
+    ];
+
+    function CommandCenter() {
+      // Global Auth & Database State
+      const [user, setUser] = useState(null);
+      const [savedInvoices, setSavedInvoices] = useState([]);
+
+      // App UI State
+      const [activeView, setActiveView] = useState('dashboard'); // 'dashboard' or 'generator'
+      const [activeTool, setActiveTool] = useState('invoice'); // 'invoice', 'letter', 'envelope'
+      const [activeTabMobile, setActiveTabMobile] = useState('edit');
+      const [scale, setScale] = useState(1);
+      const previewContainerRef = useRef(null);
+      const [logoUrl, setLogoUrl] = useState("1000441850.png");
+
+      const todayString = new Date().toISOString().split('T')[0];
+
+      // Unified Global Form Data
+      const [formData, setFormData] = useState({
+        clientName: "",
+        role: "Director, Commercial Banking",
+        addressLine1: "",
+        addressLine2: "",
+        cityStateZip: "",
+        country: "India",
+        mobile: "",
+        email: "",
+        refId: "",
+        invoiceNo: "",
+        date: todayString,
+        dueDate: todayString,
+        billingMode: "standard", // 'standard', 'advance', 'final'
+        // UPDATED NOTES: Clear mention of 50% non-refundable advance
+        notes: "Thank you for partnering with Footprint Forge. A 50% non-refundable advance deposit is required before engineering commences. Please process payment via NEFT/RTGS to HDFC Bank A/c: 50100XXXXXXXXX, IFSC: HDFC0001234."
+      });
+
+      // Invoice Specific State
+      const [invoiceItems, setInvoiceItems] = useState([
+        { id: 1, desc: "The Authority Portfolio", qty: 1, rate: 2499, discount: 1000 },
+        { id: 2, desc: "Premium PVC QR Card (Standard Issue)", qty: 1, rate: 0, discount: 0 }
+      ]);
+
+      // ----------------------------------------------------------------------
+      // FIREBASE & AUTHENTICATION EFFECTS
+      // ----------------------------------------------------------------------
+      useEffect(() => {
+        if (!auth) return;
+        const initAuth = async () => {
+          try {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+              await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+              await signInAnonymously(auth);
+            }
+          } catch(e) { console.error("Auth init error:", e); }
+        };
+        initAuth();
+        const unsubscribe = onAuthStateChanged(auth, setUser);
+        return () => unsubscribe();
+      }, []);
+
+      useEffect(() => {
+        if (!user || !db) return;
+        const invoicesRef = collection(db, 'artifacts', appId, 'users', user.uid, 'invoices');
+        
+        const unsubscribe = onSnapshot(invoicesRef, (snapshot) => {
+          const invData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          invData.sort((a, b) => b.timestamp - a.timestamp);
+          setSavedInvoices(invData);
+        }, (err) => {
+          console.error("Firestore sync error:", err);
+        });
+        return () => unsubscribe();
+      }, [user]);
+
+      // Auto-Serialization Generator (FF-YYMM-XXX)
+      useEffect(() => {
+        const d = new Date();
+        const yy = String(d.getFullYear()).slice(-2);
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const prefix = `FF-${yy}${mm}-`;
+        
+        let maxNum = 0;
+        savedInvoices.forEach(inv => {
+          if (inv.invoiceNo && inv.invoiceNo.startsWith(prefix)) {
+            const parts = inv.invoiceNo.split('-');
+            if (parts.length === 3) {
+              const num = parseInt(parts[2], 10);
+              if (!isNaN(num) && num > maxNum) maxNum = num;
+            }
+          }
+        });
+        
+        const nextNum = String(maxNum + 1).padStart(3, '0');
+        const nextInvoiceNo = `${prefix}${nextNum}`;
+        
+        if (!formData.invoiceNo || !formData.invoiceNo.startsWith(prefix)) {
+            setFormData(prev => ({...prev, invoiceNo: nextInvoiceNo}));
+        }
+      }, [savedInvoices, formData.invoiceNo]);
+
+      // ----------------------------------------------------------------------
+      // HANDLERS & EXPORTS
+      // ----------------------------------------------------------------------
+      const updateData = (field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+      };
+
+      const handleNameChange = (e) => {
+        const name = e.target.value;
+        const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        const ref = `${initials || 'XX'}-${Math.floor(1000 + Math.random() * 9000)}`;
+        setFormData(prev => ({ ...prev, clientName: name, refId: ref }));
+      };
+
+      const handleLogoUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => setLogoUrl(event.target.result);
+          reader.readAsDataURL(file);
+        }
+      };
+
+      const handlePrint = () => {
+        window.print();
+      };
+
+      const calculateBaseTotal = () => {
+        const subtotal = invoiceItems.reduce((sum, item) => sum + (Number(item.qty) * Number(item.rate)), 0);
+        const totalDiscount = invoiceItems.reduce((sum, item) => sum + (Number(item.qty) * Number(item.discount || 0)), 0);
+        return subtotal - totalDiscount;
+      };
+
+      const handleSaveAndPrint = async () => {
+        if (user && db) {
+            const baseTotal = calculateBaseTotal();
+            let amountDue = baseTotal;
+            if (formData.billingMode === 'advance' || formData.billingMode === 'final') {
+                amountDue = baseTotal / 2;
+            }
+
+            const newInvoiceData = {
+               invoiceNo: formData.invoiceNo,
+               clientName: formData.clientName,
+               email: formData.email,
+               mobile: formData.mobile,
+               date: formData.date,
+               total: amountDue,
+               billingMode: formData.billingMode,
+               paymentStatus: 'Pending',
+               deliveryStatus: 'Processing', // Processing, Shipped, Delivered
+               timestamp: Date.now()
+            };
+            try {
+               const newDocRef = doc(collection(db, 'artifacts', appId, 'users', user.uid, 'invoices'));
+               await setDoc(newDocRef, newInvoiceData);
+               alert("Data saved to Dashboard! Proceeding to print...");
+            } catch(e) {
+               console.error("Failed to save invoice:", e);
+            }
+        }
+        window.print();
+      };
+
+      const togglePaymentStatus = async (inv) => {
+          if(!user || !db || inv.paymentStatus === 'Cancelled') return;
+          const newStatus = inv.paymentStatus === 'Pending' ? 'Paid' : 'Pending';
+          try {
+             const docRef = doc(collection(db, 'artifacts', appId, 'users', user.uid, 'invoices'), inv.id);
+             await updateDoc(docRef, { paymentStatus: newStatus });
+          } catch(e) { console.error("Failed to update status:", e); }
+      };
+
+      const cycleDeliveryStatus = async (inv) => {
+          if(!user || !db || inv.paymentStatus === 'Cancelled') return;
+          
+          let newDelivery = 'Processing';
+          if (inv.deliveryStatus === 'Processing') newDelivery = 'Shipped';
+          else if (inv.deliveryStatus === 'Shipped') newDelivery = 'Delivered';
+          else newDelivery = 'Processing';
+
+          try {
+             const docRef = doc(collection(db, 'artifacts', appId, 'users', user.uid, 'invoices'), inv.id);
+             await updateDoc(docRef, { deliveryStatus: newDelivery });
+          } catch(e) { console.error("Failed to update delivery:", e); }
+      };
+
+      const cancelInvoice = async (inv) => {
+          if(!user || !db) return;
+          if(!window.confirm("Are you sure you want to cancel this order? This will remove it from revenue metrics.")) return;
+          try {
+             const docRef = doc(collection(db, 'artifacts', appId, 'users', user.uid, 'invoices'), inv.id);
+             await updateDoc(docRef, { paymentStatus: 'Cancelled', deliveryStatus: 'Cancelled' });
+          } catch(e) { console.error("Failed to cancel invoice:", e); }
+      };
+
+      // EXPORT TO EXCEL (CSV)
+      const exportToExcel = () => {
+        if (savedInvoices.length === 0) {
+          alert("No data to export.");
+          return;
+        }
+
+        const headers = ["Invoice No", "Date", "Client Name", "Email", "Mobile", "Billing Type", "Amount (INR)", "Payment Status", "Delivery Status"];
+        
+        const rows = savedInvoices.map(inv => {
+          const bType = inv.billingMode === 'advance' ? '50% Advance' : inv.billingMode === 'final' ? '50% Final' : 'Standard';
+          // Sanitize fields to prevent CSV breaking (quotes around strings)
+          return [
+            inv.invoiceNo,
+            inv.date,
+            `"${inv.clientName || ''}"`,
+            `"${inv.email || ''}"`,
+            `"${inv.mobile || ''}"`,
+            bType,
+            inv.total,
+            inv.paymentStatus || inv.status, // Fallback for older data
+            inv.deliveryStatus || 'Processing'
+          ];
+        });
+
+        const csvContent = "data:text/csv;charset=utf-8," 
+            + headers.join(",") + "\n" 
+            + rows.map(e => e.join(",")).join("\n");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `FootprintForge_CRM_Export_${todayString}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+
+      // Currency Formatter
+      const formatCurrency = (num) => {
+        return new Intl.NumberFormat('en-IN', {
+          style: 'currency',
+          currency: 'INR',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(num || 0);
+      };
+
+      // Dynamic Viewport Scaling
+      useEffect(() => {
+        const handleResize = () => {
+          if (previewContainerRef.current && activeView === 'generator') {
+            const containerWidth = previewContainerRef.current.clientWidth;
+            const targetWidthPx = activeTool === 'envelope' ? 1020 : 794; 
+            const padding = activeTool === 'envelope' ? 40 : 32; 
+            
+            if (containerWidth < targetWidthPx + padding) {
+              setScale((containerWidth - padding) / targetWidthPx);
+            } else {
+              setScale(1);
+            }
+          }
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+      }, [activeView, activeTool, activeTabMobile]);
+
+
+      // ----------------------------------------------------------------------
+      // UI RENDERING: SIDEBAR & DASHBOARD
+      // ----------------------------------------------------------------------
+      const renderSidebarContent = () => {
+        if (activeView === 'dashboard') return null;
+
+        return (
+          <div className={`no-print w-full lg:w-[450px] bg-white border-r border-gray-200 p-6 flex-col min-h-screen overflow-y-auto shadow-xl z-10 shrink-0 pb-28 lg:pb-6 ${activeTabMobile === 'edit' ? 'flex' : 'hidden lg:flex'}`}>
+            <div className="flex justify-between items-center mb-6">
+               <div className="flex items-center gap-3">
+                 <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center border border-[#c27e42]">
+                   <i className="fa-solid fa-fingerprint text-[#c27e42]"></i>
+                 </div>
+                 <div>
+                   <h1 className="text-sm font-bold tracking-widest uppercase">Command Center</h1>
+                   <p className="text-xs text-gray-500 font-mono">Agency Operations</p>
+                 </div>
+               </div>
+               <button onClick={() => setActiveView('dashboard')} className="text-[#c27e42] hover:bg-[#c27e42]/10 p-2 rounded-lg transition-colors flex flex-col items-center group" title="Return to Dashboard">
+                  <i className="fa-solid fa-chart-line text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                  <span className="text-[8px] uppercase tracking-widest font-bold">Dashboard</span>
+               </button>
+            </div>
+
+            <div className="space-y-6 flex-1">
+              
+              <div className="flex bg-gray-100 p-1 rounded-lg gap-1 border border-gray-200">
+                <button onClick={() => setActiveTool('invoice')} className={`flex-1 py-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded-md transition-colors ${activeTool === 'invoice' ? 'bg-white shadow text-[#c27e42]' : 'text-gray-500 hover:text-gray-800'}`}>Invoice</button>
+                <button onClick={() => setActiveTool('letter')} className={`flex-1 py-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded-md transition-colors ${activeTool === 'letter' ? 'bg-white shadow text-[#c27e42]' : 'text-gray-500 hover:text-gray-800'}`}>Letter</button>
+                <button onClick={() => setActiveTool('envelope')} className={`flex-1 py-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded-md transition-colors ${activeTool === 'envelope' ? 'bg-white shadow text-[#c27e42]' : 'text-gray-500 hover:text-gray-800'}`}>Envelope</button>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex justify-between items-end">
+                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide">Global Client Data</label>
+                </div>
+                <input type="text" placeholder="Client / Company Name" value={formData.clientName} onChange={handleNameChange} className="w-full text-sm p-2.5 border border-gray-300 rounded font-bold outline-none focus:border-[#c27e42] focus:ring-1 focus:ring-[#c27e42]" />
+                
+                {activeTool === 'letter' && (
+                  <input type="text" placeholder="Role / Title" value={formData.role} onChange={(e) => updateData('role', e.target.value)} className="w-full text-sm p-2.5 border border-gray-300 rounded outline-none" />
+                )}
+                
+                <div className="grid grid-cols-1 gap-2 pt-1 border-t border-gray-100">
+                  <input type="text" placeholder="Address Line 1" value={formData.addressLine1} onChange={(e) => updateData('addressLine1', e.target.value)} className="w-full text-sm p-2.5 border border-gray-300 rounded outline-none" />
+                  <input type="text" placeholder="Address Line 2 (Optional)" value={formData.addressLine2} onChange={(e) => updateData('addressLine2', e.target.value)} className="w-full text-sm p-2.5 border border-gray-300 rounded outline-none" />
+                  <div className="grid grid-cols-2 gap-2">
+                    <input type="text" placeholder="City, State Zip" value={formData.cityStateZip} onChange={(e) => updateData('cityStateZip', e.target.value)} className="w-full text-sm p-2.5 border border-gray-300 rounded outline-none" />
+                    <input type="text" placeholder="Country" value={formData.country} onChange={(e) => updateData('country', e.target.value)} className="w-full text-sm p-2.5 border border-gray-300 rounded outline-none" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input type="text" placeholder="Mobile" value={formData.mobile} onChange={(e) => updateData('mobile', e.target.value)} className="w-full text-sm p-2.5 border border-gray-300 rounded outline-none" />
+                    <input type="email" placeholder="Email" value={formData.email} onChange={(e) => updateData('email', e.target.value)} className="w-full text-sm p-2.5 border border-gray-300 rounded outline-none" />
+                  </div>
+                </div>
+              </div>
+
+              {/* INVOICE SPECIFIC CONTROLS */}
+              {activeTool === 'invoice' && (
+                <div className="space-y-4 pt-4 border-t border-gray-200">
+                  <div className="bg-[#c27e42]/10 border border-[#c27e42]/30 p-3 rounded-lg">
+                     <label className="block text-[10px] font-bold text-[#c27e42] uppercase tracking-wide mb-2">Billing Mode (Payment Structure)</label>
+                     <select 
+                        value={formData.billingMode} 
+                        onChange={(e) => updateData('billingMode', e.target.value)}
+                        className="w-full text-sm p-2 border border-[#c27e42]/50 bg-white rounded outline-none font-medium"
+                     >
+                        <option value="standard">100% Upfront (Standard)</option>
+                        <option value="advance">50% Advance Request</option>
+                        <option value="final">50% Final Settlement</option>
+                     </select>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Invoice No.</label>
+                      <input type="text" value={formData.invoiceNo} onChange={(e) => updateData('invoiceNo', e.target.value)} className="w-full text-sm p-2 border border-gray-300 rounded outline-none font-mono" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Issue Date</label>
+                      <input type="date" value={formData.date} onChange={(e) => updateData('date', e.target.value)} className="w-full text-sm p-2 border border-gray-300 rounded outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-700 uppercase tracking-wide mb-1">Due Date</label>
+                      <input type="date" value={formData.dueDate} onChange={(e) => updateData('dueDate', e.target.value)} className="w-full text-sm p-2 border border-gray-300 rounded outline-none" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-3">
+                      <label className="block text-xs font-bold text-[#c27e42] uppercase tracking-wide">Line Items</label>
+                      <button onClick={() => setInvoiceItems([...invoiceItems, { id: Date.now(), desc: "Custom Line Item", qty: 1, rate: 0, discount: 0 }])} className="text-[10px] bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-1 px-2 rounded transition-colors uppercase tracking-widest">
+                        + Add Item
+                      </button>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {invoiceItems.map((item) => {
+                        const isPredefined = PREDEFINED_PRODUCTS.some(p => p.name === item.desc);
+                        return (
+                          <div key={item.id} className="bg-gray-50 border border-gray-200 p-3 rounded-lg flex flex-col gap-2 relative group">
+                            {invoiceItems.length > 1 && (
+                              <button onClick={() => setInvoiceItems(invoiceItems.filter(i => i.id !== item.id))} className="absolute -top-2 -right-2 w-5 h-5 bg-red-100 hover:bg-red-500 hover:text-white text-red-500 rounded-full flex items-center justify-center text-[10px] transition-colors border border-red-200 z-10">
+                                <i className="fa-solid fa-xmark"></i>
+                              </button>
+                            )}
+                            <select 
+                              value={isPredefined ? item.desc : "Custom Line Item"}
+                              onChange={(e) => {
+                                const selectedName = e.target.value;
+                                if (selectedName === "Custom Line Item") {
+                                  setInvoiceItems(invoiceItems.map(i => i.id === item.id ? { ...i, desc: "" } : i));
+                                } else {
+                                  const prod = PREDEFINED_PRODUCTS.find(p => p.name === selectedName);
+                                  setInvoiceItems(invoiceItems.map(i => i.id === item.id ? { ...i, desc: prod.name, rate: prod.rate, discount: prod.discount } : i));
+                                }
+                              }}
+                              className="w-full text-xs p-2 border border-gray-300 rounded outline-none bg-white font-medium text-gray-800"
+                            >
+                              <option value="Custom Line Item">Custom Line Item</option>
+                              {PREDEFINED_PRODUCTS.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
+                            </select>
+                            {!isPredefined && (
+                              <input type="text" placeholder="Custom Description" value={item.desc} onChange={(e) => setInvoiceItems(invoiceItems.map(i => i.id === item.id ? { ...i, desc: e.target.value } : i))} className="w-full text-xs p-2 border border-gray-300 rounded outline-none" />
+                            )}
+                            <div className="flex gap-2 mt-1">
+                              <div className="flex-1">
+                                <span className="text-[9px] text-gray-500 font-bold uppercase ml-1">Qty</span>
+                                <input type="number" min="1" value={item.qty} onChange={(e) => setInvoiceItems(invoiceItems.map(i => i.id === item.id ? { ...i, qty: e.target.value } : i))} className="w-full text-xs p-2 border border-gray-300 rounded outline-none font-mono" />
+                              </div>
+                              <div className="flex-1">
+                                <span className="text-[9px] text-gray-500 font-bold uppercase ml-1">Rate (₹)</span>
+                                <input type="number" min="0" value={item.rate} onChange={(e) => setInvoiceItems(invoiceItems.map(i => i.id === item.id ? { ...i, rate: e.target.value } : i))} className="w-full text-xs p-2 border border-gray-300 rounded outline-none font-mono" />
+                              </div>
+                              <div className="flex-1">
+                                <span className="text-[9px] text-copper font-bold uppercase ml-1">Discount (₹)</span>
+                                <input type="number" min="0" value={item.discount || 0} onChange={(e) => setInvoiceItems(invoiceItems.map(i => i.id === item.id ? { ...i, discount: e.target.value } : i))} className="w-full text-xs p-2 border border-copper bg-[#c27e42]/5 rounded outline-none font-mono text-copper" />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Payment Notes</label>
+                    <textarea value={formData.notes} onChange={(e) => updateData('notes', e.target.value)} className="w-full text-xs p-2.5 border border-gray-300 rounded outline-none resize-none h-16 leading-relaxed"></textarea>
+                  </div>
+                </div>
+              )}
+
+              {/* LETTER SPECIFIC CONTROLS */}
+              {activeTool === 'letter' && (
+                <div className="space-y-4 pt-4 border-t border-gray-200">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Reference ID</label>
+                    <input type="text" value={formData.refId} onChange={(e) => updateData('refId', e.target.value)} className="w-full text-sm p-2.5 bg-gray-50 border border-gray-300 rounded font-mono text-gray-600 outline-none" />
+                  </div>
+                </div>
+              )}
+
+              <div className="bg-gray-50 p-3 rounded border border-gray-200 mt-4">
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Global Logo Upload</label>
+                <input type="file" accept="image/*" onChange={handleLogoUpload} className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-[#c27e42]/10 file:text-[#c27e42] hover:file:bg-[#c27e42]/20 cursor-pointer outline-none" />
+              </div>
+
+            </div>
+          </div>
+        );
+      };
+
+      const renderDashboard = () => {
+        // Safe access to paymentStatus and fallback to older 'status' field if needed
+        const activeInvoices = savedInvoices.filter(i => (i.paymentStatus || i.status) !== 'Cancelled');
+        
+        const totalRev = activeInvoices.filter(i => (i.paymentStatus || i.status) === 'Paid').reduce((sum, i) => sum + Number(i.total), 0);
+        const outstanding = activeInvoices.filter(i => (i.paymentStatus || i.status) === 'Pending').reduce((sum, i) => sum + Number(i.total), 0);
+        const ordersShipped = activeInvoices.filter(i => i.deliveryStatus === 'Shipped' || i.deliveryStatus === 'Delivered').length;
+
+        return (
+          <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-10 animate-[fadeIn_0.5s_ease-out]">
+            
+            <div className="flex flex-col md:flex-row justify-between md:items-end mb-10 gap-4">
+               <div>
+                  <h2 className="text-3xl font-serif text-gray-900 mb-2">Financial Command</h2>
+                  <p className="text-gray-500 text-sm tracking-wide">Track your portfolio deployments, payments, and delivery statuses.</p>
+               </div>
+               <div className="flex gap-3">
+                 <button onClick={exportToExcel} className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 px-5 py-3 rounded-xl font-bold tracking-wide transition-all shadow-sm text-sm flex gap-2 items-center">
+                    <i className="fa-solid fa-file-excel text-green-600"></i> Export CSV
+                 </button>
+                 <button onClick={() => { window.print(); }} className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 px-5 py-3 rounded-xl font-bold tracking-wide transition-all shadow-sm text-sm flex gap-2 items-center">
+                    <i className="fa-solid fa-file-pdf text-red-500"></i> PDF Report
+                 </button>
+                 <button onClick={() => setActiveView('generator')} className="bg-[#111] hover:bg-gray-800 text-white px-6 py-3 rounded-xl font-bold tracking-wide transition-all shadow-lg text-sm flex gap-2 items-center">
+                    <i className="fa-solid fa-plus"></i> New Client
+                 </button>
+               </div>
+            </div>
+
+            {/* Financial Metrics */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+               <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 relative overflow-hidden">
+                  <div className="absolute right-0 top-0 w-32 h-32 bg-green-500/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                  <p className="text-xs uppercase tracking-widest text-gray-500 font-bold mb-3 flex items-center gap-2"><i className="fa-solid fa-vault text-green-600"></i> Realized Revenue</p>
+                  <p className="text-3xl md:text-4xl lg:text-5xl font-mono text-gray-900 font-bold">{formatCurrency(totalRev)}</p>
+               </div>
+               <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 relative overflow-hidden">
+                  <div className="absolute right-0 top-0 w-32 h-32 bg-[#c27e42]/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                  <p className="text-xs uppercase tracking-widest text-gray-500 font-bold mb-3 flex items-center gap-2"><i className="fa-solid fa-hourglass-half text-[#c27e42]"></i> Outstanding Capital</p>
+                  <p className="text-3xl md:text-4xl lg:text-5xl font-mono text-[#c27e42] font-bold">{formatCurrency(outstanding)}</p>
+               </div>
+               <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-200 relative overflow-hidden">
+                  <div className="absolute right-0 top-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                  <p className="text-xs uppercase tracking-widest text-gray-500 font-bold mb-3 flex items-center gap-2"><i className="fa-solid fa-truck-fast text-blue-500"></i> Cards Dispatched</p>
+                  <p className="text-3xl md:text-4xl lg:text-5xl font-mono text-blue-600 font-bold">{ordersShipped}</p>
+               </div>
+            </div>
+
+            {/* Invoice Ledger Table */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+               <div className="p-6 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                  <h3 className="font-bold text-gray-800 uppercase tracking-widest text-sm">Invoice Ledger</h3>
+               </div>
+               <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-white border-b border-gray-100">
+                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-gray-500 font-bold">Date</th>
+                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-gray-500 font-bold">Invoice No.</th>
+                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-gray-500 font-bold">Client / Email</th>
+                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-gray-500 font-bold">Type</th>
+                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-gray-500 font-bold text-right">Amount</th>
+                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-gray-500 font-bold text-center">Payment</th>
+                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-gray-500 font-bold text-center">Delivery</th>
+                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-gray-500 font-bold text-center no-print">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {savedInvoices.length === 0 ? (
+                        <tr><td colSpan="8" className="py-12 text-center text-gray-500 text-sm">No operations deployed to the cloud yet.</td></tr>
+                      ) : (
+                        savedInvoices.map((inv) => {
+                          const pStatus = inv.paymentStatus || inv.status; // backwards compatibility
+                          const dStatus = inv.deliveryStatus || 'Processing';
+                          const isCancelled = pStatus === 'Cancelled';
+                          
+                          return (
+                            <tr key={inv.id} className={`border-b border-gray-50 transition-colors ${isCancelled ? 'bg-gray-100/50 opacity-60' : 'hover:bg-gray-50/50'}`}>
+                              <td className="py-4 px-6 text-sm text-gray-500 font-mono whitespace-nowrap">{new Date(inv.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                              <td className="py-4 px-6 text-sm font-bold text-gray-800 font-mono whitespace-nowrap">{isCancelled ? <del>{inv.invoiceNo}</del> : inv.invoiceNo}</td>
+                              <td className="py-4 px-6 text-sm">
+                                <div className={`font-medium text-gray-900 ${isCancelled && 'line-through'}`}>{inv.clientName}</div>
+                                {inv.email && <div className="text-xs text-gray-500 font-mono mt-1">{inv.email}</div>}
+                              </td>
+                              <td className="py-4 px-6 text-xs text-gray-500 uppercase tracking-widest whitespace-nowrap">{inv.billingMode === 'advance' ? '50% Adv' : inv.billingMode === 'final' ? '50% Final' : 'Standard'}</td>
+                              <td className="py-4 px-6 text-sm text-gray-900 font-mono font-bold text-right whitespace-nowrap">{formatCurrency(inv.total)}</td>
+                              
+                              {/* Payment Status */}
+                              <td className="py-4 px-6 text-center">
+                                 <button 
+                                   onClick={() => togglePaymentStatus(inv)}
+                                   disabled={isCancelled}
+                                   className={`px-3 py-1.5 rounded-full text-[10px] uppercase tracking-widest font-bold transition-all shadow-sm whitespace-nowrap ${pStatus === 'Paid' ? 'bg-green-100 text-green-700 hover:bg-green-200 border border-green-200' : isCancelled ? 'bg-gray-200 text-gray-500 cursor-not-allowed border border-gray-300' : 'bg-orange-100 text-orange-700 hover:bg-orange-200 border border-orange-200'}`}
+                                 >
+                                   {pStatus}
+                                 </button>
+                              </td>
+
+                              {/* Delivery Status */}
+                              <td className="py-4 px-6 text-center">
+                                 <button 
+                                   onClick={() => cycleDeliveryStatus(inv)}
+                                   disabled={isCancelled}
+                                   className={`px-3 py-1.5 rounded-full text-[10px] uppercase tracking-widest font-bold transition-all shadow-sm whitespace-nowrap w-24
+                                     ${isCancelled ? 'bg-gray-200 text-gray-500 cursor-not-allowed border border-gray-300' : 
+                                       dStatus === 'Delivered' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 border border-blue-200' : 
+                                       dStatus === 'Shipped' ? 'bg-purple-100 text-purple-700 hover:bg-purple-200 border border-purple-200' : 
+                                       'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
+                                     }`}
+                                 >
+                                   {dStatus}
+                                 </button>
+                              </td>
+
+                              <td className="py-4 px-6 text-center no-print">
+                                  {!isCancelled && (
+                                      <button onClick={() => cancelInvoice(inv)} className="text-red-400 hover:text-red-600 transition-colors p-2" title="Cancel Order">
+                                          <i className="fa-solid fa-ban"></i>
+                                      </button>
+                                  )}
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+               </div>
+            </div>
+            
+            <div className="mt-8 text-center text-sm text-gray-500 font-mono no-print">
+              Press Cmd+P / Ctrl+P to extract this dashboard view as a PDF.
+            </div>
+          </div>
+        );
+      };
+
+      // RENDER PREVIEWS (INVOICE, LETTER, ENVELOPE)
+      const renderInvoicePreview = () => {
+        const subtotal = invoiceItems.reduce((sum, item) => sum + (Number(item.qty) * Number(item.rate)), 0);
+        const totalDiscount = invoiceItems.reduce((sum, item) => sum + (Number(item.qty) * Number(item.discount || 0)), 0);
+        const projectTotal = subtotal - totalDiscount;
+
+        const formatD = (dateString) => new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        const fullAddress = [formData.addressLine1, formData.addressLine2, formData.cityStateZip, formData.country].filter(Boolean).join('\n');
+
+        return (
+          <div className="a4-paper text-black relative flex flex-col p-[20mm]">
+            <div className="flex justify-between items-start mb-12">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full border-2 border-copper overflow-hidden flex items-center justify-center bg-[#111]">
+                  <img src={logoUrl} alt="Logo" className="w-full h-full object-cover bg-[#05080f]" onError={(e) => { e.target.style.display='none'; e.target.parentNode.innerHTML='<i class="fa-solid fa-fingerprint text-[#c27e42] text-2xl"></i>'; }} />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold tracking-[0.2em] text-[#111] uppercase leading-none mb-1">Footprint Forge</h1>
+                  <p className="text-[10px] text-gray-500 font-mono tracking-widest uppercase">Identity Infrastructure</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <h2 className="font-serif text-4xl text-[#111] uppercase tracking-wider mb-2">Invoice</h2>
+                <p className="text-[10px] text-gray-600 font-mono uppercase tracking-widest bg-gray-100 px-2 py-1 inline-block rounded border border-gray-200">{formData.invoiceNo}</p>
+                {formData.billingMode === 'advance' && <p className="text-[9px] text-copper font-bold uppercase tracking-widest mt-2 block">50% Advance Request</p>}
+                {formData.billingMode === 'final' && <p className="text-[9px] text-copper font-bold uppercase tracking-widest mt-2 block">Final Settlement</p>}
+              </div>
+            </div>
+
+            <div className="flex justify-between items-start mb-12 border-b border-gray-200 pb-8">
+              <div className="w-1/3">
+                <p className="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-2">From</p>
+                <p className="font-mono text-xs text-gray-700 leading-relaxed">
+                  362, L Block, West Cementry Road<br/>Oldwashermenpet, Chennai-600021<br/>Ph: +919952041493<br/>MSME: UDYAM-TN-02-0455866<br/>footprintforge-hq.github.io
+                </p>
+              </div>
+              <div className="w-1/3 border-l-2 border-copper pl-4">
+                <p className="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-2">Billed To</p>
+                <h3 className="font-serif font-bold text-lg text-[#1a1a1a] mb-1">{formData.clientName || 'Client Name'}</h3>
+                <p className="font-mono text-xs text-gray-600 leading-relaxed whitespace-pre-wrap">{fullAddress}</p>
+                {formData.mobile && <p className="font-mono text-xs text-gray-600 mt-1">Ph: {formData.mobile}</p>}
+              </div>
+              <div className="w-1/4 text-right flex flex-col gap-4">
+                <div>
+                  <p className="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-1">Date of Issue</p>
+                  <p className="font-mono text-sm font-semibold text-gray-800">{formatD(formData.date)}</p>
+                </div>
+                <div>
+                  <p className="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-1">Due Date</p>
+                  <p className="font-mono text-sm font-semibold text-copper">{formatD(formData.dueDate)}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex-1">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr>
+                    <th className="py-3 px-2 border-b-2 border-gray-800 text-[10px] uppercase tracking-widest text-gray-500 font-bold w-5/12">Description</th>
+                    <th className="py-3 px-2 border-b-2 border-gray-800 text-[10px] uppercase tracking-widest text-gray-500 font-bold text-center w-1/12">Qty</th>
+                    <th className="py-3 px-2 border-b-2 border-gray-800 text-[10px] uppercase tracking-widest text-gray-500 font-bold text-right w-2/12">Rate</th>
+                    <th className="py-3 px-2 border-b-2 border-gray-800 text-[10px] uppercase tracking-widest text-copper font-bold text-right w-2/12">Discount</th>
+                    <th className="py-3 px-2 border-b-2 border-gray-800 text-[10px] uppercase tracking-widest text-gray-500 font-bold text-right w-2/12">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {invoiceItems.map((item) => (
+                    <tr key={item.id}>
+                      <td className="py-4 px-2 border-b border-gray-100 text-sm text-gray-800 font-medium">{item.desc || "Item Description"}</td>
+                      <td className="py-4 px-2 border-b border-gray-100 text-sm text-gray-600 font-mono text-center">{item.qty}</td>
+                      <td className="py-4 px-2 border-b border-gray-100 text-sm text-gray-600 font-mono text-right">{formatCurrency(item.rate)}</td>
+                      <td className="py-4 px-2 border-b border-gray-100 text-sm text-copper font-mono text-right">{item.discount > 0 ? `-${formatCurrency(item.discount)}` : '-'}</td>
+                      <td className="py-4 px-2 border-b border-gray-100 text-sm font-mono font-semibold text-gray-900 text-right">{formatCurrency((item.rate - (item.discount || 0)) * item.qty)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="w-full flex justify-end mt-8 mb-12">
+              <div className="w-1/2 md:w-[50%]">
+                <div className="flex justify-between py-2 border-b border-gray-100">
+                  <span className="text-xs text-gray-500 uppercase tracking-widest font-bold">Subtotal</span>
+                  <span className="font-mono text-sm text-gray-800">{formatCurrency(subtotal)}</span>
+                </div>
+                {totalDiscount > 0 && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-xs text-copper uppercase tracking-widest font-bold">Total Savings</span>
+                    <span className="font-mono text-sm text-copper font-bold">-{formatCurrency(totalDiscount)}</span>
+                  </div>
+                )}
+                
+                {formData.billingMode === 'advance' && (
+                  <>
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-xs text-gray-500 uppercase tracking-widest font-bold">Total Project Value</span>
+                      <span className="font-mono text-sm text-gray-800">{formatCurrency(projectTotal)}</span>
+                    </div>
+                    <div className="flex justify-between py-4 border-t-2 border-b-2 border-gray-800 mt-1 bg-[#c27e42]/5 px-2">
+                      <span className="text-sm font-bold text-[#111] uppercase tracking-widest">50% Advance Due Now</span>
+                      <span className="font-mono text-xl font-bold copper-text">{formatCurrency(projectTotal / 2)}</span>
+                    </div>
+                  </>
+                )}
+
+                {formData.billingMode === 'final' && (
+                  <>
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-xs text-gray-500 uppercase tracking-widest font-bold">Total Project Value</span>
+                      <span className="font-mono text-sm text-gray-800">{formatCurrency(projectTotal)}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-xs text-gray-500 uppercase tracking-widest font-bold">Less: 50% Advance Paid</span>
+                      <span className="font-mono text-sm text-gray-800">-{formatCurrency(projectTotal / 2)}</span>
+                    </div>
+                    <div className="flex justify-between py-4 border-t-2 border-b-2 border-gray-800 mt-1">
+                      <span className="text-sm font-bold text-[#111] uppercase tracking-widest">Final Balance Due</span>
+                      <span className="font-mono text-xl font-bold copper-text">{formatCurrency(projectTotal / 2)}</span>
+                    </div>
+                  </>
+                )}
+
+                {formData.billingMode === 'standard' && (
+                  <div className="flex justify-between py-4 border-t-2 border-b-2 border-gray-800 mt-1">
+                    <span className="text-sm font-bold text-[#111] uppercase tracking-widest">Total Due</span>
+                    <span className="font-mono text-xl font-bold copper-text">{formatCurrency(projectTotal)}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-auto pt-8 border-t border-gray-200 flex justify-between items-end">
+              <div className="w-2/3">
+                <p className="text-[10px] uppercase tracking-widest text-copper font-bold mb-2">Payment Terms & Notes</p>
+                <p className="text-xs text-gray-600 leading-relaxed font-light whitespace-pre-wrap">{formData.notes}</p>
+              </div>
+              <div className="text-right flex flex-col items-end">
+                <div className="h-12 w-32 border-b border-dashed border-gray-400 mb-2 flex items-center justify-center opacity-30 relative">
+                   <div className="absolute w-12 h-12 rounded-full border border-copper bg-black overflow-hidden left-0 mix-blend-multiply opacity-20">
+                      <img src={logoUrl} alt="Seal" className="w-full h-full object-cover" onError={(e) => e.target.style.display='none'} />
+                   </div>
+                </div>
+                <p className="text-[10px] uppercase tracking-widest text-gray-800 font-bold">Authorized Signatory</p>
+                <p className="text-[8px] font-mono text-gray-500 mt-1">Footprint Forge</p>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      const renderLetterPreview = () => {
+        const firstName = formData.clientName.split(' ')[0] || 'Client';
+        const formatD = (dateString) => new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        
+        return (
+          <div className="a4-paper a4-letter text-black relative">
+            <div className="fold-guide fold-1"><div className="fold-tick tick-left"></div><div className="fold-tick tick-right"></div></div>
+            <div className="fold-guide fold-2"><div className="fold-tick tick-left"></div><div className="fold-tick tick-right"></div></div>
+
+            <div className="absolute top-[20mm] right-[20mm] flex items-start gap-3">
+              <div className="text-right">
+                <h2 className="text-[14px] font-bold tracking-[0.2em] text-[#111] uppercase mb-[2px]">Footprint Forge</h2>
+                <p className="text-[10px] text-gray-500 font-mono tracking-wide uppercase">Identity Infrastructure</p>
+                <div className="w-[30mm] h-[1px] bg-[#c27e42] ml-auto mt-2 mb-2"></div>
+                <p className="text-[8px] text-gray-500 font-mono leading-relaxed">
+                  362, L Block, West Cementry Road<br/>Oldwashermenpet, Chennai-600021<br/>Mob: +919952041493<br/>UDYAM-TN-02-0455866<br/>footprintforge-hq.github.io
+                </p>
+              </div>
+              <div className="w-[16mm] h-[16mm] rounded-full border border-[#c27e42] flex items-center justify-center bg-black overflow-hidden shrink-0 mt-[1mm]">
+                <img src={logoUrl} alt="Logo" className="w-full h-full object-cover bg-[#05080f]" onError={(e) => { e.target.style.display='none'; }} />
+              </div>
+            </div>
+
+            <div className="window-address-block pl-2 border-l-2 border-[#c27e42]">
+              <p className="text-[8px] uppercase tracking-widest text-gray-400 font-bold mb-1">To:</p>
+              <h3 className="font-serif font-bold text-[14px] text-[#1a1a1a] mb-[2px]">{formData.clientName}</h3>
+              {formData.role && <p className="text-[10px] text-[#c27e42] font-medium mb-1">{formData.role}</p>}
+              <p className="font-mono text-[10px] text-gray-600 leading-[1.3]">
+                {formData.addressLine1}<br/>
+                {formData.addressLine2 && <>{formData.addressLine2}<br/></>}
+                {formData.cityStateZip}<br/>
+                {formData.country}
+              </p>
+              <div className="mt-1 flex gap-2 text-[8px] font-mono text-gray-500">
+                {formData.mobile && <span>Ph: {formData.mobile}</span>}
+              </div>
+            </div>
+
+            <div className="absolute top-[102mm] left-[20mm] right-[20mm]">
+              <div className="flex justify-between items-end border-b border-gray-200 pb-2 mb-3">
+                <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">Date: {formatD(formData.date)}</p>
+                <p className="text-[10px] font-mono text-[#c27e42] uppercase tracking-widest">Ref: {formData.refId}</p>
+              </div>
+              <h1 className="font-serif text-[22px] text-[#111] leading-tight mb-2">Welcome to your new infrastructure, {firstName}.</h1>
+              <p className="text-[11px] text-gray-700 leading-relaxed font-light text-justify">
+                Enclosed is your engineered digital identity card. This physical asset is permanently mapped to your dynamic portfolio architecture. Your identity hub has been successfully deployed across GitHub's global edge infrastructure, ensuring permanent uptime, SSL security, and instant global access.
+              </p>
+            </div>
+
+            <div className="card-mount">
+              <i className="fa-solid fa-arrows-to-dot text-[#c27e42] text-xl mb-2 opacity-70"></i>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-[#c27e42] opacity-80">Mount Card Here</span>
+              <span className="text-[7px] font-mono text-[#c27e42] mt-1 opacity-50">(Apply Fugitive Glue Dot)</span>
+            </div>
+
+            <div className="absolute top-[205mm] left-[20mm] right-[20mm]">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-[#111] mb-4">Deployment Instructions</h3>
+              <div className="space-y-4 mb-8">
+                <div className="flex gap-3 items-start">
+                  <div className="w-5 h-5 rounded-full border border-[#c27e42] text-[#c27e42] flex items-center justify-center text-[10px] font-bold shrink-0">1</div>
+                  <p className="text-[11px] text-gray-600 leading-relaxed"><strong>Detach the Asset.</strong> Peel the premium PVC card from this letter. The fugitive glue dot will remove cleanly without leaving residue.</p>
+                </div>
+                <div className="flex gap-3 items-start">
+                  <div className="w-5 h-5 rounded-full border border-[#c27e42] text-[#c27e42] flex items-center justify-center text-[10px] font-bold shrink-0">2</div>
+                  <p className="text-[11px] text-gray-600 leading-relaxed"><strong>Instant Operation.</strong> Your card is fully active. Allow clients to scan the permanent QR code using any standard smartphone camera to instantly route them to your digital infrastructure.</p>
+                </div>
+                <div className="flex gap-3 items-start">
+                  <div className="w-5 h-5 rounded-full border border-[#c27e42] text-[#c27e42] flex items-center justify-center text-[10px] font-bold shrink-0">3</div>
+                  <p className="text-[11px] text-gray-600 leading-relaxed"><strong>Cloud Modifications.</strong> To update your architecture, impact metrics, or contact vectors, submit a request via the portal. Your physical card requires zero configuration—it automatically routes to your latest deployment.</p>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-end pt-4 border-t border-gray-200">
+                <div>
+                  <p className="font-serif italic text-[16px] text-[#111] mb-1">The Engineering Team</p>
+                  <p className="text-[9px] text-gray-500 font-mono uppercase tracking-widest">Footprint Forge, Chennai</p>
+                </div>
+                <div className="flex items-center gap-2 opacity-30">
+                  <div className="w-[12mm] h-[12mm] rounded-full overflow-hidden grayscale mix-blend-multiply border border-gray-400">
+                    <img src={logoUrl} alt="Seal" className="w-full h-full object-cover" onError={(e) => { e.target.style.display='none'; }} />
+                  </div>
+                  <span className="text-[8px] uppercase tracking-widest font-mono text-[#c27e42] font-bold">QA Passed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      const renderEnvelopePreview = () => {
+        return (
+          <div className="relative w-[270mm] h-[275mm] mx-auto print:!m-0 text-white font-sans drop-shadow-2xl print:drop-shadow-none bg-[#0a0f1c] print:bg-white p-[10mm] print:p-0 box-content">
+            <div className="relative w-full h-full">
+              
+              <div className="absolute top-[0mm] left-[25mm] w-[220mm] h-[45mm] bg-[#111] print-env-panel" style={{clipPath: 'polygon(15mm 0, calc(100% - 15mm) 0, 100% 100%, 0 100%)'}}>
+                <div className="absolute top-[6mm] left-[101mm] transform rotate-180 w-[18mm] h-[18mm] rounded-full foil-bg p-[0.5mm] shadow-[0_0_10px_rgba(194,126,66,0.3)] print:shadow-none">
+                  <div className="w-full h-full bg-[#0a0a0a] rounded-full flex flex-col items-center justify-center border border-[#111]">
+                    <i className="fa-solid fa-fingerprint foil-text text-[6mm] mb-[0.5mm]"></i>
+                    <span className="text-[1.8mm] uppercase tracking-[0.2em] foil-text font-bold leading-none">Secured</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="absolute top-[45mm] left-[25mm] w-[220mm] h-[5mm] bg-[#1a1a1a] print-env-panel border-x border-t border-dashed border-[#c27e42]/50 flex items-center justify-center">
+                <span className="text-[2mm] text-[#c27e42] opacity-60 tracking-[0.5em] uppercase font-mono no-print">5mm Gusset</span>
+              </div>
+              <div className="absolute top-[160mm] left-[25mm] w-[220mm] h-[5mm] bg-[#1a1a1a] print-env-panel border-x border-b border-dashed border-[#c27e42]/50 flex items-center justify-center">
+                <span className="text-[2mm] text-[#c27e42] opacity-60 tracking-[0.5em] uppercase font-mono no-print">5mm Gusset</span>
+              </div>
+              <div className="absolute top-[50mm] left-[20mm] w-[5mm] h-[110mm] bg-[#1a1a1a] print-env-panel border-y border-l border-dashed border-[#c27e42]/50 flex items-center justify-center">
+                <span className="transform -rotate-90 text-[2mm] text-[#c27e42] opacity-60 tracking-[0.5em] uppercase font-mono whitespace-nowrap no-print">5mm Gusset</span>
+              </div>
+              <div className="absolute top-[50mm] left-[245mm] w-[5mm] h-[110mm] bg-[#1a1a1a] print-env-panel border-y border-r border-dashed border-[#c27e42]/50 flex items-center justify-center">
+                <span className="transform rotate-90 text-[2mm] text-[#c27e42] opacity-60 tracking-[0.5em] uppercase font-mono whitespace-nowrap no-print">5mm Gusset</span>
+              </div>
+              <div className="absolute top-[160mm] left-[20mm] w-[5mm] h-[5mm] bg-[#0a0a0a] print-env-panel border border-[#c27e42]/80 group">
+                <span className="absolute -left-12 top-1 opacity-0 group-hover:opacity-100 text-[8px] text-[#c27e42] no-print transition-opacity">Corner Tab</span>
+              </div>
+              <div className="absolute top-[160mm] left-[245mm] w-[5mm] h-[5mm] bg-[#0a0a0a] print-env-panel border border-[#c27e42]/80 group"></div>
+
+              <div className="absolute top-[55mm] left-[0mm] w-[20mm] h-[100mm] bg-[#080808] print-env-panel border border-dashed border-[#c27e42]/70 flex items-center justify-center" style={{clipPath: 'polygon(0 5mm, 100% 0, 100% 100%, 0 calc(100% - 5mm))'}}>
+                 <span className="transform -rotate-90 text-[3.5mm] text-[#c27e42] font-bold uppercase tracking-widest whitespace-nowrap no-print">Apply Glue</span>
+              </div>
+              <div className="absolute top-[55mm] left-[250mm] w-[20mm] h-[100mm] bg-[#080808] print-env-panel border border-dashed border-[#c27e42]/70 flex items-center justify-center" style={{clipPath: 'polygon(0 0, 100% 5mm, 100% calc(100% - 5mm), 0 100%)'}}>
+                 <span className="transform rotate-90 text-[3.5mm] text-[#c27e42] font-bold uppercase tracking-widest whitespace-nowrap no-print">Apply Glue</span>
+              </div>
+
+              <div className="absolute top-[50mm] left-[25mm] w-[220mm] h-[110mm] bg-[#111] print-env-panel p-[10mm]">
+                <div className="flex justify-between items-start">
+                  <div className="flex gap-3">
+                    <div className="w-[12mm] h-[12mm] rounded-full border border-[#c27e42] flex items-center justify-center bg-[#05080f] overflow-hidden shrink-0 mt-1">
+                      <img src={logoUrl} alt="FF" className="w-full h-full object-cover bg-[#05080f]" onError={(e) => { e.target.style.display='none'; }} />
+                    </div>
+                    <div>
+                      <h2 className="text-[3.5mm] font-bold tracking-[0.2em] text-white uppercase mb-[1mm] leading-none">Footprint Forge</h2>
+                      <p className="text-[2.2mm] text-gray-400 font-mono leading-[1.4] tracking-wide uppercase">
+                        362, L Block, West Cementry Road<br/>Oldwashermenpet, Chennai-600021<br/>Mob: +919952041493<br/>footprintforge-hq.github.io
+                      </p>
+                    </div>
+                  </div>
+                  <div className="border border-[#c27e42] px-[2mm] py-[1mm] rounded flex items-center gap-[1mm]">
+                    <i className="fa-solid fa-plane-departure text-[#c27e42] text-[2.5mm]"></i>
+                    <span className="text-[#c27e42] text-[2mm] font-bold tracking-widest uppercase">Priority</span>
+                  </div>
+                </div>
+
+                <div className="absolute bottom-[12mm] left-[15mm] z-10 w-[90mm]">
+                  <p className="text-[2.5mm] uppercase tracking-widest text-[#c27e42] font-bold mb-[1mm]">Deliver To:</p>
+                  <h3 className="font-serif font-bold text-[5.5mm] text-white mb-[1mm] leading-tight">{formData.clientName}</h3>
+                  <p className="font-mono text-[3mm] text-gray-300 leading-[1.4]">
+                    {formData.addressLine1}<br/>
+                    {formData.addressLine2 && <>{formData.addressLine2}<br/></>}
+                    {formData.cityStateZip}<br/>
+                    {formData.country}
+                  </p>
+                  <div className="mt-[2mm] text-[2.5mm] font-mono text-[#c27e42] font-semibold tracking-wide">
+                    {formData.mobile && <span><i className="fa-solid fa-phone text-[2mm] mr-1"></i> {formData.mobile}</span>}
+                  </div>
+                </div>
+
+                <div className="absolute bottom-[10mm] right-[10mm] text-right flex flex-col items-end gap-1">
+                  <span className="text-[2.8mm] font-bold tracking-[0.3em] env-white-text uppercase border border-white px-[2mm] py-[0.5mm] rounded">Do Not Bend</span>
+                  <span className="text-[2.2mm] font-mono font-semibold env-white-text uppercase">Contents: Digital Infrastructure</span>
+                </div>
+              </div>
+
+              <div className="absolute top-[165mm] left-[25mm] w-[220mm] h-[110mm] bg-[#111] print-env-panel" style={{clipPath: 'polygon(0 0, 100% 0, calc(100% - 10mm) 100%, 10mm 100%)'}}>
+                <div className="absolute top-[8mm] w-full text-center transform rotate-180">
+                  <h2 className="font-serif italic text-[5mm] foil-text mb-[1mm]">Identity Infrastructure.</h2>
+                  <p className="text-[2.2mm] font-bold uppercase tracking-[0.3em] env-white-text">Engineered in Chennai</p>
+                  <p className="text-[1.8mm] font-semibold uppercase tracking-[0.2em] env-white-text mt-[1mm]">MSME: UDYAM-TN-02-0455866</p>
+                </div>
+              </div>
+
+              <div className="absolute top-[285mm] left-[25mm] w-[220mm] text-center no-print">
+                <div className="inline-block text-[#c27e42] text-[12px] font-mono tracking-wide bg-[#c27e42]/10 p-3 rounded-lg border border-[#c27e42]/20">
+                  <i className="fa-solid fa-wrench mr-2"></i>
+                  <strong>ASSEMBLY:</strong> 1. Fold 5mm gussets inward. 2. Fold Left/Right Laps inward. 3. Fold Back Panel UP and adhere to Laps.
+                </div>
+              </div>
+
+            </div>
+          </div>
+        );
+      };
+
+      return (
+        <div className="flex flex-col lg:flex-row w-full min-h-screen relative">
+          
+          <style>
+            {`
+              @media print {
+                @page {
+                  size: ${activeTool === 'envelope' && activeView !== 'dashboard' ? 'A3' : 'A4'} portrait;
+                  margin: ${activeTool === 'envelope' && activeView !== 'dashboard' ? '10mm' : '0'};
+                }
+              }
+            `}
+          </style>
+
+          {renderSidebarContent()}
+
+          {/* MAIN STAGE */}
+          <div 
+            ref={activeView !== 'dashboard' ? previewContainerRef : null} 
+            className={`flex-1 bg-gray-100 overflow-y-auto flex-col items-center pt-8 pb-28 lg:pb-10 print:!block print:!p-0 print:!bg-white ${activeTabMobile === 'preview' || activeView === 'dashboard' ? 'flex' : 'hidden lg:flex'}`}
+          >
+            {activeView === 'dashboard' ? renderDashboard() : (
+              <div 
+                style={{ 
+                  transform: `scale(${scale})`, 
+                  transformOrigin: 'top center',
+                  marginBottom: scale < 1 ? `-${(activeTool === 'envelope' ? 275 : 297) * (1 - scale)}mm` : '0' 
+                }}
+                className="print:!transform-none print:!m-0 transition-transform duration-200"
+              >
+                {activeTool === 'invoice' && renderInvoicePreview()}
+                {activeTool === 'letter' && renderLetterPreview()}
+                {activeTool === 'envelope' && renderEnvelopePreview()}
+              </div>
+            )}
+          </div>
+
+          {/* MOBILE NAVIGATION */}
+          {activeView !== 'dashboard' && (
+            <div className="lg:hidden no-print fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 flex gap-3 z-50 shadow-[0_-4px_15px_rgba(0,0,0,0.05)]">
+              {activeTabMobile === 'edit' ? (
+                <button onClick={() => setActiveTabMobile('preview')} className="flex-1 bg-gray-900 hover:bg-black text-white py-3 rounded-lg font-bold tracking-wide transition-colors">
+                  Preview Document
+                </button>
+              ) : (
+                <>
+                  <button onClick={() => setActiveTabMobile('edit')} className="flex-1 border border-gray-300 text-gray-700 py-3 rounded-lg font-bold tracking-wide">
+                    Edit Details
+                  </button>
+                  {activeTool === 'invoice' ? (
+                    <button onClick={handleSaveAndPrint} className="flex-1 bg-[#c27e42] text-white py-3 rounded-lg font-bold tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-[#c27e42]/20 text-[10px]">
+                      <i className="fa-solid fa-cloud-arrow-up"></i> Save & Print
+                    </button>
+                  ) : (
+                    <button onClick={handlePrint} className="flex-1 bg-[#c27e42] text-white py-3 rounded-lg font-bold tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-[#c27e42]/20">
+                      <i className="fa-solid fa-print"></i> Print
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+          
+          {/* DESKTOP FLOATING BUTTON */}
+          {activeView !== 'dashboard' && (
+            <div className="hidden lg:block no-print fixed bottom-8 right-8 z-50">
+              {activeTool === 'invoice' ? (
+                 <button onClick={handleSaveAndPrint} className="bg-[#c27e42] hover:bg-[#a66731] text-white font-bold uppercase tracking-wider py-4 px-8 rounded-full shadow-2xl transition-all flex justify-center items-center gap-3 hover:scale-105 group">
+                   <div className="flex flex-col items-center">
+                     <span className="flex items-center gap-2"><i className="fa-solid fa-cloud-arrow-up"></i> Save & Print</span>
+                     <span className="text-[9px] text-white/70 tracking-widest -mt-1">Syncs to Dashboard</span>
+                   </div>
+                 </button>
+              ) : (
+                 <button onClick={handlePrint} className="bg-[#c27e42] hover:bg-[#a66731] text-white font-bold uppercase tracking-wider py-4 px-8 rounded-full shadow-2xl transition-all flex justify-center items-center gap-3 hover:scale-105">
+                   <i className="fa-solid fa-print text-xl"></i> Print {activeTool}
+                 </button>
+              )}
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<CommandCenter />);
+  </script>
+</body>
+</html>
