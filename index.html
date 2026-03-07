@@ -898,17 +898,30 @@
 
                 </div>
 
-                {/* SLA Banner */}
-                <div className="mt-20 max-w-4xl mx-auto bg-gradient-to-r from-[#c27e42]/10 to-transparent border border-[#c27e42]/20 rounded-2xl p-6 md:p-10 flex flex-col md:flex-row gap-6 md:items-center relative overflow-hidden backdrop-blur-sm">
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#e6b981] to-[#c27e42]"></div>
-                  <div className="shrink-0 bg-white/5 p-4 rounded-xl border border-white/10">
-                    <i className="fa-solid fa-clock-rotate-left text-2xl text-[#c27e42]"></i>
+                {/* SLA & Payment Terms Banner */}
+                <div className="mt-20 max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* SLA */}
+                  <div className="bg-gradient-to-r from-[#c27e42]/10 to-transparent border border-[#c27e42]/20 rounded-2xl p-6 md:p-8 flex gap-4 relative overflow-hidden backdrop-blur-sm">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#e6b981] to-[#c27e42]"></div>
+                    <i className="fa-solid fa-clock-rotate-left text-2xl text-[#c27e42] shrink-0 mt-1"></i>
+                    <div>
+                      <h3 className="text-sm font-bold text-white mb-2 uppercase tracking-widest">Deployment SLA</h3>
+                      <p className="text-slate-400 font-light text-sm leading-relaxed">
+                        Strict <strong className="text-white font-medium">Weekend Deployment schedule</strong>. All builds and updates submitted during the week are pushed live by Sunday evening.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-base font-bold text-white mb-2 uppercase tracking-widest">Service Level Agreement</h3>
-                    <p className="text-slate-400 font-light text-sm md:text-base leading-relaxed">
-                      Footprint Forge operates on a strict <strong className="text-white font-medium">Weekend Deployment schedule</strong>. To keep our infrastructure costs zero, all portfolio updates submitted during the week are coded, tested, and pushed live by Sunday evening.
-                    </p>
+                  
+                  {/* Payment Terms */}
+                  <div className="bg-gradient-to-r from-[#c27e42]/10 to-transparent border border-[#c27e42]/20 rounded-2xl p-6 md:p-8 flex gap-4 relative overflow-hidden backdrop-blur-sm">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#e6b981] to-[#c27e42]"></div>
+                    <i className="fa-solid fa-file-invoice-dollar text-2xl text-[#c27e42] shrink-0 mt-1"></i>
+                    <div>
+                      <h3 className="text-sm font-bold text-white mb-2 uppercase tracking-widest">Payment Terms</h3>
+                      <p className="text-slate-400 font-light text-sm leading-relaxed">
+                        A <strong className="text-white font-medium">50% non-refundable advance</strong> is required to initiate engineering. Final settlement is due prior to physical card dispatch.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
