@@ -188,9 +188,12 @@
         e.preventDefault();
         setFormStatus('submitting');
         
+        const today = new Date().toISOString().split('T')[0];
+        let firebaseSuccess = false;
+        let emailSuccess = false;
+        
+        // 1. Try pushing to Firebase CRM Database
         try {
-          const today = new Date().toISOString().split('T')[0];
-          // 1. Push directly to the shared CRM collection
           await addDoc(collection(db, 'ff_agency_data'), {
             clientName: leadData.clientName,
             role: leadData.role,
@@ -203,14 +206,19 @@
             tierRequested: leadData.tier,
             date: today,
             dueDate: today,
-            paymentStatus: 'New Lead', // CRM will flag this
+            paymentStatus: 'New Lead', 
             deliveryStatus: 'Processing',
             billingMode: 'advance',
             timestamp: Date.now()
           });
+          firebaseSuccess = true;
+        } catch (error) {
+          console.error("Firebase submission error:", error);
+        }
 
-          // 2. Trigger instant Email Notification to you
-          if (WEB3FORMS_ACCESS_KEY && WEB3FORMS_ACCESS_KEY !== "YOUR_KEY_HERE") {
+        // 2. Try sending instant Email Notification
+        if (WEB3FORMS_ACCESS_KEY && WEB3FORMS_ACCESS_KEY !== "YOUR_KEY_HERE") {
+          try {
             const emailMessage = `
 New Lead Application Received!
 
@@ -224,7 +232,7 @@ Address: ${leadData.addressLine1}, ${leadData.addressLine2 ? leadData.addressLin
 Open your local Command Center CRM to process this lead and generate their invoice.
             `;
             
-            await fetch("https://api.web3forms.com/submit", {
+            const response = await fetch("https://api.web3forms.com/submit", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -234,16 +242,30 @@ Open your local Command Center CRM to process this lead and generate their invoi
                     access_key: WEB3FORMS_ACCESS_KEY,
                     subject: `🔥 New Lead: ${leadData.clientName} - Footprint Forge`,
                     from_name: "Footprint Forge Portal",
+                    name: leadData.clientName,
+                    email: leadData.email,
                     message: emailMessage,
                 }),
             });
+            
+            if (response.ok) {
+               emailSuccess = true;
+            } else {
+               console.error("Web3Forms error:", await response.text());
+            }
+          } catch (error) {
+            console.error("Email submission error:", error);
           }
+        } else {
+          console.warn("Web3Forms Key not set. Skipping email.");
+        }
 
-          setFormStatus('success');
-        } catch (error) {
-          console.error("Error submitting:", error);
-          alert("Connection error. Please try again or contact via WhatsApp.");
-          setFormStatus('idle');
+        // 3. Final Success/Fail Evaluation
+        if (firebaseSuccess || emailSuccess) {
+           setFormStatus('success');
+        } else {
+           alert("Connection error. Please try again or contact us via WhatsApp.");
+           setFormStatus('idle');
         }
       };
 
