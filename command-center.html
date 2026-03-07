@@ -137,7 +137,7 @@
       useEffect(() => {
         const initAuth = async () => {
           try {
-            await signInAnonymously(auth); // Perfect for private local tools
+            await signInAnonymously(auth); 
           } catch(e) { console.error("Auth init error:", e); }
         };
         initAuth();
@@ -179,7 +179,6 @@
             setFormData(prev => ({...prev, invoiceNo: nextInvoiceNo}));
         }
       }, [savedInvoices, formData.invoiceNo]);
-
 
       const updateData = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
       const handleNameChange = (e) => {
@@ -230,7 +229,6 @@
         
         try {
            if (formData.id) {
-               // Update existing document if we loaded a lead
                await updateDoc(doc(db, 'ff_agency_data', formData.id), updatedData);
            } else {
                await addDoc(collection(db, 'ff_agency_data'), updatedData);
@@ -241,10 +239,8 @@
         setTimeout(() => window.print(), 100);
       };
 
-      // --- AUTOMATION: LOAD LEAD INTO GENERATOR ---
       const loadClientToGenerator = (inv) => {
-        // Map the selected tier text back to the pricing items
-        let matchedProduct = PREDEFINED_PRODUCTS[1]; // default to Authority
+        let matchedProduct = PREDEFINED_PRODUCTS[1]; 
         if (inv.tierRequested && inv.tierRequested.includes("Executive")) matchedProduct = PREDEFINED_PRODUCTS[0];
         if (inv.tierRequested && inv.tierRequested.includes("Institution")) matchedProduct = PREDEFINED_PRODUCTS[2];
 
@@ -266,7 +262,7 @@
           addressLine2: inv.addressLine2 || "",
           cityStateZip: inv.cityStateZip || "",
           refId: `${initials}-${Math.floor(1000 + Math.random() * 9000)}`,
-          paymentStatus: 'Pending', // Convert New Lead to Pending when loading to gen
+          paymentStatus: 'Pending', 
           billingMode: 'advance'
         }));
         
@@ -274,7 +270,6 @@
         setActiveTool('invoice');
       };
 
-      // --- NEW: DROPDOWN STATUS HANDLERS ---
       const updatePaymentStatus = async (inv, newStatus) => {
           if(!user || !db) return;
           try { 
@@ -289,7 +284,6 @@
           } catch(e) { console.error("Failed to update delivery status:", e); }
       };
 
-      // --- NEW: REJECT LEAD HANDLER ---
       const rejectLead = async (inv) => {
           if(!user || !db) return;
           if(!window.confirm("Are you sure you want to reject this application?")) return;
@@ -312,7 +306,6 @@
           } catch(e) { console.error("Failed to toggle cancel state:", e); }
       };
 
-      // EXPORT TO EXCEL (CSV)
       const exportToExcel = () => {
         if (savedInvoices.length === 0) return alert("No data available to export");
         const headers = ["Invoice No", "Date", "Client Name", "Email", "Mobile", "Billing Type", "Amount (INR)", "Payment Status", "Delivery Status"];
@@ -488,7 +481,6 @@
       };
 
       const renderDashboard = () => {
-        // Exclude Cancelled AND Rejected leads from active revenue metrics
         const activeInvoices = savedInvoices.filter(i => {
             const stat = i.paymentStatus || i.status;
             return stat !== 'Cancelled' && stat !== 'Rejected';
@@ -577,7 +569,6 @@
                               </td>
                               <td className="py-4 px-6 text-sm text-gray-900 font-mono font-bold text-right whitespace-nowrap">{inv.total ? formatCurrency(inv.total) : 'TBD'}</td>
                               
-                              {/* STATUS DROPDOWNS */}
                               <td className="py-4 px-6 text-center">
                                  <select 
                                    value={pStatus}
@@ -800,7 +791,7 @@
               </div>
               <div className="flex justify-between items-end pt-4 border-t border-gray-200">
                 <div><p className="font-serif italic text-[16px] text-[#111] mb-1">The Engineering Team</p><p className="text-[9px] text-gray-500 font-mono uppercase tracking-widest">Footprint Forge, Chennai</p></div>
-                <div className="flex items-center gap-2 opacity-30"><div className="w-[12mm] h-[12mm] rounded-full overflow-hidden grayscale mix-blend-multiply border border-gray-400"><img src={logoUrl} alt="Seal" className="w-full h-full object-cover" onError={(e) => { e.target.style.display='none'; }} /></div><span className="text-[8px] uppercase tracking-widest font-mono text-[#c27e42] font-bold">QA Passed</span></div>
+                <div className="flex items-center gap-2 opacity-30"><div className="w-[12mm] h-[12mm] rounded-full overflow-hidden grayscale mix-blend-multiply border border-gray-400"><img src={logoUrl} alt="Seal" className="w-full h-full object-cover" onerror={(e) => { e.target.style.display='none'; }} /></div><span className="text-[8px] uppercase tracking-widest font-mono text-[#c27e42] font-bold">QA Passed</span></div>
               </div>
             </div>
           </div>
