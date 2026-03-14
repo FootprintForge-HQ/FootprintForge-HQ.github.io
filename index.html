@@ -53,7 +53,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://footprintforge-hq.github.io/">
   <meta name="twitter:title" content="Premium QR Business Card + Portfolio Website | Chennai">
-  <meta name="twitter:description" content="Velvet & gold foil QR cards connected to bespoke portfolio websites. For founders & professionals. Starting ₹1,499.">
+  <meta name="twitter:description" content="Premium QR cards connected to bespoke portfolio websites. For founders & professionals. Starting ₹1,499.">
   <meta name="twitter:image" content="https://footprintforge-hq.github.io/logo.webp">
 
   <!-- ======================================================= -->
@@ -82,7 +82,7 @@
       "latitude": 13.1067,
       "longitude": 80.2875
     },
-    "description": "Footprint Forge builds premium velvet and gold foil QR business cards connected to bespoke, hand-coded portfolio websites for founders, bankers, and professionals in Chennai. Zero recurring fees.",
+    "description": "Footprint Forge builds PVC QR business cards connected to bespoke, hand-coded portfolio websites for founders, bankers, and professionals in Chennai. Zero recurring fees.",
     "areaServed": [
       { "@type": "City", "name": "Chennai" },
       { "@type": "Country", "name": "India" }
@@ -117,7 +117,7 @@
     "sameAs": [
       "https://www.instagram.com/footprintforge.hq"
     ],
-    "knowsAbout": ["QR Business Cards", "Portfolio Websites", "Digital Identity", "Personal Branding", "Gold Foil Business Cards", "Velvet Business Cards"]
+    "knowsAbout": ["QR Business Cards", "Portfolio Websites", "Digital Identity", "Personal Branding", "Business Cards", "Digital Business Crads", "Digital Cards"]
   }
   </script>
   
@@ -624,7 +624,7 @@ Open your local Command Center CRM to process this lead and generate their invoi
                 <span className="text-lg md:text-xl font-bold tracking-tight text-white">Footprint Forge</span>
               </div>
               <div className="hidden md:flex items-center gap-8">
-                <button onClick={() => scrollToSection('hall-of-fame')} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Hall of Fame</button>
+                <button onClick={() => scrollToSection('hall-of-fame')} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Portfolio Styles</button>
                 <button onClick={() => scrollToSection('process')} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Process</button>
                 <button onClick={() => scrollToSection('pricing')} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Pricing</button>
                 <button onClick={() => scrollToSection('about')} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">About</button>
@@ -644,7 +644,7 @@ Open your local Command Center CRM to process this lead and generate their invoi
             {/* Mobile Dropdown */}
             <div className={`fixed inset-0 top-[60px] bg-[#05080f]/95 backdrop-blur-2xl transition-all duration-300 ease-in-out z-40 md:hidden flex flex-col px-6 pt-8 pb-12 ${isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'}`}>
               <div className="flex flex-col gap-6 text-center">
-                <button onClick={() => scrollToSection('hall-of-fame')} className="text-xl font-medium text-slate-300 hover:text-white border-b border-white/5 pb-4">Hall of Fame</button>
+                <button onClick={() => scrollToSection('hall-of-fame')} className="text-xl font-medium text-slate-300 hover:text-white border-b border-white/5 pb-4">Portfolio Styles</button>
                 <button onClick={() => scrollToSection('process')} className="text-xl font-medium text-slate-300 hover:text-white border-b border-white/5 pb-4">Process</button>
                 <button onClick={() => scrollToSection('pricing')} className="text-xl font-medium text-slate-300 hover:text-white border-b border-white/5 pb-4">Pricing</button>
                 <button onClick={() => scrollToSection('about')} className="text-xl font-medium text-slate-300 hover:text-white border-b border-white/5 pb-4">About</button>
@@ -680,32 +680,38 @@ Open your local Command Center CRM to process this lead and generate their invoi
                     </button>
                   </div>
                 </div>
-                {/* Hero Visual Mockup */}
-                <div className="relative h-[350px] md:h-[500px] w-full flex justify-center items-center perspective-1000 mt-8 md:mt-0">
-                  <div className="absolute right-4 md:right-16 w-56 md:w-64 h-[400px] md:h-[450px] bg-[#0a0f1c] border border-white/10 rounded-[2rem] shadow-2xl p-4 transform rotate-6 translate-y-8 opacity-80 z-0 hidden sm:block">
-                    <div className="w-full h-full border border-white/5 rounded-xl p-4 overflow-hidden relative flex flex-col gap-4 bg-gradient-to-b from-white/5 to-transparent">
-                      <div className="w-12 h-12 bg-white/10 rounded-full mb-2"></div>
-                      <div className="w-3/4 h-4 bg-white/10 rounded-md"></div>
-                      <div className="w-1/2 h-3 bg-white/5 rounded-md"></div>
-                      <div className="mt-8 space-y-3">
-                        <div className="w-full h-16 bg-[#c27e42]/20 border border-[#c27e42]/20 rounded-lg"></div>
-                        <div className="w-full h-16 bg-white/5 rounded-lg"></div>
+                {/* Hero Visual — Real Product */}
+                <div className="relative h-[380px] md:h-[520px] w-full flex justify-center items-center mt-8 md:mt-0">
+                  {/* Glow behind card */}
+                  <div className="absolute w-72 h-72 bg-[#c27e42]/20 blur-[80px] rounded-full pointer-events-none z-0"></div>
+
+                  {/* Back card (stacked effect) */}
+                  <div className="absolute w-[280px] md:w-[320px] h-[175px] md:h-[200px] bg-[#0d0d0d] rounded-2xl border border-white/10 shadow-2xl transform rotate-6 translate-y-4 translate-x-4 z-0"></div>
+
+                  {/* Main card — uses your real logo as stand-in; swap for actual card photo once received */}
+                  <div className="relative w-[280px] md:w-[320px] h-[175px] md:h-[200px] bg-gradient-to-br from-[#111] to-[#0a0a0a] rounded-2xl border border-[#c27e42]/30 shadow-[0_30px_80px_rgba(0,0,0,0.9),0_0_40px_rgba(194,126,66,0.15)] z-10 animate-float overflow-hidden flex flex-col justify-between p-6">
+                    {/* Gold border accent */}
+                    <div className="absolute inset-0 rounded-2xl border border-[#c27e42]/20 pointer-events-none"></div>
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#c27e42]/60 to-transparent"></div>
+
+                    <div className="flex justify-between items-start">
+                      <img src="logo.webp" alt="Footprint Forge" className="w-10 h-10 object-contain opacity-90" onError={(e) => e.target.style.display='none'} />
+                      <div className="bg-white/95 p-1.5 rounded-lg shadow-lg">
+                        <i className="fa-solid fa-qrcode text-2xl text-black"></i>
                       </div>
+                    </div>
+
+                    <div className="space-y-0.5">
+                      <p className="text-[10px] text-[#c27e42] uppercase tracking-[0.3em] font-bold">Footprint Forge</p>
+                      <h3 className="text-lg font-bold tracking-wide text-white">Your Name Here.</h3>
+                      <p className="text-[10px] text-zinc-500 uppercase tracking-widest">Your Title · Your Company</p>
                     </div>
                   </div>
-                  <div className="relative w-72 md:w-80 h-44 md:h-48 bg-[#111] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] border border-white/10 flex flex-col justify-between p-6 transform -rotate-3 z-10 animate-float backdrop-blur-sm">
-                    <div className="absolute inset-0 rounded-2xl border border-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 md:w-4 h-3 md:h-4 bg-gradient-to-br from-[#e6b981] to-[#c27e42] rounded-sm shadow-[0_0_15px_rgba(194,126,66,0.6)]"></div>
-                        <span className="text-[10px] md:text-xs font-bold tracking-[0.2em] text-zinc-400 uppercase">Footprint</span>
-                      </div>
-                      <div className="bg-white p-1.5 md:p-2 rounded-lg flex items-center justify-center shadow-lg"><i className="fa-solid fa-qrcode text-2xl md:text-3xl text-black"></i></div>
-                    </div>
-                    <div className="space-y-1 z-10">
-                      <h3 className="text-lg md:text-xl font-semibold tracking-wide text-white">Alexander Chen</h3>
-                      <p className="text-[10px] md:text-xs text-zinc-500 uppercase tracking-widest font-medium">Director, Commercial Banking</p>
-                    </div>
+
+                  {/* Scan prompt badge */}
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/5 border border-white/10 backdrop-blur-sm px-4 py-2 rounded-full z-20">
+                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                    <span className="text-xs text-slate-300 font-medium tracking-wide">Scan → Your Portfolio Goes Live</span>
                   </div>
                 </div>
               </div>
@@ -717,8 +723,9 @@ Open your local Command Center CRM to process this lead and generate their invoi
                 
                 <div className="mb-12 md:mb-20 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
                   <div className="max-w-2xl">
-                    <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">The Hall of Fame</h2>
-                    <p className="text-base md:text-lg text-slate-400 font-light">Built for professionals who treat their reputation as capital. Tap to preview structures.</p>
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#c27e42]/30 bg-[#c27e42]/10 mb-4 text-xs font-bold text-[#c27e42] tracking-widest uppercase">Portfolio Styles</div>
+                    <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">Built for Your Profession.</h2>
+                    <p className="text-base md:text-lg text-slate-400 font-light">Every portfolio is custom-built around your domain. Here are sample architectures for different professions — tap to preview.</p>
                   </div>
                   <div className="hidden md:block w-16 h-1 bg-gradient-to-r from-[#c27e42] to-transparent rounded-full"></div>
                 </div>
@@ -830,8 +837,9 @@ Open your local Command Center CRM to process this lead and generate their invoi
 
               <div className="max-w-4xl mx-auto px-6 md:px-12 relative z-10">
                 <div className="text-center mb-16 md:mb-24">
-                  <p className="text-[#c27e42] uppercase tracking-widest text-xs font-bold mb-3">Seamless Onboarding</p>
-                  <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">Three Steps. Zero Friction.</h2>
+                  <p className="text-[#c27e42] uppercase tracking-widest text-xs font-bold mb-3">How It Works</p>
+                  <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white">From Application to <span className="text-gradient-gold">Live in 7 Days.</span></h2>
+                  <p className="text-slate-400 font-light text-base mt-4 max-w-xl mx-auto">No vague timelines. No "we'll get back to you." Here's exactly what happens after you apply.</p>
                 </div>
 
                 <div className="space-y-24 md:space-y-20 relative before:absolute before:inset-0 before:ml-6 before:-translate-x-px md:before:hidden before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-white/10 before:to-transparent">
@@ -840,8 +848,12 @@ Open your local Command Center CRM to process this lead and generate their invoi
                     <div className="w-12 h-12 bg-[#05080f] border border-white/20 rounded-full flex items-center justify-center text-white font-bold text-lg md:hidden shrink-0 z-10 relative">1</div>
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-[#05080f] border border-white/20 rounded-full hidden md:flex items-center justify-center text-white font-bold text-xl z-10 shadow-lg">1</div>
                     <div className="flex-1 md:w-1/2 md:flex-none md:text-right md:pr-12 pt-1 md:pt-0">
-                      <h3 className="text-xl md:text-2xl font-bold text-white mb-2 md:mb-3">1. Apply</h3>
-                      <p className="text-slate-400 font-light text-[15px] md:text-base leading-relaxed">Submit your professional details through our structured, secure intake form.</p>
+                      <div className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md mb-3">
+                        <i className="fa-solid fa-clock text-[#c27e42] text-[10px]"></i>
+                        <span className="text-[10px] text-slate-400 font-mono tracking-wide">Day 0 — Same day</span>
+                      </div>
+                      <h3 className="text-xl md:text-2xl font-bold text-white mb-2 md:mb-3">Apply & Pay Advance</h3>
+                      <p className="text-slate-400 font-light text-[15px] md:text-base leading-relaxed">Fill the intake form with your details, role, and requirements. Pay 50% advance. You'll receive a confirmation on WhatsApp within the hour.</p>
                     </div>
                     <div className="md:w-1/2 hidden md:block"></div>
                   </div>
@@ -850,8 +862,12 @@ Open your local Command Center CRM to process this lead and generate their invoi
                     <div className="w-12 h-12 bg-gradient-to-br from-[#e6b981] to-[#c27e42] rounded-full flex items-center justify-center text-white font-bold text-lg md:hidden shrink-0 z-10 relative shadow-[0_0_20px_rgba(194,126,66,0.4)]">2</div>
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-gradient-to-br from-[#e6b981] to-[#c27e42] rounded-full hidden md:flex items-center justify-center text-white font-bold text-xl z-10 shadow-[0_0_30px_rgba(194,126,66,0.4)]">2</div>
                     <div className="flex-1 md:w-1/2 md:flex-none md:text-left md:pl-12 pt-1 md:pt-0">
-                      <h3 className="text-xl md:text-2xl font-bold text-white mb-2 md:mb-3">2. We Engineer</h3>
-                      <p className="text-slate-400 font-light text-[15px] md:text-base leading-relaxed">We design and hand-code your portfolio to precisely align with your domain and positioning.</p>
+                      <div className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md mb-3">
+                        <i className="fa-solid fa-clock text-[#c27e42] text-[10px]"></i>
+                        <span className="text-[10px] text-slate-400 font-mono tracking-wide">Day 1–5 — Portfolio build</span>
+                      </div>
+                      <h3 className="text-xl md:text-2xl font-bold text-white mb-2 md:mb-3">We Build Your Portfolio</h3>
+                      <p className="text-slate-400 font-light text-[15px] md:text-base leading-relaxed">Your portfolio is hand-coded from scratch — no templates. We share a preview link for your approval before anything goes live. One round of revisions included.</p>
                     </div>
                     <div className="md:w-1/2 hidden md:block"></div>
                   </div>
@@ -860,8 +876,12 @@ Open your local Command Center CRM to process this lead and generate their invoi
                     <div className="w-12 h-12 bg-[#05080f] border border-white/20 rounded-full flex items-center justify-center text-slate-500 font-bold text-lg md:hidden shrink-0 z-10 relative">3</div>
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-[#05080f] border border-white/20 rounded-full hidden md:flex items-center justify-center text-slate-500 font-bold text-xl z-10">3</div>
                     <div className="flex-1 md:w-1/2 md:flex-none md:text-right md:pr-12 pt-1 md:pt-0">
-                      <h3 className="text-xl md:text-2xl font-bold text-white mb-2 md:mb-3">3. Go Live</h3>
-                      <p className="text-slate-400 font-light text-[15px] md:text-base leading-relaxed">Receive your premium PVC card. Start sharing your curated identity instantly.</p>
+                      <div className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md mb-3">
+                        <i className="fa-solid fa-clock text-[#c27e42] text-[10px]"></i>
+                        <span className="text-[10px] text-slate-400 font-mono tracking-wide">Day 6–7 — Delivery</span>
+                      </div>
+                      <h3 className="text-xl md:text-2xl font-bold text-white mb-2 md:mb-3">Go Live + Card Dispatched</h3>
+                      <p className="text-slate-400 font-light text-[15px] md:text-base leading-relaxed">Portfolio goes live on GitHub Pages. PVC card is dispatched with tracking. You own your digital identity — permanently. Zero recurring fees, ever.</p>
                     </div>
                     <div className="md:w-1/2 hidden md:block"></div>
                   </div>
@@ -890,7 +910,6 @@ Open your local Command Center CRM to process this lead and generate their invoi
                     </div>
                     <div className="mb-8 border-b border-white/10 pb-8">
                       <div className="flex items-end gap-3">
-                        <span className="line-through text-slate-500 text-2xl font-semibold">₹1,499</span>
                         <span className="text-4xl md:text-5xl font-extrabold text-white">₹999</span>
                       </div>
                       <div className="inline-flex items-center gap-1.5 mt-3 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md">
@@ -924,7 +943,6 @@ Open your local Command Center CRM to process this lead and generate their invoi
                     </div>
                     <div className="mb-8 border-b border-white/10 pb-8">
                       <div className="flex items-end gap-3">
-                        <span className="line-through text-[#c27e42]/60 text-2xl font-semibold">₹2,499</span>
                         <span className="text-4xl md:text-5xl font-extrabold text-white">₹1,499</span>
                       </div>
                       <div className="inline-flex items-center gap-1.5 mt-3 bg-[#c27e42]/10 border border-[#c27e42]/20 px-2.5 py-1 rounded-md">
@@ -957,7 +975,6 @@ Open your local Command Center CRM to process this lead and generate their invoi
                     </div>
                     <div className="mb-8 border-b border-white/10 pb-8">
                       <div className="flex items-end gap-3">
-                        <span className="line-through text-slate-500 text-2xl font-semibold">₹5,999</span>
                         <span className="text-4xl md:text-5xl font-extrabold text-white">₹3,499</span>
                       </div>
                       <div className="inline-flex items-center gap-1.5 mt-3 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md">
@@ -1007,13 +1024,82 @@ Open your local Command Center CRM to process this lead and generate their invoi
 
             {/* ABOUT US SECTION */}
             <section id="about" className="py-20 md:py-32 bg-[#03050a] border-t border-white/5 relative overflow-hidden">
-              <div className="max-w-4xl mx-auto px-6 md:px-12 relative z-10 text-center">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#c27e42]/30 bg-[#c27e42]/10 mb-6 text-xs font-bold text-[#c27e42] tracking-widest uppercase">The Origin of the Forge</div>
-                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-10">Forged in the friction of <br className="hidden md:block"/><span className="text-gradient-gold">modern corporate finance.</span></h2>
-                <div className="space-y-6 text-[15px] md:text-lg text-slate-400 font-light leading-relaxed max-w-3xl mx-auto">
-                  <p>Footprint Forge was born from the friction of modern corporate finance. Operating in a high-stakes offshore commercial banking environment, the exchange of paper contact details felt completely disconnected from the digital reality of global business.</p>
-                  <p>We realized that professionals don't just need a digital business card; they need <strong className="text-white font-medium">permanent digital infrastructure</strong>. We engineer bespoke, hand-coded architectures for founders, bankers, and consultants who treat their reputation as capital.</p>
+              <div className="max-w-4xl mx-auto px-6 md:px-12 relative z-10">
+                <div className="text-center mb-12">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#c27e42]/30 bg-[#c27e42]/10 mb-6 text-xs font-bold text-[#c27e42] tracking-widest uppercase">The Founder</div>
+                  <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">Built by someone who <br className="hidden md:block"/><span className="text-gradient-gold">actually uses it.</span></h2>
                 </div>
+
+                <div className="grid md:grid-cols-2 gap-12 items-center">
+                  {/* Left — founder card */}
+                  <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-8 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-[#c27e42]/5 blur-3xl rounded-full"></div>
+                    <div className="w-16 h-16 bg-gradient-to-br from-[#c27e42]/20 to-transparent border border-[#c27e42]/30 rounded-2xl flex items-center justify-center mb-6">
+                      <img src="yogaprabhu.jpg" alt="Yogaprabhu S." className="w-14 h-14 rounded-2xl object-cover border border-[#c27e42]/30" onError={(e) => { e.target.style.display='none'; }} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-1">Yogaprabhu S.</h3>
+                    <p className="text-[#c27e42] text-sm font-semibold tracking-widest uppercase mb-4">Founder · Footprint Forge</p>
+                    <p className="text-slate-400 text-sm font-light leading-relaxed mb-6">Commercial Credit & Agentic AI Specialist. Based in Chennai. Building tools for professionals who take their reputation seriously.</p>
+                    <div className="flex gap-3">
+                      <a href="https://linkedin.com/in/yogaprabhu" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/5 border border-white/10 hover:border-[#c27e42]/40 rounded-xl flex items-center justify-center transition-colors">
+                        <i className="fa-brands fa-linkedin-in text-slate-400 hover:text-[#c27e42] text-sm"></i>
+                      </a>
+                      <a href="https://www.instagram.com/prabhuofyoga" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/5 border border-white/10 hover:border-[#E1306C]/40 rounded-xl flex items-center justify-center transition-colors">
+                        <i className="fa-brands fa-instagram text-slate-400 text-sm"></i>
+                      </a>
+                      <a href="https://prabhuofyoga.github.io/yogaprabhu-portfolio/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/5 border border-white/10 hover:border-[#c27e42]/40 rounded-xl flex items-center justify-center transition-colors">
+                        <i className="fa-solid fa-globe text-slate-400 text-sm"></i>
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Right — real story */}
+                  <div className="space-y-6 text-[15px] md:text-base text-slate-400 font-light leading-relaxed">
+                    <p>I built Footprint Forge because I needed it myself. As a credit professional handing out paper cards in 2025, something felt broken. Everyone was scanning QR codes — but those QR codes led to generic Linktree pages or expired links.</p>
+                    <p>So I built my own. A real portfolio site, hand-coded, linked to a physical card. The reaction when people scanned it told me everything.</p>
+                    <p><strong className="text-white font-medium">Footprint Forge is that same product — built for you.</strong> Not a SaaS platform. Not a template. A real person, building your real portfolio, shipping it in 7 days.</p>
+                    <div className="flex flex-wrap gap-4 pt-2">
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <i className="fa-solid fa-building-columns text-[#c27e42]"></i>
+                        MSME Registered · UDYAM-TN-02-0455866
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <i className="fa-solid fa-location-dot text-[#c27e42]"></i>
+                        Engineered in Chennai, India
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* SOCIAL PROOF SECTION */}
+            <section className="py-20 md:py-28 bg-[#05080f] border-t border-white/5">
+              <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#c27e42]/30 bg-[#c27e42]/10 mb-6 text-xs font-bold text-[#c27e42] tracking-widest uppercase">Early Builds</div>
+                <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-4">The first card off the forge.</h2>
+                <p className="text-slate-400 font-light text-base mb-12 max-w-xl mx-auto">We're just getting started. Here's the first portfolio built on Footprint Forge infrastructure — the founder's own.</p>
+
+                <div className="bg-white/[0.02] border border-[#c27e42]/20 rounded-3xl p-8 md:p-10 max-w-2xl mx-auto relative overflow-hidden">
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-[#c27e42]/5 blur-3xl rounded-full"></div>
+                  <div className="flex items-center gap-4 mb-6">
+                    <img src="yogaprabhu.jpg" alt="Yogaprabhu S." className="w-14 h-14 rounded-2xl object-cover border border-[#c27e42]/30" onError={(e) => { e.target.style.display='none'; }} />
+                    <div className="text-left">
+                      <h4 className="text-white font-bold">Yogaprabhu S.</h4>
+                      <p className="text-slate-500 text-sm">Commercial Credit & Agentic AI Specialist</p>
+                    </div>
+                    <a href="https://prabhuofyoga.github.io/yogaprabhu-portfolio/" target="_blank" rel="noopener noreferrer" className="ml-auto flex items-center gap-2 text-[#c27e42] text-xs font-semibold hover:underline">
+                      View Live <i className="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                    </a>
+                  </div>
+                  <p className="text-slate-300 text-[15px] font-light leading-relaxed text-left italic">"I built this for myself first. Premium PVC card, custom QR, portfolio live on GitHub Pages — zero subscriptions, zero platform dependency. This is what every professional deserves."</p>
+                  <div className="mt-6 pt-6 border-t border-white/5 flex items-center gap-3 text-left">
+                    <i className="fa-solid fa-circle-check text-[#c27e42]"></i>
+                    <span className="text-xs text-slate-500 font-mono">Verified Build · Footprint Forge Infrastructure</span>
+                  </div>
+                </div>
+
+                <p className="text-slate-600 text-sm mt-10 font-light">Your testimonial could be next. <button onClick={() => openForm()} className="text-[#c27e42] hover:underline font-medium">Apply for your build →</button></p>
               </div>
             </section>
 
@@ -1021,8 +1107,8 @@ Open your local Command Center CRM to process this lead and generate their invoi
             <section id="contact" className="py-20 md:py-32 bg-[#05080f] border-t border-white/5 relative overflow-hidden">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-[300px] bg-[#c27e42]/5 blur-[120px] rounded-full pointer-events-none"></div>
               <div className="max-w-4xl mx-auto px-6 md:px-12 relative z-10 text-center">
-                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6">Initiate <span className="text-gradient-gold">Contact.</span></h2>
-                <p className="text-slate-400 font-light text-base md:text-lg mb-12 max-w-2xl mx-auto">Have questions about our deployments? Connect directly with our engineering and advisory team.</p>
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-4">Got a question? <span className="text-gradient-gold">Just ask.</span></h2>
+                <p className="text-slate-400 font-light text-base md:text-lg mb-12 max-w-2xl mx-auto">No sales funnels. No chatbots. You're talking directly to the founder. Pick whichever way feels easiest.</p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* WhatsApp */}
