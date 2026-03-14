@@ -94,21 +94,21 @@
         {
           "@type": "Offer",
           "name": "The Executive",
-          "price": "1499",
+          "price": "999",
           "priceCurrency": "INR",
           "description": "Premium QR business card with bespoke portfolio website"
         },
         {
           "@type": "Offer",
           "name": "The Authority",
-          "price": "2499",
+          "price": "1499",
           "priceCurrency": "INR",
           "description": "Premium QR business card with full portfolio website and multiple sections"
         },
         {
           "@type": "Offer",
           "name": "The Institution",
-          "price": "5999",
+          "price": "3499",
           "priceCurrency": "INR",
           "description": "Full bespoke portfolio website with premium card suite"
         }
@@ -117,7 +117,7 @@
     "sameAs": [
       "https://www.instagram.com/footprintforge.hq"
     ],
-    "knowsAbout": ["QR Business Cards", "Portfolio Websites", "Digital Identity", "Personal Branding", "Business Cards", "Digital Business Crads", "Digital Cards"]
+    "knowsAbout": ["QR Business Cards", "Portfolio Websites", "Digital Identity", "Personal Branding", "Business Cards", "Digital Business Cards", "Digital Cards"]
   }
   </script>
   
@@ -676,7 +676,7 @@ Open your local Command Center CRM to process this lead and generate their invoi
                       Apply for Build <i className="fa-solid fa-arrow-right text-sm group-hover:translate-x-1 transition-transform"></i>
                     </button>
                     <button onClick={() => scrollToSection('hall-of-fame')} className="text-slate-300 hover:text-white text-base font-medium px-8 py-4 flex items-center justify-center gap-2 transition-colors w-full sm:w-auto bg-white/5 hover:bg-white/10 rounded-xl border border-white/5">
-                      View Hall of Fame
+                      View Portfolio Styles
                     </button>
                   </div>
                 </div>
@@ -1034,8 +1034,8 @@ Open your local Command Center CRM to process this lead and generate their invoi
                   {/* Left — founder card */}
                   <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-8 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-40 h-40 bg-[#c27e42]/5 blur-3xl rounded-full"></div>
-                    <div className="w-16 h-16 bg-gradient-to-br from-[#c27e42]/20 to-transparent border border-[#c27e42]/30 rounded-2xl flex items-center justify-center mb-6">
-                      <img src="yogaprabhu.jpg" alt="Yogaprabhu S." className="w-14 h-14 rounded-2xl object-cover border border-[#c27e42]/30" onError={(e) => { e.target.style.display='none'; }} />
+                    <div className="mb-6">
+                      <img src="yogaprabhu.jpg" alt="Yogaprabhu S." className="w-20 h-20 rounded-2xl object-cover border border-[#c27e42]/30 shadow-lg" onError={(e) => { e.target.parentElement.innerHTML = '<div class="w-20 h-20 bg-gradient-to-br from-[#c27e42]/20 to-transparent border border-[#c27e42]/30 rounded-2xl flex items-center justify-center"><i class=\'fa-solid fa-fingerprint text-2xl text-[#c27e42]\'></i></div>'; }} />
                     </div>
                     <h3 className="text-2xl font-bold text-white mb-1">Yogaprabhu S.</h3>
                     <p className="text-[#c27e42] text-sm font-semibold tracking-widest uppercase mb-4">Founder · Footprint Forge</p>
@@ -1242,7 +1242,7 @@ Open your local Command Center CRM to process this lead and generate their invoi
                         <i className="fa-solid fa-check text-3xl text-green-400"></i>
                       </div>
                       <h2 className="text-2xl font-bold text-white mb-3">Application Received</h2>
-                      <p className="text-slate-400 leading-relaxed max-w-md mx-auto mb-8">Our engineering team will review your details. You will receive an official advance invoice via email shortly to initiate the build.</p>
+                      <p className="text-slate-400 leading-relaxed max-w-md mx-auto mb-8">I'll personally review your details and reach out on WhatsApp within a few hours to kick off your build. Talk soon!</p>
                       <button onClick={() => setIsFormOpen(false)} className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold py-3 px-8 rounded-xl transition-all">Close Console</button>
                     </div>
                   ) : (
@@ -1263,11 +1263,11 @@ Open your local Command Center CRM to process this lead and generate their invoi
                       <div className="grid md:grid-cols-2 gap-6">
                         <div>
                           <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Full Name</label>
-                          <input required type="text" value={leadData.clientName} onChange={e => setLeadData({...leadData, clientName: e.target.value})} className="w-full bg-black/50 border border-white/10 text-white text-sm p-3 rounded-lg outline-none focus:border-[#c27e42] transition-colors" placeholder="Alexander Chen" />
+                          <input required type="text" value={leadData.clientName} onChange={e => setLeadData({...leadData, clientName: e.target.value})} className="w-full bg-black/50 border border-white/10 text-white text-sm p-3 rounded-lg outline-none focus:border-[#c27e42] transition-colors" placeholder="Yogaprabhu S." />
                         </div>
                         <div>
                           <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Role & Company</label>
-                          <input required type="text" value={leadData.role} onChange={e => setLeadData({...leadData, role: e.target.value})} className="w-full bg-black/50 border border-white/10 text-white text-sm p-3 rounded-lg outline-none focus:border-[#c27e42] transition-colors" placeholder="Director, HDFC" />
+                          <input required type="text" value={leadData.role} onChange={e => setLeadData({...leadData, role: e.target.value})} className="w-full bg-black/50 border border-white/10 text-white text-sm p-3 rounded-lg outline-none focus:border-[#c27e42] transition-colors" placeholder="Commercial Credit & Agentic AI Specialist" />
                         </div>
                       </div>
 
