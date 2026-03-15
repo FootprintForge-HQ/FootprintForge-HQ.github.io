@@ -233,10 +233,11 @@
     const [stageFilter,  setStageFilter]  = useState('All');
     const [showNewForm,  setShowNewForm]  = useState(false);
     const [showInvoice,  setShowInvoice]  = useState(false);
+    const [showLetter,   setShowLetter]   = useState(false);
     const [showMsg,      setShowMsg]      = useState(null); // { type:'wa'|'email', stage }
     const [noteText,     setNoteText]     = useState('');
     const [savingNote,   setSavingNote]   = useState(false);
-    const [logoUrl,      setLogoUrl]      = useState('1000441850.png');
+    const [logoUrl,      setLogoUrl]      = useState('logo.webp');
 
     /* Auth — wait for Firebase module to finish loading */
     useEffect(() => {
@@ -345,6 +346,31 @@
     };
 
     /* ── Stats ── */
+    const wipeData = async () => {
+      if(!window.confirm('Delete ALL client data permanently? This cannot be undone.')) return;
+      if(window.prompt("Type DELETE to confirm:") !== 'DELETE') return;
+      const db=window._ffDb; const fns=window._ffFns; if(!db||!fns) return;
+      try {
+        await Promise.all(clients.map(c=>fns.deleteDoc(fns.doc(db,'ff_clients',c.id))));
+        alert('All data deleted.');
+      } catch(e) { console.error(e); alert('Error: '+e.message); }
+    };
+
+    const exportCSV = () => {
+      if(!clients.length) return alert('No data to export.');
+      const headers = ['Name','Email','Mobile','Tier','Price','Stage','Address','Portfolio URL','Tracking ID','Created'];
+      const rows = clients.map(c=>[
+        `"${c.name||''}"`,`"${c.email||''}"`,`"${c.mobile||''}"`,
+        `"${c.tier||''}"`,c.price||0,`"${c.stage||''}"`,
+        `"${c.address||''}"`,`"${c.portfolioUrl||''}"`,`"${c.trackingId||''}"`,
+        new Date(c.createdAt||Date.now()).toLocaleDateString('en-IN')
+      ]);
+      const csv = 'data:text/csv;charset=utf-8,'+headers.join(',')+'\n'+rows.map(r=>r.join(',')).join('\n');
+      const a = document.createElement('a');
+      a.href=encodeURI(csv); a.download=`FF_Clients_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+    };
+
     const stats = useMemo(() => {
       const active = clients.filter(c=>c.stage!=='Complete');
       const complete = clients.filter(c=>c.stage==='Complete');
@@ -481,15 +507,16 @@
 
           {/* ── Main ── */}
           <main style={{flex:1,overflow:'auto',minWidth:0}}>
-            {view==='dashboard' && <Dashboard stats={stats} clients={clients} setView={setView} setActiveClient={setActiveClient} setShowNewForm={setShowNewForm} />}
+            {view==='dashboard' && <Dashboard stats={stats} clients={clients} setView={setView} setActiveClient={setActiveClient} setShowNewForm={setShowNewForm} onWipe={wipeData} onExport={exportCSV} />}
             {view==='pipeline'  && <Pipeline  clients={filtered} search={search} setSearch={setSearch} stageFilter={stageFilter} setStageFilter={setStageFilter} setActiveClient={c=>{setActiveClient(c);setView('client');}} updateStage={updateStage} />}
-            {view==='client' && activeClient && <ClientDetail client={activeClient} updateClient={updateClient} updateStage={updateStage} deleteClient={deleteClient} addNote={addNote} noteText={noteText} setNoteText={setNoteText} savingNote={savingNote} setShowMsg={setShowMsg} setShowInvoice={setShowInvoice} logoUrl={logoUrl} setLogoUrl={setLogoUrl} />}
+            {view==='client' && activeClient && <ClientDetail client={activeClient} updateClient={updateClient} updateStage={updateStage} deleteClient={deleteClient} addNote={addNote} noteText={noteText} setNoteText={setNoteText} savingNote={savingNote} setShowMsg={setShowMsg} setShowInvoice={setShowInvoice} setShowLetter={setShowLetter} logoUrl={logoUrl} setLogoUrl={setLogoUrl} />}
           </main>
 
           {/* ── Modals ── */}
           {showNewForm && <NewClientModal onClose={()=>setShowNewForm(false)} onSave={saveClient} />}
           {showMsg && activeClient && <MsgModal client={clientCtx(activeClient)} config={showMsg} onClose={()=>setShowMsg(null)} />}
           {showInvoice && activeClient && <InvoiceModal client={activeClient} onClose={()=>setShowInvoice(false)} logoUrl={logoUrl} />}
+          {showLetter  && activeClient && <LetterModal  client={activeClient} onClose={()=>setShowLetter(false)}  logoUrl={logoUrl} />}
         </div>
       </div>
     );
@@ -498,14 +525,24 @@
   /* ════════════════════════════════════════════════════════
      DASHBOARD
   ════════════════════════════════════════════════════════ */
-  function Dashboard({ stats, clients, setView, setActiveClient, setShowNewForm }) {
+  function Dashboard({ stats, clients, setView, setActiveClient, setShowNewForm, onWipe, onExport }) {
     const urgent = clients.filter(c=>c.stage==='New Lead'||c.stage==='Design Approved');
     return (
       <div style={{padding:'32px 32px 60px',maxWidth:1100,margin:'0 auto'}} className="fade-up">
         {/* Header */}
-        <div style={{marginBottom:32}}>
-          <h1 style={{fontSize:28,fontWeight:800,color:'var(--text)',marginBottom:4}}>{greet()}, Yogaprabhu. 👋</h1>
-          <p className="mono" style={{fontSize:12,color:'var(--muted)'}}>{new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</p>
+        <div style={{marginBottom:28,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
+          <div>
+            <h1 style={{fontSize:26,fontWeight:800,color:'var(--text)',marginBottom:4}}>{greet()}, Yogaprabhu. 👋</h1>
+            <p className="mono" style={{fontSize:12,color:'var(--muted)'}}>{new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</p>
+          </div>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+            <button onClick={onExport} className="btn-ghost" style={{fontSize:12,padding:'8px 14px'}}>
+              <i className="fa-solid fa-file-csv" style={{color:'#4ade80'}}></i> Export CSV
+            </button>
+            <button onClick={onWipe} style={{display:'flex',alignItems:'center',gap:7,background:'rgba(248,113,113,.1)',border:'1px solid rgba(248,113,113,.2)',color:'#f87171',borderRadius:10,padding:'8px 14px',cursor:'pointer',fontSize:12,fontWeight:700,fontFamily:'Syne'}}>
+              <i className="fa-solid fa-trash-can"></i> Wipe Data
+            </button>
+          </div>
         </div>
 
         {/* Stats */}
@@ -670,7 +707,7 @@
   /* ════════════════════════════════════════════════════════
      CLIENT DETAIL
   ════════════════════════════════════════════════════════ */
-  function ClientDetail({ client, updateClient, updateStage, deleteClient, addNote, noteText, setNoteText, savingNote, setShowMsg, setShowInvoice, logoUrl, setLogoUrl }) {
+  function ClientDetail({ client, updateClient, updateStage, deleteClient, addNote, noteText, setNoteText, savingNote, setShowMsg, setShowInvoice, setShowLetter, logoUrl, setLogoUrl }) {
     const [editing,    setEditing]    = useState(false);
     const [editData,   setEditData]   = useState({});
     const [activeTab,  setActiveTab]  = useState('overview'); // overview | brief | timeline
@@ -747,6 +784,9 @@
             </button>
             <button onClick={()=>setShowInvoice(true)} className="btn-ghost" style={{fontSize:12,padding:'8px 14px'}}>
               <i className="fa-solid fa-file-invoice"></i> Invoice
+            </button>
+            <button onClick={()=>setShowLetter(true)} className="btn-ghost" style={{fontSize:12,padding:'8px 14px'}}>
+              <i className="fa-solid fa-envelope-open-text"></i> Letter
             </button>
             {confirmDel ? (
               <div style={{display:'flex',gap:4}}>
@@ -1510,7 +1550,7 @@ IMPORTANT: This is a real person's professional identity. Make it feel premium, 
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:40}}>
               <div style={{display:'flex',alignItems:'center',gap:14}}>
                 <div style={{width:52,height:52,borderRadius:'50%',border:'2px solid #c27e42',overflow:'hidden',background:'#111',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                  <img src={logoUrl} alt="FF" style={{width:'100%',height:'100%',objectFit:'cover'}} onError={e=>{e.target.style.display='none';e.target.parentNode.innerHTML='<i class="fa-solid fa-fingerprint" style="color:#c27e42;font-size:20px"></i>';}} />
+                  <img src="logo.webp" alt="FF" style={{width:'100%',height:'100%',objectFit:'cover'}} onError={e=>{e.target.style.display='none';e.target.parentNode.innerHTML='<span style="font-weight:800;color:#c27e42;font-size:16px">FF</span>';}} />
                 </div>
                 <div>
                   <h1 style={{fontSize:18,fontWeight:800,letterSpacing:'0.15em',textTransform:'uppercase',color:'#111',marginBottom:2}}>Footprint Forge</h1>
@@ -1602,6 +1642,140 @@ IMPORTANT: This is a real person's professional identity. Make it feel premium, 
       </div>
     );
   }
+
+/* ════════════════════════════════════════════════════
+   LETTER MODAL — printable trifold DL
+════════════════════════════════════════════════════ */
+function LetterModal({client:c, onClose, logoUrl}) {
+  const firstName = (c.name||'').split(' ')[0] || 'there';
+  const today     = new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}).toUpperCase();
+  const refId     = `FF-${(c.name||'XX').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)}-${Math.floor(1000+Math.random()*9000)}`;
+  const fullAddr  = [c.address].filter(Boolean).join(', ');
+
+  const panelStyle = {
+    width:'100%', height:'374px', boxSizing:'border-box',
+    position:'relative', overflow:'hidden',
+    borderBottom:'1px dashed rgba(0,0,0,0.12)',
+  };
+
+  return (
+    <div className="modal-bg" style={{alignItems:'flex-start',paddingTop:24,paddingBottom:24,overflowY:'auto'}}>
+      <div style={{width:'100%',maxWidth:800}} className="fade-up">
+
+        {/* Controls */}
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12,padding:'0 6px'}}>
+          <h3 style={{color:'var(--text)',fontWeight:800,display:'flex',alignItems:'center',gap:8}}>
+            <i className="fa-solid fa-envelope-open-text" style={{color:'var(--gold)'}}></i> Delivery Letter
+          </h3>
+          <div style={{display:'flex',gap:7}}>
+            <button onClick={()=>window.print()} className="btn-gold" style={{fontSize:12,padding:'7px 13px'}}>
+              <i className="fa-solid fa-print"></i> Print
+            </button>
+            <button onClick={onClose} className="btn-ghost" style={{fontSize:12,padding:'7px 13px'}}>
+              <i className="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+
+        {/* A4 Sheet — 3 equal panels stacked */}
+        <div style={{width:'794px',background:'#fff',boxShadow:'0 20px 60px rgba(0,0,0,.6)',margin:'0 auto',fontFamily:'Syne',color:'#111',display:'flex',flexDirection:'column'}}>
+
+          {/* ── PANEL 3 (top) — Sender top-right, Recipient address bottom-left ── */}
+          <div style={{...panelStyle,padding:'30px 45px 28px'}}>
+            {/* Fold tick marks */}
+            <div style={{position:'absolute',bottom:0,left:0,width:'11px',borderTop:'0.5px solid rgba(0,0,0,.3)'}}></div>
+            <div style={{position:'absolute',bottom:0,right:0,width:'11px',borderTop:'0.5px solid rgba(0,0,0,.3)'}}></div>
+
+            {/* Sender — top right */}
+            <div style={{display:'flex',justifyContent:'flex-end',alignItems:'flex-start',gap:12,marginBottom:'auto'}}>
+              <div style={{textAlign:'right'}}>
+                <p style={{fontSize:13,fontWeight:800,letterSpacing:'0.12em',textTransform:'uppercase',color:'#111',marginBottom:1}}>Footprint Forge</p>
+                <p style={{fontSize:8,color:'#aaa',fontFamily:'DM Mono',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:6}}>Identity Infrastructure</p>
+                <div style={{width:'106px',height:'1px',background:'#c27e42',marginLeft:'auto',marginBottom:6}}></div>
+                <p style={{fontSize:8,color:'#888',fontFamily:'DM Mono',lineHeight:1.8}}>
+                  362, L Block, West Cementry Road<br/>
+                  Oldwashermenpet, Chennai-600021<br/>
+                  +91 99520 41493 · UDYAM-TN-02-0455866
+                </p>
+              </div>
+              <div style={{width:46,height:46,borderRadius:'50%',border:'1.5px solid #c27e42',overflow:'hidden',background:'#111',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                <img src="logo.webp" alt="FF" style={{width:'100%',height:'100%',objectFit:'cover'}} onError={e=>{e.target.style.display='none';e.target.parentNode.innerHTML='<span style="font-weight:800;color:#c27e42;font-size:14px">FF</span>';}} />
+              </div>
+            </div>
+
+            {/* Recipient address — bottom left, envelope window zone */}
+            <div style={{position:'absolute',bottom:'28px',left:'45px',width:'280px'}}>
+              <p style={{fontFamily:'DM Mono',fontSize:7,color:'#aaa',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:5}}>To:</p>
+              <p style={{fontSize:15,fontWeight:800,color:'#111',marginBottom:3,lineHeight:1.2}}>{c.name||'Client Name'}</p>
+              {c.role && <p style={{fontSize:9,color:'#c27e42',fontWeight:600,marginBottom:4}}>{c.role}</p>}
+              <p style={{fontFamily:'DM Mono',fontSize:9,color:'#666',lineHeight:1.6}}>{fullAddr||'—'}</p>
+              {c.mobile && <p style={{fontFamily:'DM Mono',fontSize:8,color:'#999',marginTop:4}}>Ph: {c.mobile}</p>}
+            </div>
+          </div>
+
+          {/* ── PANEL 2 (middle) — Card mount centred ── */}
+          <div style={{...panelStyle,padding:'0',display:'flex',alignItems:'center',justifyContent:'center'}}>
+            {/* Fold tick marks */}
+            <div style={{position:'absolute',bottom:0,left:0,width:'11px',borderTop:'0.5px solid rgba(0,0,0,.3)'}}></div>
+            <div style={{position:'absolute',bottom:0,right:0,width:'11px',borderTop:'0.5px solid rgba(0,0,0,.3)'}}></div>
+
+            <div style={{width:'310px',height:'197px',border:'1.5px dashed #c27e42',borderRadius:'15px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',background:'rgba(194,126,66,.02)'}}>
+              <i className="fa-solid fa-arrows-to-dot" style={{color:'#c27e42',fontSize:15,marginBottom:6,opacity:.6}}></i>
+              <p style={{fontFamily:'DM Mono',fontSize:8,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',color:'#c27e42',opacity:.7}}>Mount Card Here</p>
+              <p style={{fontFamily:'DM Mono',fontSize:7,color:'#c27e42',marginTop:3,opacity:.4}}>(Fugitive glue dot)</p>
+            </div>
+          </div>
+
+          {/* ── PANEL 1 (bottom) — The letter ── */}
+          <div style={{width:'100%',minHeight:'374px',boxSizing:'border-box',padding:'12mm 18mm 14mm'}}>
+
+            {/* Date + Ref */}
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',borderBottom:'1px solid #e5e7eb',paddingBottom:'15px',marginBottom:'23px'}}>
+              <p style={{fontFamily:'DM Mono',fontSize:9,color:'#aaa',textTransform:'uppercase',letterSpacing:'0.08em'}}>{today}</p>
+              <p style={{fontFamily:'DM Mono',fontSize:9,color:'#c27e42',textTransform:'uppercase',letterSpacing:'0.08em'}}>Ref: {refId}</p>
+            </div>
+
+            {/* Headline */}
+            <p style={{fontSize:20,fontWeight:800,color:'#111',lineHeight:1.25,marginBottom:'19px'}}>Your identity is live, {firstName}.</p>
+
+            <p style={{fontSize:10.5,color:'#555',lineHeight:1.8,marginBottom:'15px'}}>
+              It was a pleasure building this for you. Enclosed is your premium PVC card — your permanent gateway to the digital infrastructure we've engineered together.
+            </p>
+            <p style={{fontSize:10.5,color:'#555',lineHeight:1.8,marginBottom:'15px'}}>
+              Every time someone scans the QR on this card, they land on <em>your</em> space — bespoke, hand-coded, and live on GitHub's global infrastructure. No subscriptions. No platform lock-in. Just your reputation, permanently online.
+            </p>
+            <p style={{fontSize:10.5,color:'#555',lineHeight:1.8,marginBottom:'19px'}}>
+              If you'd ever like to update your portfolio — a new role, a new achievement, or a new direction — just reach out. We'll get it done.
+            </p>
+
+            {/* Instructions */}
+            <div style={{borderLeft:'2px solid #c27e42',paddingLeft:'15px',marginBottom:'23px'}}>
+              <p style={{fontSize:10,color:'#333',lineHeight:1.75,marginBottom:'8px'}}><strong>① Detach the card</strong> — peel it gently from the mount above. The adhesive dot releases cleanly.</p>
+              <p style={{fontSize:10,color:'#333',lineHeight:1.75,marginBottom:'8px'}}><strong>② Start sharing</strong> — hand it over in your next meeting. Any smartphone camera scans the QR instantly.</p>
+              <p style={{fontSize:10,color:'#333',lineHeight:1.75}}><strong>③ Stay in touch</strong> — portfolio updates, more cards, or a new section? WhatsApp us anytime.</p>
+            </div>
+
+            {/* Sign-off */}
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',paddingTop:'15px',borderTop:'1px solid #e5e7eb'}}>
+              <div>
+                <p style={{fontSize:15,fontWeight:800,fontStyle:'italic',color:'#111',marginBottom:2}}>Yogaprabhu S.</p>
+                <p style={{fontFamily:'DM Mono',fontSize:8,color:'#aaa',textTransform:'uppercase',letterSpacing:'0.1em'}}>Founder · Footprint Forge · Chennai</p>
+                <p style={{fontFamily:'DM Mono',fontSize:8,color:'#c27e42',marginTop:3}}>+91 99520 41493</p>
+              </div>
+              <div style={{display:'flex',alignItems:'center',gap:6,opacity:.2}}>
+                <div style={{width:34,height:34,borderRadius:'50%',border:'1px solid #aaa',overflow:'hidden',background:'#111',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                  <img src="logo.webp" alt="seal" style={{width:'100%',height:'100%',objectFit:'cover'}} onError={e=>{e.target.style.display='none';}} />
+                </div>
+                <p style={{fontFamily:'DM Mono',fontSize:7,color:'#aaa',textTransform:'uppercase',letterSpacing:'0.08em',lineHeight:1.4}}>Quality<br/>Assured</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
   ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
