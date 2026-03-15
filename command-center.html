@@ -185,7 +185,7 @@
   /* ── WhatsApp Templates ── */
   const WA_TEMPLATES = {
     "New Lead":           (c) => `Hi ${c.firstName}! 👋 Thanks for your interest in Footprint Forge. I'm Yogaprabhu. Could you share a bit more about what you're looking for? We build premium PVC QR cards + bespoke portfolio websites starting at ₹999. 🔥`,
-    "Advance Paid":       (c) => `Hi ${c.firstName}! ✅ Advance payment received — thank you! Your build is now confirmed.\n\nTo get started, please fill in your Portfolio Brief using this link:\n👉 https://footprintforge-hq.github.io/brief.html?id=${c.id||'YOUR_ID'}\n\nIt only takes 5–10 minutes and helps us build exactly what you need. Once submitted, we'll get right to work! 🚀`,
+    "Advance Paid":       (c) => `Hi ${c.firstName}! ✅ Advance payment received — thank you! Your build is now confirmed.\n\nTo get started, please fill in your Portfolio Brief using this link:\n👉 https://footprintforge.in/brief.html?id=${c.id||'YOUR_ID'}\n\nIt only takes 5–10 minutes and helps us build exactly what you need. Once submitted, we'll get right to work! 🚀`,
     "Design in Progress": (c) => `Hi ${c.firstName}! 🎨 Just wanted to let you know — your portfolio design is currently in progress. I'll share a preview link for your review once it's ready. Should be with you soon!`,
     "Design Approved":    (c) => `Hi ${c.firstName}! ✅ Your design is approved and locked in — brilliant! Your card is now heading to print. I'll keep you posted on the progress. 🖨️`,
     "Printing":           (c) => `Hi ${c.firstName}! 🖨️ Great news — your premium PVC card is currently being printed. Once it's in my hands, I'll send you a quick video before dispatch. Shouldn't be long now!`,
@@ -198,7 +198,7 @@
   const EMAIL_TEMPLATES = {
     "New Lead": (c) => ({
       subject: `Your Footprint Forge enquiry — ${c.name}`,
-      body: `Hi ${c.firstName},\n\nThank you for your interest in Footprint Forge! 🙏\n\nWe build premium PVC QR business cards connected to bespoke portfolio websites — hand-coded, permanently hosted, zero recurring fees.\n\nOur packages start at ₹999. I'd love to understand your requirements better and put together the right solution for you.\n\nCould you share a bit about your role and what you'd like on your portfolio?\n\nLooking forward to hearing from you.\n\nWarm regards,\nYogaprabhu S.\nFounder · Footprint Forge\n+91 99520 41493\nfootprintforge-hq.github.io`,
+      body: `Hi ${c.firstName},\n\nThank you for your interest in Footprint Forge! 🙏\n\nWe build premium PVC QR business cards connected to bespoke portfolio websites — hand-coded, permanently hosted, zero recurring fees.\n\nOur packages start at ₹999. I'd love to understand your requirements better and put together the right solution for you.\n\nCould you share a bit about your role and what you'd like on your portfolio?\n\nLooking forward to hearing from you.\n\nWarm regards,\nYogaprabhu S.\nFounder · Footprint Forge\n+91 99520 41493\nfootprintforge.in`,
     }),
     "Advance Paid": (c) => ({
       subject: `Payment Confirmed — Let's Build Your Infrastructure, ${c.firstName}!`,
@@ -210,7 +210,7 @@
     }),
     "Complete": (c) => ({
       subject: `Your Footprint Forge Infrastructure is Live! 🚀`,
-      body: `Hi ${c.firstName},\n\nYour Footprint Forge build is complete! 🌟\n\nHere's a summary of what we've built together:\n\n🔗 Portfolio: ${c.portfolioUrl||'[Portfolio URL]'}\n💳 PVC QR Card: Delivered\n🏗 Infrastructure: GitHub Pages (permanent, zero cost)\n\nWhenever you need updates to your portfolio — a new role, new projects, or additional sections — just reach out and I'll get it done.\n\nThank you for trusting Footprint Forge with your digital identity. It was a privilege building your infrastructure. 🙏\n\nWarm regards,\nYogaprabhu S.\nFounder · Footprint Forge\n+91 99520 41493\nfootprintforge-hq.github.io`,
+      body: `Hi ${c.firstName},\n\nYour Footprint Forge build is complete! 🌟\n\nHere's a summary of what we've built together:\n\n🔗 Portfolio: ${c.portfolioUrl||'[Portfolio URL]'}\n💳 PVC QR Card: Delivered\n🏗 Infrastructure: GitHub Pages (permanent, zero cost)\n\nWhenever you need updates to your portfolio — a new role, new projects, or additional sections — just reach out and I'll get it done.\n\nThank you for trusting Footprint Forge with your digital identity. It was a privilege building your infrastructure. 🙏\n\nWarm regards,\nYogaprabhu S.\nFounder · Footprint Forge\n+91 99520 41493\nfootprintforge.in`,
     }),
   };
 
@@ -771,7 +771,7 @@
             </button>
             {/* Copy Brief Link */}
             <button onClick={()=>{
-              const url = `${window.location.origin.includes('github')?'https://footprintforge-hq.github.io':window.location.origin}/brief.html?id=${c.id}`;
+              const url = `${window.location.origin.includes('github')?'https://footprintforge.in':window.location.origin}/brief.html?id=${c.id}`;
               navigator.clipboard.writeText(url).then(()=>{
                 const btn = document.activeElement;
                 const orig = btn.innerHTML;
@@ -1572,7 +1572,7 @@ IMPORTANT: This is a real person's professional identity. Make it feel premium, 
                   Oldwashermenpet, Chennai-600021<br/>
                   Ph: +91 99520 41493<br/>
                   MSME: UDYAM-TN-02-0455866<br/>
-                  footprintforge-hq.github.io
+                  footprintforge.in
                 </p>
               </div>
               <div style={{width:'45%',paddingLeft:20,borderLeft:'2px solid #c27e42'}}>
