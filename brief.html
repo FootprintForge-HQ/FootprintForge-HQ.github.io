@@ -629,6 +629,23 @@
       }];
       await updateDoc(clientRef, { brief, timeline });
 
+      // Notify via Vercel API
+      try {
+        await fetch('/api/brief-submitted', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            clientId,
+            clientName:  existing.name  || '',
+            clientEmail: existing.email || '',
+            tagline:     brief.tagline  || '',
+            designStyle: brief.designStyle || '',
+          }),
+        });
+      } catch(apiErr) {
+        console.warn('Email notify failed (non-critical):', apiErr);
+      }
+
       document.getElementById('formWrap').style.display   = 'none';
       document.getElementById('successScreen').classList.add('show');
       window.scrollTo({top:0,behavior:'smooth'});

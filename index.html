@@ -2,14 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Google Analytics GA4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-3W29MD30D8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-3W29MD30D8');
-</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
   <!-- ======================================================= -->
@@ -20,7 +12,7 @@
   <meta name="keywords" content="QR business card Chennai, premium PVC visiting card with portfolio website, digital portfolio website Chennai, custom QR visiting card founders, professional portfolio website India, bespoke business card Chennai, hand-coded portfolio site, PVC QR business card Chennai, digital identity infrastructure Chennai">
   <meta name="author" content="Footprint Forge">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-  <link rel="canonical" href="https://footprintforge.in/">
+  <link rel="canonical" href="https://footprintforge-hq.github.io/">
 
   <!-- ======================================================= -->
   <!-- 🔍 SEARCH ENGINE VERIFICATION                           -->
@@ -33,16 +25,16 @@
   <!-- ======================================================= -->
   <!-- 🗺️ SITEMAP HINT FOR CRAWLERS                           -->
   <!-- ======================================================= -->
-  <link rel="sitemap" type="application/xml" href="https://footprintforge.in/sitemap.xml" />
+  <link rel="sitemap" type="application/xml" href="https://footprintforge-hq.github.io/sitemap.xml" />
 
   <!-- ======================================================= -->
   <!-- 🔗 OPEN GRAPH (FACEBOOK, LINKEDIN, WHATSAPP)            -->
   <!-- ======================================================= -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://footprintforge.in/">
+  <meta property="og:url" content="https://footprintforge-hq.github.io/">
   <meta property="og:title" content="Premium QR Business Card + Portfolio Website | Footprint Forge Chennai">
   <meta property="og:description" content="Premium PVC QR business cards connected to your own bespoke portfolio website. Built for founders, bankers & professionals. Starting ₹1,499. Engineered in Chennai.">
-  <meta property="og:image" content="https://footprintforge.in/og-image.png">
+  <meta property="og:image" content="https://footprintforge-hq.github.io/logo.webp">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Footprint Forge - Premium QR Business Card with Portfolio Website">
@@ -59,10 +51,10 @@
   <!-- 🐦 TWITTER CARDS                                        -->
   <!-- ======================================================= -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://footprintforge.in/">
+  <meta name="twitter:url" content="https://footprintforge-hq.github.io/">
   <meta name="twitter:title" content="Premium QR Business Card + Portfolio Website | Chennai">
   <meta name="twitter:description" content="Premium QR cards connected to bespoke portfolio websites. For founders & professionals. Starting ₹1,499.">
-  <meta name="twitter:image" content="https://footprintforge.in/logo.webp">
+  <meta name="twitter:image" content="https://footprintforge-hq.github.io/logo.webp">
 
   <!-- ======================================================= -->
   <!-- 🧠 STRUCTURED DATA (JSON-LD FOR GOOGLE RICH SNIPPETS)   -->
@@ -72,9 +64,9 @@
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     "name": "Footprint Forge",
-    "image": "https://footprintforge.in/logo.webp",
-    "@id": "https://footprintforge.in",
-    "url": "https://footprintforge.in",
+    "image": "https://footprintforge-hq.github.io/logo.webp",
+    "@id": "https://footprintforge-hq.github.io",
+    "url": "https://footprintforge-hq.github.io",
     "telephone": "+919952041493",
     "priceRange": "₹1,499 - ₹5,999",
     "address": {
@@ -238,8 +230,7 @@
   </div>
 
   <!-- WhatsApp Floating Button -->
-  <a href="https://wa.me/919952041493?text=Hi%2C%20I%20am%20interested%20in%20Footprint%20Forge!" 
-     target="_blank" rel="noopener noreferrer" 
+  <a href="#" onclick="openWA('Hi, I am interested in Footprint Forge!'); return false;"
      class="whatsapp-float" aria-label="Chat on WhatsApp">
     <i class="fa-brands fa-whatsapp"></i>
   </a>
@@ -261,9 +252,7 @@
         projectId: "footprint-forge-f4c95"
     };
 
-    // === PASTE YOUR WEB3FORMS ACCESS KEY HERE ===
-    // Get it free from https://web3forms.com/
-    const WEB3FORMS_ACCESS_KEY = "5b76816a-770b-4896-a8a1-b153d407c0e7";
+    // === VERCEL API handles emails — no keys needed here ===
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -317,104 +306,72 @@
 
       const handleFormSubmit = async (e) => {
         e.preventDefault();
-        
-        // Safety check to alert you if the API key hasn't been added yet
-        if (!WEB3FORMS_ACCESS_KEY || WEB3FORMS_ACCESS_KEY === "YOUR_KEY_HERE") {
-          alert("Developer Note: You must replace 'YOUR_KEY_HERE' on line 98 with your actual Web3Forms access key for emails to send!");
-        }
-
         setFormStatus('submitting');
-        
-        const today = new Date().toISOString().split('T')[0];
+
+        const tierPriceMap = { 'The Executive':999, 'The Authority':1499, 'The Institution':3499 };
+        const price = tierPriceMap[leadData.tier] || 1499;
+
+        // Generate client ref
+        const seq     = String(Math.floor(1000 + Math.random() * 8999));
+        const city    = (leadData.address||'CH').replace(/[^a-zA-Z]/g,'').slice(0,2).toUpperCase()||'CH';
+        const now2    = new Date();
+        const yymm    = String(now2.getFullYear()).slice(-2)+String(now2.getMonth()+1).padStart(2,'0');
+        const clientRef  = `FF-${city}-${seq}`;
+        const invoiceId  = `FF-INV-${yymm}-${seq}`;
+
         let firebaseSuccess = false;
-        let emailSuccess = false;
-        
-        // 1. Push to Firebase ff_clients (aligned with Command Center v2)
+        let emailSuccess    = false;
+
+        // 1. Save to Firebase
         try {
-          const tierPriceMap = {
-            'The Executive': 999,
-            'The Authority': 1499,
-            'The Institution': 3499,
-          };
           await addDoc(collection(db, 'ff_clients'), {
-            name:      leadData.clientName,
-            role:      leadData.role,
-            email:     leadData.email,
-            mobile:    leadData.mobile,
-            address:   leadData.address,
-            tier:      leadData.tier,
-            price:     tierPriceMap[leadData.tier] || 1499,
-            stage:     'New Lead',
-            timeline:  [{
-              type: 'stage',
-              text: 'Lead submitted via website intake form',
-              ts:   Date.now()
-            }],
-            notes:        [],
-            trackingId:   '',
-            portfolioUrl: '',
-            createdAt:    Date.now(),
+            name:        leadData.clientName,
+            role:        leadData.role,
+            email:       leadData.email,
+            mobile:      leadData.mobile,
+            address:     leadData.address,
+            tier:        leadData.tier,
+            price,
+            clientRef,
+            invoiceId,
+            stage:       'New Lead',
+            timeline:    [{ type:'stage', text:`Lead submitted via website · Ref: ${clientRef}`, ts: Date.now() }],
+            notes:       [],
+            trackingId:  '',
+            portfolioUrl:'',
+            createdAt:   Date.now(),
           });
           firebaseSuccess = true;
-        } catch (error) {
-          console.error("Firebase submission error:", error);
+        } catch (err) {
+          console.error("Firebase error:", err);
         }
 
-        // 2. Try sending instant Email Notification
-        if (WEB3FORMS_ACCESS_KEY && WEB3FORMS_ACCESS_KEY !== "YOUR_KEY_HERE") {
-          try {
-            const emailMessage = `
-New Lead Application Received!
-
-Name: ${leadData.clientName}
-Role: ${leadData.role}
-Package: ${leadData.tier}
-Mobile: ${leadData.mobile}
-Email: ${leadData.email}
-Address: ${leadData.address}
-
-Open Command Center v2 to process this lead.
-            `;
-            
-            const response = await fetch("https://api.web3forms.com/submit", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                },
-                body: JSON.stringify({
-                    access_key: WEB3FORMS_ACCESS_KEY,
-                    subject: `🔥 New Lead: ${leadData.clientName} - Footprint Forge`,
-                    from_name: "Footprint Forge Portal",
-                    name: leadData.clientName,
-                    email: leadData.email,
-                    message: emailMessage,
-                }),
-            });
-            
-            const json = await response.json();
-            
-            if (response.status === 200 && json.success) {
-               emailSuccess = true;
-            } else {
-               console.error("Web3Forms error details:", json);
-               alert(`Email Failed to Send: ${json.message}`);
-            }
-          } catch (error) {
-            console.error("Email network error:", error);
-            alert("Email network error. Please check console logs.");
-          }
+        // 2. Send emails via Vercel API
+        try {
+          const r = await fetch('/api/new-lead', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name:      leadData.clientName,
+              email:     leadData.email,
+              mobile:    leadData.mobile,
+              address:   leadData.address,
+              tier:      leadData.tier,
+              price,
+              clientRef,
+            }),
+          });
+          if (r.ok) emailSuccess = true;
+        } catch (err) {
+          console.error("Email API error:", err);
         }
 
-        // 3. Final Success/Fail Evaluation
-        if (firebaseSuccess || emailSuccess) {
-           setFormStatus('success');
-           if (!emailSuccess && WEB3FORMS_ACCESS_KEY !== "YOUR_KEY_HERE") {
-              alert("Data saved to CRM, but email notification failed. Please check console logs.");
-           }
+        // 3. Result
+        if (firebaseSuccess) {
+          setFormStatus('success');
         } else {
-           alert("Connection error. Please try again or contact us via WhatsApp.");
-           setFormStatus('idle');
+          alert("Connection error. Please try WhatsApp or email us directly.");
+          setFormStatus('idle');
         }
       };
 
@@ -691,7 +648,7 @@ Open Command Center v2 to process this lead.
                       Apply for Build <i className="fa-solid fa-arrow-right text-sm group-hover:translate-x-1 transition-transform"></i>
                     </button>
                     <button onClick={() => scrollToSection('hall-of-fame')} className="text-slate-300 hover:text-white text-base font-medium px-8 py-4 flex items-center justify-center gap-2 transition-colors w-full sm:w-auto bg-white/5 hover:bg-white/10 rounded-xl border border-white/5">
-                      View Portfolio Styles
+                      View Hall of Fame
                     </button>
                   </div>
                 </div>
@@ -732,8 +689,8 @@ Open Command Center v2 to process this lead.
               </div>
             </section>
 
-            {/* Portfolio Styles */}
-            <section id="portfolio-styles" className="py-20 md:py-32 bg-[#03050a] border-y border-white/5 relative z-10">
+            {/* HALL OF FAME */}
+            <section id="hall-of-fame" className="py-20 md:py-32 bg-[#03050a] border-y border-white/5 relative z-10">
               <div className="max-w-7xl mx-auto px-6 md:px-12">
                 
                 <div className="mb-12 md:mb-20 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
@@ -1127,7 +1084,7 @@ Open Command Center v2 to process this lead.
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* WhatsApp */}
-                  <a href="https://wa.me/919952041493" target="_blank" rel="noopener noreferrer" className="group bg-white/[0.02] border border-white/10 hover:border-[#25D366]/50 p-8 rounded-2xl transition-all hover:bg-white/[0.04] flex flex-col items-center justify-center">
+                  <a href="#" onClick={(e)=>{e.preventDefault();window.openWA('Hi, I would like to get in touch with Footprint Forge.');}} className="group bg-white/[0.02] border border-white/10 hover:border-[#25D366]/50 p-8 rounded-2xl transition-all hover:bg-white/[0.04] flex flex-col items-center justify-center">
                     <div className="w-14 h-14 bg-white/5 rounded-full flex items-center justify-center mb-4 group-hover:bg-[#25D366]/20 transition-colors">
                       <i className="fa-brands fa-whatsapp text-2xl text-slate-300 group-hover:text-[#25D366] transition-colors"></i>
                     </div>
@@ -1339,6 +1296,23 @@ Open Command Center v2 to process this lead.
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
+<!-- WhatsApp helper — number lives in env var, never in HTML -->
+<script>
+  window.openWA = async function(message) {
+    try {
+      const r = await fetch('/api/contact', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ message })
+      });
+      const { url } = await r.json();
+      if (url) window.open(url, '_blank', 'noopener,noreferrer');
+    } catch(e) {
+      // Fallback — open WhatsApp without pre-filled message
+      window.open('https://wa.me/', '_blank', 'noopener,noreferrer');
+    }
+  };
+</script>
 </body>
 </html>
 
