@@ -1301,19 +1301,13 @@
 
 <!-- WhatsApp helper — number lives in env var, never in HTML -->
 <script>
-  window.openWA = async function(message) {
-    try {
-      const r = await fetch('/api/contact', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ message })
-      });
-      const { url } = await r.json();
-      if (url) window.open(url, '_blank', 'noopener,noreferrer');
-    } catch(e) {
-      // Fallback — open WhatsApp without pre-filled message
-      window.open('https://wa.me/', '_blank', 'noopener,noreferrer');
-    }
+  window.openWA = function(message) {
+    // The phone number must include the country code without the '+'
+    const phoneNumber = "919952041493"; 
+    const encodedMessage = encodeURIComponent(message);
+    const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 </script>
 </body>
